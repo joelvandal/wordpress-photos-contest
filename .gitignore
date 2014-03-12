@@ -1,3 +1,6 @@
+uploads/*.png
+uploads/*.jpg
+uploads/*.gif
 .htaccess
 wp-config.php
 wp-content/uploads/
