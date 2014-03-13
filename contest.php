@@ -26,6 +26,8 @@ if (!defined('PSC_PLUGIN'))  define('PSC_PLUGIN', 'photoscontest');
 if (!defined('PSC_ABSPATH'))  define('PSC_ABSPATH', dirname(__FILE__) . '/');
 if (!defined('PSC_PATH')) define('PSC_PATH', plugin_dir_url(__FILE__));
 
+psc_load_options();
+
 add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
 register_activation_hook( __FILE__, 'psc_activation_init' );
@@ -152,7 +154,7 @@ function psc_load_options() {
 function psc_get_option($key, $default = null) {
 
     global $psc_options;
-    if (isset($ps_options[$key])) {
+    if (isset($psc_options[$key])) {
 	return $psc_options[$key];
     }
     
@@ -164,9 +166,38 @@ function psc_save_options() {
     if (!isset($_POST['psc_settings_nonce'])) return;
 
     check_admin_referer('psc_settings', 'psc_settings' . '_nonce');
- 
+
     $options = array();
     
+    if (isset($_POST['vote_open_date'])) {
+	$date = trim($_POST['vote_open_date']);
+	
+	if (!empty($date)) {
+	    $options['vote_open_date'] = $date;
+	}
+    }
+    
+    if (isset($_POST['vote_close_date'])) {
+	$date = trim($_POST['vote_close_date']);
+	
+	if (!empty($date)) {
+	    $options['vote_close_date'] = $date;
+	}
+    }
+
+    if (isset($_POST['google_api_key'])) {
+	$options['google_api_key'] = $_POST['google_api_key'];
+    }
+    
+    if (isset($_POST['facebook_client_id'])) {
+	$options['facebook_client_id'] = $_POST['facebook_client_id'];
+    }
+    if (isset($_POST['facebook_secret_key'])) {
+	$options['facebook_secret_key'] = $_POST['facebook_secret_key'];
+    }
+    
     update_option(PSC_PLUGIN, $options);
+
+    wp_redirect(admin_url('admin.php?page=psc_settings'));
     
 }
