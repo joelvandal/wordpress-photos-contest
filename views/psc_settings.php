@@ -1,9 +1,6 @@
 <div class="wrap">
-	<div id="icon-options-general" class="icon32">
-		<br>
-	</div>
 
-	<h2><?php _e('Photos contest - Configuration', PSC_PLUGIN); ?></h2>
+	<h2><?php _e('Photos Contest - Configuration', PSC_PLUGIN); ?></h2>
 
 	<form name="configuration" id="configuration" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 		<?php wp_nonce_field('psc_settings', 'psc_settings_nonce') ?>

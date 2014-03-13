@@ -19,14 +19,22 @@
  * GitHub Plugin URI: 	https://github.com/joelvandal/wordpress-photos-contest
  */
 
-global $wpdb;
-global $psc_options;
+global $wpdb, $psc_options;
 
-if (!defined('PSC_PLUGIN'))  define('PSC_PLUGIN', 'photoscontest');
-if (!defined('PSC_ABSPATH'))  define('PSC_ABSPATH', dirname(__FILE__) . '/');
-if (!defined('PSC_PATH')) define('PSC_PATH', plugin_dir_url(__FILE__));
+define('PSC_PLUGIN', 'photoscontest');
+define('PSC_ABSPATH', dirname(__FILE__) . '/');
+define('PSC_PATH', plugin_dir_url(__FILE__));
+
+define('PSC_TABLE_VOTES', $wpdb->prefix . 'psc_votes');
+define('PSC_TABLE_PARTICIPANTS', $wpdb->prefix . 'psc_participants');
+
+require PSC_ABSPATH . 'lib/Tables.php';
 
 psc_load_options();
+
+if (defined('WP_DEBUG') && WP_DEBUG) {
+    psc_activation_init();
+}
 
 add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
@@ -39,6 +47,7 @@ add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts');
 add_action( 'admin_init', 'psc_admin_init' );
 add_action( 'admin_menu', 'psc_admin_menu' );
 add_action( 'admin_notices', 'psc_admin_notices' );
+add_action( 'admin_head', 'psc_admin_headers' );
 
 function psc_enqueue_scripts() {
     
@@ -69,13 +78,13 @@ function psc_enqueue_admin_scripts() {
 function psc_activation_init() {
     global $wpdb;
 
-    $tbl = $wpdb->prefix . 'psc_participants';
+    $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_VOTES . " (id int(11) not null auto_increment, voter_name varchar(255), voter_email varchar(255), voter_ip varchar(80), vote_date int(11), participant_id int(11), primary key(id), key(participant_id))";
+    $wpdb->query($ptbl);
     
-    $ptbl = "CREATE TABLE IF NOT EXISTS " . $tbl . "(id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
-						     last_name varchar(80), age int(11), sex varchar(1), project_name varchar(80),
-						     project_category varchar(80), project_description text, mail_site int(1),
-						     mail_contest int(1), approved int(1) default 0, primary key (id), key(email))";
-
+    $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
+									last_name varchar(80), age int(11), sex varchar(1), project_name varchar(80),
+									project_category varchar(80), project_description text, mail_site int(1),
+									mail_contest int(1), approved int(1) default 0, primary key (id), key(email))";
     $wpdb->query($ptbl);
     
 }
@@ -98,9 +107,28 @@ function psc_admin_menu() {
     
     add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Overview', PSC_PLUGIN), __('Overview', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
-    add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), __('Participants', PSC_PLUGIN), 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
+    
+}
+
+function psc_admin_menu_item() {
+
+    switch ($_GET['page']) {
+     case 'psc_overview':
+     case 'psc_votes':
+     case 'psc_participants':
+     case 'psc_settings':
+	ob_start();
+	include 'views/' . $_GET['page'] . '.php';
+	echo ob_get_clean();
+	break;
+	
+     default:
+	echo 'unknown section';
+	break;
+    }
     
 }
 
@@ -108,34 +136,39 @@ function psc_admin_notices() {
     // TODO
 }
 
-function psc_admin_menu_item() {
-    global $wpdb;
+function psc_admin_headers() {
+    $page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
 
-    switch ($_GET['page']) {
-     case 'psc_overview':
+    echo '<style type="text/css">';
+    
+    switch($page) {
+	
      case 'psc_votes':
+	echo '.wp-list-table .column-name { width: 30%; }';
+	echo '.wp-list-table .column-ip_address { width: 200px; }';
+	echo '.wp-list-table .column-vote_date { width: 200px; }';
+	break;
+	
      case 'psc_participants':
-     case 'psc_settings':
-	echo $_GET['page'];
-	ob_start();
-	include 'views/' . $_GET['page'] . '.php';
-	echo ob_get_clean();
-
+	echo '.wp-list-table .column-image { width: 160px; }';
+	echo '.wp-list-table .column-name { width: 15%; }';
+	echo '.wp-list-table .column-email { width: 10%; }';
+	echo '.wp-list-table .column-views { width: 5%; text-align: center; }';
+	echo '.wp-list-table .column-votes { width: 5%; text-align: center; }';
+	echo '.wp-list-table .column-status { width: 10%; text-align: center; }';
 	break;
     }
     
+    echo '</style>';
+    
 }
-
-function psc_shortcode_register() {
-    ob_start();
-    include 'views/register.php';
-    return ob_get_clean();
-}
-
-
 
 function psc_format_date($timestamp) {
     return date("Y-m-d", $timestamp);
+}
+
+function psc_format_datetime($timestamp) {
+    return date("Y-m-d H:i:s", $timestamp);
 }
 
 
@@ -201,3 +234,64 @@ function psc_save_options() {
     wp_redirect(admin_url('admin.php?page=psc_settings'));
     
 }
+
+
+function psc_image($email) {
+    
+    $thumbW = 150;
+    $thumbH = 150;
+    
+    $viewW = 1920;
+    $viewH = 1440;
+
+    $image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.jpg';
+    $dest_file = PSC_ABSPATH . '/uploads/' . md5($email);
+    
+    if (!file_exists($image_file)) {
+	$image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.png';
+    }
+    
+    if (!file_exists($image_file)) {
+	$image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.gif';
+    }
+    
+    if (!file_exists($image_file)) {
+	return false;
+    }
+    
+    $thumbFile = $dest_file . '-thumb.png';
+    
+    if (!file_exists($thumbFile)) {
+	$image_thumbs = wp_get_image_editor($image_file);
+	if (!is_wp_error($image_thumbs)) {
+	    
+	    $size = $image_thumbs->get_size();
+	    $w0 = $size['width'];
+	    $h0 = $size['height'];
+	    
+	    $w = round($w0 * ( $thumbW / $h0));
+	    $h = $thumbH;
+	    
+	    $image_thumbs->resize($w, $h, false);
+	    $image_thumbs->save($thumbFile);
+	}
+    }
+    
+    $viewFile = $dest_file . '-view.png';
+    if (!file_exists($viewFile)) {
+	$image_view = wp_get_image_editor($image_file); // WP_Image_Editor
+	if (!is_wp_error($image_view)) {
+	    $image_view->resize($viewW, $viewH, false);
+	    $image_view->save($viewFile);
+	}
+    }
+}
+
+function psc_shortcode_register() {
+    ob_start();
+    include 'views/register.php';
+    return ob_get_clean();
+}
+
+
+
