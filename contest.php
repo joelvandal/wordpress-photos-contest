@@ -20,6 +20,7 @@
  */
 
 global $wpdb;
+global $psc_options;
 
 if (!defined('PSC_PLUGIN'))  define('PSC_PLUGIN', 'photoscontest');
 if (!defined('PSC_ABSPATH'))  define('PSC_ABSPATH', dirname(__FILE__) . '/');
@@ -31,6 +32,8 @@ register_activation_hook( __FILE__, 'psc_activation_init' );
 register_deactivation_hook( __FILE__, 'psc_deactivate_init' );
 
 add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
+add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts');
+
 add_action( 'admin_init', 'psc_admin_init' );
 add_action( 'admin_menu', 'psc_admin_menu' );
 add_action( 'admin_notices', 'psc_admin_notices' );
@@ -47,6 +50,18 @@ function psc_enqueue_scripts() {
     wp_register_style('fancybox', PSC_PATH . '/css/fancybox.css');
     wp_enqueue_style('fancybox');
     
+}
+
+function psc_enqueue_admin_scripts() {
+    
+    // using jquery-ui
+    wp_enqueue_script('jquery-ui-core');
+    
+    if ($_GET['page'] == 'psc_settings') {
+	wp_enqueue_script('jquery-ui-datepicker');
+	wp_enqueue_style('jquery-ui', PSC_PATH . '/css/jquery-ui.css');
+    }
+
 }
 
 function psc_activation_init() {
@@ -68,7 +83,13 @@ function psc_deactivation_init() {
 }
 
 function psc_admin_init() {
-    // TODO
+    
+    switch ($_GET['page']) {
+     case 'psc_settings':
+	psc_save_options();
+	break;
+    }
+    
 }
 
 function psc_admin_menu() {
@@ -93,7 +114,11 @@ function psc_admin_menu_item() {
      case 'psc_votes':
      case 'psc_participants':
      case 'psc_settings':
+	echo $_GET['page'];
+	ob_start();
 	include 'views/' . $_GET['page'] . '.php';
+	echo ob_get_clean();
+
 	break;
     }
     
@@ -105,3 +130,43 @@ function psc_shortcode_register() {
     return ob_get_clean();
 }
 
+
+
+function psc_format_date($timestamp) {
+    return date("Y-m-d", $timestamp);
+}
+
+
+function psc_load_options() {
+    
+    global $psc_options;
+    $defaults = array();
+    
+    $psc_options = get_option(PSC_PLUGIN);
+    
+    foreach ($defaults as $k => $v) {
+	if (!isset($psc_options[$k])) $psc_options[$k] = $v;
+    }
+}
+
+function psc_get_option($key, $default = null) {
+
+    global $psc_options;
+    if (isset($ps_options[$key])) {
+	return $psc_options[$key];
+    }
+    
+    return $default;
+}
+
+function psc_save_options() {
+    
+    if (!isset($_POST['psc_settings_nonce'])) return;
+
+    check_admin_referer('psc_settings', 'psc_settings' . '_nonce');
+ 
+    $options = array();
+    
+    update_option(PSC_PLUGIN, $options);
+    
+}

@@ -127,12 +127,6 @@ function psc_db_register($data) {
     
     $tbl = $wpdb->prefix . 'psc_participants';
     
-    $ptbl = "CREATE TABLE IF NOT EXISTS " . $tbl . "(id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
-						     last_name varchar(80), age int(11), sex varchar(1), project_name varchar(80),
-						     project_category varchar(80), project_description text, mail_site int(1),
-						     mail_contest int(1), approved int(1) default 0, primary key (id), key(email))";
-    $wpdb->query($ptbl);
-    
     $sql = "SELECT * FROM " . $tbl . " WHERE email = '" . $data['email'] . "'";
     $res = $wpdb->get_results($sql);
     if(!empty($res)) {
