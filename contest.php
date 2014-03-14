@@ -37,17 +37,23 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 }
 
 add_shortcode( 'contest_register', 'psc_shortcode_register' );
+add_shortcode( 'contest_participants', 'psc_shortcode_participants' );
+
+// add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
 register_activation_hook( __FILE__, 'psc_activation_init' );
 register_deactivation_hook( __FILE__, 'psc_deactivate_init' );
 
 add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
-add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts');
+add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
 
 add_action( 'admin_init', 'psc_admin_init' );
 add_action( 'admin_menu', 'psc_admin_menu' );
 add_action( 'admin_notices', 'psc_admin_notices' );
 add_action( 'admin_head', 'psc_admin_headers' );
+
+add_filter( 'query_vars', 'psc_query_var' );
+add_action( 'parse_query','psc_parse_query' );
 
 function psc_enqueue_scripts() {
     
@@ -237,9 +243,9 @@ function psc_save_options() {
 
 
 function psc_image($email) {
-    
-    $thumbW = 150;
-    $thumbH = 150;
+
+    $thumbW = 207;
+    $thumbH = 136;
     
     $viewW = 1920;
     $viewH = 1440;
@@ -264,15 +270,7 @@ function psc_image($email) {
     if (!file_exists($thumbFile)) {
 	$image_thumbs = wp_get_image_editor($image_file);
 	if (!is_wp_error($image_thumbs)) {
-	    
-	    $size = $image_thumbs->get_size();
-	    $w0 = $size['width'];
-	    $h0 = $size['height'];
-	    
-	    $w = round($w0 * ( $thumbW / $h0));
-	    $h = $thumbH;
-	    
-	    $image_thumbs->resize($w, $h, false);
+	    $image_thumbs->resize($thumbW, $thumbH, true);
 	    $image_thumbs->save($thumbFile);
 	}
     }
@@ -293,5 +291,24 @@ function psc_shortcode_register() {
     return ob_get_clean();
 }
 
+function psc_shortcode_participants() {
+    ob_start();
+    include 'views/participants.php';
+    return ob_get_clean();
+    
+}
+			      
+function psc_query_var($vars) {
+	$vars[] = 'participants';
+	return $vars;
+}
 
+function psc_parse_query() {
+    global $wp_query;
 
+    if(isset($wp_query->query_vars['participants']) && $wp_query->query_vars['participants'] != ''){
+	// add_filter('the_content','votes_content_update');
+	//add_filter('post_thumbnail_html','votes_the_post_thumbnail');
+	// add_filter('single_template', 'vote_body_class');
+    }
+}

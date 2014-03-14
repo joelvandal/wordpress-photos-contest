@@ -1,7 +1,7 @@
 <?php
 
 if(!isset($_SERVER['HTTP_X_REQUESTED_WITH']) || strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) != 'xmlhttprequest') {
-    die('Unknown what to do!');
+//    die('Unknown what to do!');
 }
 
 define('DOING_AJAX', true);
@@ -23,7 +23,9 @@ send_nosniff_header();
 nocache_headers();
 
 add_action('send_headers', 'psc_ajax_send_headers');
+
 add_action('wp_ajax_nopriv_register', 'psc_ajax_register');
+add_action('wp_ajax_nopriv_details', 'psc_ajax_details');
 
 do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ); // Non-admin actions
 
@@ -31,6 +33,21 @@ wp_die();
 
 function psc_ajax_send_headers() {
     header('Content-Type: application/json; charset=' . get_option('blog_charset'));
+}
+
+function psc_ajax_details() {
+
+    global $wpdb;
+    
+    $tbl = $wpdb->prefix . 'psc_participants';
+
+    $sql = "SELECT * FROM " . $tbl . " WHERE id = " . intval($_REQUEST['id']);
+    $item = $wpdb->get_row($sql, ARRAY_A);
+    
+    ob_start();
+    include 'views/details.php';
+    echo ob_get_clean();
+    
 }
 
 function psc_ajax_register() {

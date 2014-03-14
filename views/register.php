@@ -19,6 +19,7 @@
 	<p>
 	        <label for="input-first-name">Your Name <span>(required)</span></label>
 	        <input type="text" id="input-first-name" placeholder="First Name" name="first_name" class="small">
+		<br />
 	        <input type="text" id="input-last-name" placeholder="Last Name" name="last_name" class="small">
 
 	</p>
@@ -28,7 +29,7 @@
 			<label class="input-label">Gender <span>(required)</span></label>
 			<input type="radio" name="input-sex" id="input-sex" value="m" checked> Male
 			<br />
-			<input type="radio" name="input-sex" id="input-sex" value="f" checked> Female
+			<input type="radio" name="input-sex" id="input-sex" value="f"> Female
 		</div>
 
 		<div style="float: left; padding-left: 50px">
@@ -98,7 +99,7 @@
 
 	</div>
 
-	<button id="register-button" class="btn" xstyle="display:none">Register &#187;</button>
+	<button id="register-button" class="btn" style="display:none">Register &#187;</button>
 
 
 <script type="text/javascript">
