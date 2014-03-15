@@ -19,7 +19,7 @@
  * GitHub Plugin URI: 	https://github.com/joelvandal/wordpress-photos-contest
  */
 
-global $wpdb, $psc_options;
+global $wpdb, $psc_options, $psc_admin_notices;
 
 define('PSC_PLUGIN', 'photoscontest');
 define('PSC_ABSPATH', dirname(__FILE__) . '/');
@@ -49,11 +49,12 @@ add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
 
 add_action( 'admin_init', 'psc_admin_init' );
 add_action( 'admin_menu', 'psc_admin_menu' );
-add_action( 'admin_notices', 'psc_admin_notices' );
 add_action( 'admin_head', 'psc_admin_headers' );
 
 add_filter( 'query_vars', 'psc_query_var' );
 add_action( 'parse_query','psc_parse_query' );
+
+//add_action( 'admin_notices', 'psc_admin_notices' );
 
 function psc_enqueue_scripts() {
     
@@ -79,6 +80,12 @@ function psc_enqueue_admin_scripts() {
 	wp_enqueue_style('jquery-ui', PSC_PATH . '/css/jquery-ui.css');
     }
 
+    wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
+    wp_enqueue_script('fancybox', array('jquery'));
+    
+    wp_register_style('fancybox', PSC_PATH . '/css/fancybox.css');
+    wp_enqueue_style('fancybox');
+    
 }
 
 function psc_activation_init() {
@@ -122,9 +129,74 @@ function psc_admin_menu() {
 function psc_admin_menu_item() {
 
     switch ($_GET['page']) {
+     case 'psc_participants':
+	
+	global $wpdb, $psc_admin_notices;
+	$item = intval($_GET['item']);
+	
+	if ($item) {
+	    $info = $wpdb->get_row("SELECT email FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $item, ARRAY_A);
+	}
+	
+	$page = $_GET['page'];
+	
+	switch($_GET['action']) {
+
+	 case 'approve':
+	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been approved.", PSC_PLUGIN), $info['email']);
+	    $wpdb->query("UPDATE " . PSC_TABLE_PARTICIPANTS . " SET approved=1 WHERE id=" . $item);
+	    break;
+	    
+	 case 'unapprove':
+	    $psc_admin_notices['error'][] = sprintf(__("The participant '%s' has been rejected.", PSC_PLUGIN), $info['email']);
+	    $wpdb->query("UPDATE " . PSC_TABLE_PARTICIPANTS . " SET approved=0 WHERE id=" . $item);
+	    break;
+	    
+	 case 'delete':
+	    $psc_admin_notices['error'][] = sprintf(__("The participant '%s' has been deleted.", PSC_PLUGIN), $info['email']);
+	    $wpdb->query("DELETE FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $item);
+	    $wpdb->query("DELETE FROM " . PSC_TABLE_VOTES . " WHERE participant_id=" . $item);
+	    break;
+	    
+	 case 'edit':
+	    $page .= '_edit';
+	    break;
+	    
+	 case 'save':
+
+	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been updated successfully.", PSC_PLUGIN), $info['email']);
+	    
+	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'project_name' => '%s',
+			    'project_category' => '%s', 'project_description' => '%s', 'approved' => '%d', 'mail_site' => '%d', 
+			    'mail_contest' => '%d');
+	    $data = array();
+	    $format = array();
+	    foreach($fields as $field => $fmt) {
+		if (isset($_POST[$field])) {
+		    $val = $_POST[$field];
+		    if ($val == 'on') { $val = 1; }
+		    $data[$field] = $val;
+		} else {
+		    $data[$field] = '';
+		}
+		$format[] = $fmt;
+	    }
+	    
+	    $wpdb->update(PSC_TABLE_PARTICIPANTS, $data, array('id' => $item), $format, array('%d'));
+	    
+	    break;
+	    
+	}
+	
+	echo psc_admin_notices(true);
+	ob_start();
+	include 'views/' . $page . '.php';
+	echo ob_get_clean();
+	
+	break;
+	
      case 'psc_overview':
      case 'psc_votes':
-     case 'psc_participants':
      case 'psc_settings':
 	ob_start();
 	include 'views/' . $_GET['page'] . '.php';
@@ -138,8 +210,29 @@ function psc_admin_menu_item() {
     
 }
 
-function psc_admin_notices() {
-    // TODO
+function psc_admin_notices($return = false) {
+    global $psc_admin_notices;
+    
+    
+    if( ! empty( $psc_admin_notices ) ){    
+	// Remove an empty and then sort
+	array_filter( $psc_admin_notices );
+	ksort( $psc_admin_notices );
+	
+	$output = '';
+	foreach( $psc_admin_notices as $key => $value ){
+	    // Probably an array but best to check
+	    if( is_array( $value ) ) {
+		foreach( $value as $v ) {
+		    $output .= '<div class="' . esc_attr( $key ) . '"><p>' . esc_html( $v ) . '</p></div>';
+		}
+	    } else {
+		$output .= '<div class="' . esc_attr( $key ) . '"><p>' . esc_html( $value ) . '</p></div>';
+	    }
+	}
+	if ($return) return $output;
+	echo $output;
+    }
 }
 
 function psc_admin_headers() {
