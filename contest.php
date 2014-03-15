@@ -75,11 +75,15 @@ function psc_enqueue_admin_scripts() {
     // using jquery-ui
     wp_enqueue_script('jquery-ui-core');
     
-    if ($_GET['page'] == 'psc_settings') {
-	wp_enqueue_script('jquery-ui-datepicker');
-	wp_enqueue_style('jquery-ui', PSC_PATH . '/css/jquery-ui.css');
-    }
+//    wp_enqueue_script('jquery-ui-datepicker');
+    wp_enqueue_style('jquery-ui', PSC_PATH . '/css/jquery-ui.css');
 
+    wp_register_script('jquery-ui-datetimepicker', PSC_PATH. '/js/jquery.datetimepicker.js');
+    wp_enqueue_script('jquery-ui-datetimepicker', array('jquery'));
+
+    wp_register_style('jquery-ui-datetimepicker', PSC_PATH . '/css/jquery.datetimepicker.css');
+    wp_enqueue_style('jquery-ui-datetimepicker');
+    
     wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
     wp_enqueue_script('fancybox', array('jquery'));
     
@@ -97,7 +101,7 @@ function psc_activation_init() {
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
 									last_name varchar(80), age int(11), sex varchar(1), project_name varchar(80),
 									project_category varchar(80), project_description text, mail_site int(1),
-									mail_contest int(1), approved int(1) default 0, primary key (id), key(email))";
+									mail_contest int(1), approved int(1) default 0, subscribe_date int(11), primary key (id), key(email))";
     $wpdb->query($ptbl);
     
 }
@@ -167,18 +171,26 @@ function psc_admin_menu_item() {
 	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been updated successfully.", PSC_PLUGIN), $info['email']);
 	    
 	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'project_name' => '%s',
-			    'project_category' => '%s', 'project_description' => '%s', 'approved' => '%d', 'mail_site' => '%d', 
-			    'mail_contest' => '%d');
+			    'project_category' => '%s', 'project_description' => '%s', 'approved' => '%b', 'mail_site' => '%b',
+			    'mail_contest' => '%b', 'subscribe_date' => '%T');
+	    
 	    $data = array();
 	    $format = array();
 	    foreach($fields as $field => $fmt) {
 		if (isset($_POST[$field])) {
 		    $val = $_POST[$field];
-		    if ($val == 'on') { $val = 1; }
+		    if ($fmt == '%b' && $val == 'on') { $val = 1; }
+		    if ($fmt == '%T') { $val = strtotime($val); }
 		    $data[$field] = $val;
 		} else {
+		    if ($fmt == '%b' && $val != 'on') { $val = 0; }
+		    if ($fmt == '%T' && !$val) { $val = time(); }
 		    $data[$field] = '';
 		}
+		
+		if ($fmt == '%b') $fmt = '%d';
+		if ($fmt == '%T') $fmt = '%d';
+		
 		$format[] = $fmt;
 	    }
 	    
@@ -254,7 +266,8 @@ function psc_admin_headers() {
 	echo '.wp-list-table .column-email { width: 10%; }';
 	echo '.wp-list-table .column-views { width: 5%; text-align: center; }';
 	echo '.wp-list-table .column-votes { width: 5%; text-align: center; }';
-	echo '.wp-list-table .column-status { width: 10%; text-align: center; }';
+	echo '.wp-list-table .column-subscribe_date { width: 5%; }';
+	echo '.wp-list-table .column-status { width: 10%; }';
 	break;
     }
     
@@ -266,8 +279,9 @@ function psc_format_date($timestamp) {
     return date("Y-m-d", $timestamp);
 }
 
-function psc_format_datetime($timestamp) {
-    return date("Y-m-d H:i:s", $timestamp);
+function psc_format_datetime($timestamp, $seconds = false) {
+    $format = ($seconds) ? "Y-m-d H:i:s" : "Y-m-d H:i";
+    return date($format, $timestamp);
 }
 
 

@@ -7,6 +7,9 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	<h2><?php _e('Photos Contest - Participants', PSC_PLUGIN); ?></h2>
 
 	<form name="participant" id="participant" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
+
+		<h4>Participant Informations</h4>
+
 		<table class="form-table">
 
 			<tr valign="top">
@@ -60,6 +63,8 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 		</table>
 
+		<h4>Project Informations</h4>
+
 		<table class="form-table">
 
 			<tr valign="top">
@@ -91,7 +96,18 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 		</table>
 
+		<h4>Subscription</h4>
+
 		<table class="form-table">
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Subscription Date', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" class="datepicker" name="subscribe_date" value="<?php echo psc_format_datetime($info['subscribe_date']); ?>" />
+				</td>
+			</tr>
 
 			<tr valign="top">
 				<th align="left">
@@ -129,11 +145,8 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 <script type="text/javascript">
 	jQuery(document).ready(function(){
-		jQuery('.datepicker').datepicker({
-			showOn: "button",
-			buttonImage: "<?php echo PSC_PATH . '/images/vcalendar.png';?>",
-			buttonImageOnly: true,
-			dateFormat : "yy-mm-dd"
+		jQuery('.datepicker').datetimepicker({
+			format : "Y-m-d H:i"
 		});
 	});
 </script>

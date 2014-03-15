@@ -72,6 +72,7 @@ class PSC_Participants_Table extends PSC_Table {
 			 'project_description'  => __('Description', PSC_PLUGIN),
 //			 'views'                => __('Views', PSC_PLUGIN),
 			 'votes'                => __('Votes', PSC_PLUGIN),
+			 'subscribe_date'       => __('Subscribe', PSC_PLUGIN),
 			 'status'               => __('Status', PSC_PLUGIN)
 		         );
 	return $columns;
@@ -97,6 +98,10 @@ class PSC_Participants_Table extends PSC_Table {
 	 case 'votes':
 	    return $item[ $column_name ] ? $item[ $column_name ] : __('N/A', PSC_PLUGIN);
 	    break;
+
+	 case 'subscribe_date':
+	    return psc_format_datetime($item[ $column_name ]);
+	    break;
 	    
 	 case 'school':
 	 case 'name':
@@ -117,7 +122,9 @@ class PSC_Participants_Table extends PSC_Table {
 				  'email' => array('email',false),
 				  'project_name'   => array('project_name',false),
 				  'project_category'   => array('project_category',false),
-				  'project_description'   => array('project_description',false)
+				  'project_description'   => array('project_description',false),
+				  'subscribe_date'   => array('subscribe_date',false),
+				  'status'   => array('status',false)
 				  );
 	return $sortable_columns;
     }

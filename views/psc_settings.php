@@ -13,7 +13,7 @@
 					<?php _e('Vote open date', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input class="datepicker" type="text" size="10" name="vote_open_date" value="<?php echo psc_format_date( psc_get_option('vote_open_date')); ?>" />
+					<input class="datepicker" type="text" size="15" name="vote_open_date" value="<?php echo psc_format_datetime( psc_get_option('vote_open_date')); ?>" />
 					<p class="description">
 					</p>
 				</td>
@@ -23,7 +23,7 @@
 					<?php _e('Vote close date', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input class="datepicker" type="text" size="10" name="vote_close_date" value="<?php echo psc_format_date( psc_get_option('vote_close_date')); ?>" />
+					<input class="datepicker" type="text" size="15" name="vote_close_date" value="<?php echo psc_format_datetime( psc_get_option('vote_close_date')); ?>" />
 					<p class="description">
 					</p>
 				</td>
@@ -38,7 +38,7 @@
 					<?php _e('Google API Key', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" size="20" name="google_api_key" value="<?php echo psc_get_option('google_api_key'); ?>" />
+					<input type="text" size="40" name="google_api_key" value="<?php echo psc_get_option('google_api_key'); ?>" />
 					<p class="description">
 						<?php _e('This is the Google API Key', PSC_PLUGIN);?>
 					</p>
@@ -49,7 +49,7 @@
 					<?php _e('Facebook Client ID', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" size="20" name="facebook_client_id" value="<?php echo psc_get_option('facebook_client_id'); ?>" />
+					<input type="text" size="40" name="facebook_client_id" value="<?php echo psc_get_option('facebook_client_id'); ?>" />
 					<p class="description">
 						<?php _e('This is the Facebook Client ID', PSC_PLUGIN);?>
 					</p>
@@ -60,7 +60,7 @@
 					<?php _e('Facebook Secret Key', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" size="20" name="facebook_secret_key" value="<?php echo psc_get_option('facebook_secret_key'); ?>" />
+					<input type="text" size="40" name="facebook_secret_key" value="<?php echo psc_get_option('facebook_secret_key'); ?>" />
 					<p class="description">
 						<?php _e('This is the Facebook Secret Key', PSC_PLUGIN);?>
 					</p>
@@ -75,11 +75,8 @@
 
 <script type="text/javascript">
 	jQuery(document).ready(function(){
-		jQuery('.datepicker').datepicker({
-			showOn: "button",
-			buttonImage: "<?php echo PSC_PATH . '/images/vcalendar.png';?>",
-			buttonImageOnly: true,
-			dateFormat : "yy-mm-dd"
+		jQuery('.datepicker').datetimepicker({
+			format : "Y-m-d H:i"
 		});
 	});
 </script>
