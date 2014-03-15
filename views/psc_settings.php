@@ -10,7 +10,7 @@
 		<table class="form-table">
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Vote open date', PSC_PLUGIN); ?>
+					<?php _e('Vote Open Date', PSC_PLUGIN); ?>
 				</th>
 				<td>
 					<input class="datepicker" type="text" size="15" name="vote_open_date" value="<?php echo psc_format_datetime( psc_get_option('vote_open_date')); ?>" />
@@ -20,7 +20,7 @@
 			</tr>
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Vote close date', PSC_PLUGIN); ?>
+					<?php _e('Vote Close Date', PSC_PLUGIN); ?>
 				</th>
 				<td>
 					<input class="datepicker" type="text" size="15" name="vote_close_date" value="<?php echo psc_format_datetime( psc_get_option('vote_close_date')); ?>" />

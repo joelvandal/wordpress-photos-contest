@@ -262,11 +262,10 @@ function psc_admin_headers() {
 	
      case 'psc_participants':
 	echo '.wp-list-table .column-image { width: 160px; }';
-	echo '.wp-list-table .column-name { width: 15%; }';
+	echo '.wp-list-table .column-name { width: 10%; }';
 	echo '.wp-list-table .column-email { width: 10%; }';
-	echo '.wp-list-table .column-views { width: 5%; text-align: center; }';
 	echo '.wp-list-table .column-votes { width: 5%; text-align: center; }';
-	echo '.wp-list-table .column-subscribe_date { width: 5%; }';
+	echo '.wp-list-table .column-subscribe_date { width: 130px; }';
 	echo '.wp-list-table .column-status { width: 10%; }';
 	break;
     }
@@ -319,7 +318,7 @@ function psc_save_options() {
 	$date = trim($_POST['vote_open_date']);
 	
 	if (!empty($date)) {
-	    $options['vote_open_date'] = $date;
+	    $options['vote_open_date'] = strtotime($date);
 	}
     }
     
@@ -327,7 +326,7 @@ function psc_save_options() {
 	$date = trim($_POST['vote_close_date']);
 	
 	if (!empty($date)) {
-	    $options['vote_close_date'] = $date;
+	    $options['vote_close_date'] = strtotime($date);
 	}
     }
 

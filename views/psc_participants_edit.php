@@ -17,7 +17,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('First Name', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" name="first_name" value="<?php echo $info['first_name']; ?>" />
+					<input type="text" size="30" name="first_name" value="<?php echo $info['first_name']; ?>" />
 				</td>
 			</tr>
 
@@ -26,7 +26,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Last Name', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" name="last_name" value="<?php echo $info['last_name']; ?>" />
+					<input type="text" size="30" name="last_name" value="<?php echo $info['last_name']; ?>" />
 				</td>
 			</tr>
 
@@ -35,7 +35,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Email', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" name="email" value="<?php echo $info['email']; ?>" />
+					<input type="text" size="50" name="email" value="<?php echo $info['email']; ?>" />
 				</td>
 			</tr>
 
@@ -72,7 +72,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Project Name', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" name="project_name" value="<?php echo $info['project_name']; ?>" />
+					<input type="text" size="80" name="project_name" value="<?php echo $info['project_name']; ?>" />
 				</td>
 			</tr>
 
@@ -81,7 +81,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Project Category', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" name="project_category" value="<?php echo $info['project_category']; ?>" />
+					<input type="text" size="80" name="project_category" value="<?php echo $info['project_category']; ?>" />
 				</td>
 			</tr>
 
@@ -90,7 +90,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Project Description', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<textarea name="project_description"><?php echo $info['project_description']; ?></textarea>
+					<textarea cols="80" rows="5" name="project_description"><?php echo $info['project_description']; ?></textarea>
 				</td>
 			</tr>
 

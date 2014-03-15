@@ -1,6 +1,6 @@
 <?php
 
-if( ! class_exists( 'WP_List_Table' ) ) {
+if(!class_exists('WP_List_Table')) {
     require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
@@ -120,10 +120,12 @@ class PSC_Participants_Table extends PSC_Table {
 	$sortable_columns = array(
 				  'name'  => array('name',false),
 				  'email' => array('email',false),
+				  'school' => array('school',false),
 				  'project_name'   => array('project_name',false),
 				  'project_category'   => array('project_category',false),
 				  'project_description'   => array('project_description',false),
 				  'subscribe_date'   => array('subscribe_date',false),
+				  'votes' => array('votes',false),
 				  'status'   => array('status',false)
 				  );
 	return $sortable_columns;
