@@ -112,7 +112,7 @@ class PSC_Participants_Table extends PSC_Table {
     function get_data() {
 	global $wpdb;
 	
-	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id GROUP BY p.id";
+	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id GROUP BY p.id ORDER BY p.subscribe_date DESC";
 	
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
@@ -237,7 +237,7 @@ class PSC_Votes_Table extends PSC_Table {
     function get_data() {
 	global $wpdb;
 	
-	$sql = "SELECT v.*,p.first_name,p.last_name,p.project_name FROM " . PSC_TABLE_VOTES . " AS v INNER JOIN " . PSC_TABLE_PARTICIPANTS . " AS p ON p.id=v.participant_id";
+	$sql = "SELECT v.*,p.first_name,p.last_name,p.project_name FROM " . PSC_TABLE_VOTES . " AS v INNER JOIN " . PSC_TABLE_PARTICIPANTS . " AS p ON p.id=v.participant_id ORDER BY v.vote_date DESC";
 	
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
@@ -320,6 +320,8 @@ class PSC_Categories_Table extends PSC_Table {
 	if ($_GET['type']) {
 	    $sql .= " WHERE category_type = '" . esc_sql($_GET['type']) . "'";
 	}
+	$sql .= " ORDER BY category_type DESC, category_name DESC"; //, category_type ASC";
+
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	return $rows;
     }

@@ -333,6 +333,10 @@ function psc_admin_headers() {
     echo '<style type="text/css">';
     
     switch($page) {
+
+     case 'psc_categories':
+	echo '.wp-list-table .column-category_type { width: 10%; }';
+	break;
 	
      case 'psc_votes':
 	echo '.wp-list-table .column-name { width: 30%; }';
