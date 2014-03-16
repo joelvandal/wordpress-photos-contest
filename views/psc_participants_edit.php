@@ -8,7 +8,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 	<form name="participant" id="participant" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 
-		<h4>Participant Informations</h4>
+		<h3>Participant Informations</h3>
 
 		<table class="form-table">
 
@@ -63,7 +63,43 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 		</table>
 
-		<h4>Project Informations</h4>
+		<h3>School Informations</h3>
+
+		<table class="form-table">
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e('School Name', PSC_PLUGIN); ?>
+				</th>
+				<td>
+
+		<select id="input-school-name" name="school" class="name">
+	    <?php
+	    $cats = psc_get_category('school');
+	    foreach($cats as $cat) {
+		$selected = ($cat['category_name'] == $info['school']) ? 'selected' : '';
+		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
+	    }
+	    ?>
+		</select>
+
+				</td>
+			</tr>
+
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Class Name', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="60" name="class_name" value="<?php echo $info['class_name']; ?>" />
+				</td>
+			</tr>
+
+		</table>
+
+
+		<h3>Project Informations</h3>
 
 		<table class="form-table">
 
@@ -81,7 +117,17 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Project Category', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" size="80" name="project_category" value="<?php echo $info['project_category']; ?>" />
+
+		<select id="input-project-category" name="project_category" class="name">
+	    <?php
+	    $cats = psc_get_category('project');
+	    foreach($cats as $cat) {
+		$selected = ($cat['category_name'] == $info['project_category']) ? 'selected' : '';
+		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
+	    }
+	    ?>
+		</select>
+
 				</td>
 			</tr>
 
@@ -90,13 +136,13 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Project Description', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<textarea cols="80" rows="5" name="project_description"><?php echo $info['project_description']; ?></textarea>
+					<textarea cols="80" rows="5" name="project_description"><?php echo esc_textarea($info['project_description']); ?></textarea>
 				</td>
 			</tr>
 
 		</table>
 
-		<h4>Subscription</h4>
+		<h3>Subscription</h3>
 
 		<table class="form-table">
 

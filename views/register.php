@@ -49,7 +49,15 @@
 
 	<p>
 		<label for="input-school" class="input-label">School Name</label>
-		<input type="text" id="input-school" placeholder="Enter your School Name" name="school" class="name">
+		<select id="input-school" name="school" class="name">
+			<option value=""><?php _e('- Select your School -'); ?></option>
+	    <?php
+	    $cats = psc_get_category('school');
+	    foreach($cats as $cat) {
+		echo sprintf('<option value="%s">%s</option>', $cat['id'], $cat['category_name']);
+	    }
+	    ?>	
+		</select>
 	</p>
 
 	<p>
@@ -76,7 +84,15 @@
 
 	<p>
 		<label for="input-project-category" class="input-label">Project Category</label>
-		<input type="text" maxlength="30" id="input-project-category" placeholder="Project Category" name="category">
+		<select id="input-project-category" name="category" class="name">
+			<option value=""><?php _e('- Select your Category -'); ?></option>
+	    <?php
+	    $cats = psc_get_category('project');
+	    foreach($cats as $cat) {
+		echo sprintf('<option value="%s">%s</option>', $cat['id'], $cat['category_name']);
+	    }
+	    ?>
+		</select>
 	</p>
 
 	<p>

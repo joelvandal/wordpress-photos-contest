@@ -5,7 +5,71 @@ if(!class_exists('WP_List_Table')) {
 }
 
 class PSC_Table extends WP_List_Table {
-        
+    
+    function print_column_headers( $with_id = true ) {
+	list( $columns, $hidden, $sortable ) = $this->get_column_info();
+	
+	$current_url = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+	$current_url = remove_query_arg( 'paged', $current_url );
+	$current_url = remove_query_arg( 'action', $current_url );
+	$current_url = remove_query_arg( 'item', $current_url );
+	
+	if ( isset( $_GET['orderby'] ) )
+	  $current_orderby = $_GET['orderby'];
+	else
+	  $current_orderby = '';
+	
+	if ( isset( $_GET['order'] ) && 'desc' == $_GET['order'] )
+	  $current_order = 'desc';
+	else
+	  $current_order = 'asc';
+	
+	if ( ! empty( $columns['cb'] ) ) {
+	    static $cb_counter = 1;
+	    $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __( 'Select All' ) . '</label>'
+	      . '<input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
+	    $cb_counter++;
+	}
+	
+	foreach ( $columns as $column_key => $column_display_name ) {
+	    $class = array( 'manage-column', "column-$column_key" );
+	    
+	    $style = '';
+	    if ( in_array( $column_key, $hidden ) )
+	      $style = 'display:none;';
+	    
+	    $style = ' style="' . $style . '"';
+	    
+	    if ( 'cb' == $column_key )
+	      $class[] = 'check-column';
+	    elseif ( in_array( $column_key, array( 'posts', 'comments', 'links' ) ) )
+	      $class[] = 'num';
+	    
+	    if ( isset( $sortable[$column_key] ) ) {
+		list( $orderby, $desc_first ) = $sortable[$column_key];
+		
+		if ( $current_orderby == $orderby ) {
+		    $order = 'asc' == $current_order ? 'desc' : 'asc';
+		    $class[] = 'sorted';
+		    $class[] = $current_order;
+		} else {
+		    $order = $desc_first ? 'desc' : 'asc';
+		    $class[] = 'sortable';
+		    $class[] = $desc_first ? 'asc' : 'desc';
+		}
+		
+		$column_display_name = '<a href="' . esc_url( add_query_arg( compact( 'orderby', 'order' ), $current_url ) ) . '"><span>' . $column_display_name . '</span><span class="sorting-indicator"></span></a>';
+	    }
+	    
+	    $id = $with_id ? "id='$column_key'" : '';
+	    
+	    if ( !empty( $class ) )
+	      $class = "class='" . join( ' ', $class ) . "'";
+	    
+	    echo "<th scope='col' $id $class $style>$column_display_name</th>";
+	}
+    }
+    
     function prepare_items() {
 	
 	$this->table_data = $this->get_data();
@@ -104,10 +168,18 @@ class PSC_Participants_Table extends PSC_Table {
 	    break;
 	    
 	 case 'school':
+	    $cats = psc_get_category_by_id('school');
+	    return $cats[$item[$column_name]] . '<br /><i>' . $item['class_name'] . '</i>';
+	    break;
+	    
+	 case 'project_category':
+	    $cats = psc_get_category_by_id('project');
+	    return $cats[$item[$column_name]];
+	    break;
+	    
 	 case 'name':
 	 case 'email':
 	 case 'project_name':
-	 case 'project_category':
 	 case 'project_description':
 	    return $item[ $column_name ];
 	    
@@ -219,12 +291,12 @@ class PSC_Votes_Table extends PSC_Table {
 	return $sortable_columns;
     }
 
-    function column_name($item) {    
+    function column_voter_name($item) {    
 	$actions = array(
-			 'delete'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
 			 );
 	
-	return sprintf('%1$s %2$s', $item['name'], $this->row_actions($actions) );
+	return sprintf('%1$s %2$s', $item['voter_name'], $this->row_actions($actions) );
     }
 
     function get_bulk_actions() {    
@@ -235,3 +307,70 @@ class PSC_Votes_Table extends PSC_Table {
     }
 
 }
+
+
+
+class PSC_Categories_Table extends PSC_Table {
+    var $table_data = array();
+
+    function get_data() {
+	global $wpdb;
+	
+	$sql = "SELECT * FROM " . PSC_TABLE_CATEGORIES;
+	if ($_GET['type']) {
+	    $sql .= " WHERE category_type = '" . esc_sql($_GET['type']) . "'";
+	}
+	$rows = $wpdb->get_results($sql, ARRAY_A);
+	return $rows;
+    }
+    
+    function get_columns(){
+	$columns = array(
+			 'cb'                   => '<input type="checkbox" />',
+			 'category_name'        => __('Name', PSC_PLUGIN),
+			 'category_type'        => __('Type', PSC_PLUGIN),
+		         );
+	return $columns;
+    }
+    
+    function column_default( $item, $column_name ) {    
+	switch( $column_name ) {
+	 case 'category_name':
+	    return $item[ $column_name ];
+	    
+	 case 'category_type':
+	    global $psc_category_types;
+	    return $psc_category_types[$item[ $column_name ]];
+	    break;
+	    
+	 default:
+	    return print_r( $item, true ) ; //Show the whole array for troubleshooting purposes
+	}
+    }
+
+    function get_sortable_columns() {
+	$sortable_columns = array(
+				  'category_name'  => array('category_name',false),
+				  'category_type'  => array('category_type',false),
+				  );
+	return $sortable_columns;
+    }
+
+    function column_category_name($item) {    
+	$actions = array(
+			 'edit'     => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'edit',$item['id'], __('Edit', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
+			 );
+	
+	return sprintf('%1$s %2$s', $item['category_name'], $this->row_actions($actions) );
+    }
+
+    function get_bulk_actions() {    
+	$actions = array(
+			 'delete'    => 'Delete',
+		         );
+	return $actions;
+    }
+
+}
+

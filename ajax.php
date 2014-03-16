@@ -150,8 +150,9 @@ function psc_db_register($data) {
 	return false;
     } 
     
-    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, age, sex, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" . 
+    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, age, sex, school, class_name, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" . 
 		 $data['email'] . "', '" . $data['first_name'] . "', '" . $data['last_name'] . "', '" . $data['age'] . "', '" . $data['sex'] . "', '" .
+		 $data['school'] . "', '" . $data['class_name'] . "', '" . 
 		 $data['project_name'] . "', '" . $data['project_cat'] . "', '" . $data['project_desc'] . "', '" .
 		 ($data['mail_site'] ? 1 : 0) . "', '" . ($data['mail_contest'] ? 1 : 0) . "', " . time() . ")");
     

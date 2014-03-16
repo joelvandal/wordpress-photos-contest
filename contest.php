@@ -21,12 +21,18 @@
 
 global $wpdb, $psc_options, $psc_admin_notices;
 
+global $psc_category_types;
+
 define('PSC_PLUGIN', 'photoscontest');
 define('PSC_ABSPATH', dirname(__FILE__) . '/');
 define('PSC_PATH', plugin_dir_url(__FILE__));
 
 define('PSC_TABLE_VOTES', $wpdb->prefix . 'psc_votes');
 define('PSC_TABLE_PARTICIPANTS', $wpdb->prefix . 'psc_participants');
+define('PSC_TABLE_CATEGORIES', $wpdb->prefix . 'psc_categories');
+
+$psc_category_types = array('school' => __('School', PSC_PLUGIN),
+			    'project' => __('Project', PSC_PLUGIN));
 
 require PSC_ABSPATH . 'lib/Tables.php';
 
@@ -95,13 +101,17 @@ function psc_enqueue_admin_scripts() {
 function psc_activation_init() {
     global $wpdb;
 
+    $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_CATEGORIES . " (id int(11) not null auto_increment, category_name varchar(255), category_desc TEXT, category_type varchar(30), primary key(id), key(category_type))";
+    $wpdb->query($ptbl);
+
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_VOTES . " (id int(11) not null auto_increment, voter_name varchar(255), voter_email varchar(255), voter_ip varchar(80), vote_date int(11), participant_id int(11), primary key(id), key(participant_id))";
     $wpdb->query($ptbl);
     
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
-									last_name varchar(80), age int(11), sex varchar(1), project_name varchar(80),
-									project_category varchar(80), project_description text, mail_site int(1),
-									mail_contest int(1), approved int(1) default 0, subscribe_date int(11), primary key (id), key(email))";
+									last_name varchar(80), age int(11), sex varchar(1), school int(11), class_name varchar(80), 
+									project_name varchar(80), project_category varchar(80), project_description text,
+									mail_site int(1), mail_contest int(1), approved int(1) default 0, subscribe_date int(11), 
+									primary key (id), key(email))";
     $wpdb->query($ptbl);
     
 }
@@ -127,16 +137,18 @@ function psc_admin_menu() {
     add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), __('Participants', PSC_PLUGIN), 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
+    add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
     
 }
 
 function psc_admin_menu_item() {
 
+    global $wpdb, $psc_admin_notices;
+    $item = intval($_GET['item']);
+    $page = $_GET['page'];
+    
     switch ($_GET['page']) {
      case 'psc_participants':
-	
-	global $wpdb, $psc_admin_notices;
-	$item = intval($_GET['item']);
 	
 	if ($item) {
 	    $info = $wpdb->get_row("SELECT email FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $item, ARRAY_A);
@@ -170,9 +182,9 @@ function psc_admin_menu_item() {
 
 	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been updated successfully.", PSC_PLUGIN), $info['email']);
 	    
-	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'project_name' => '%s',
-			    'project_category' => '%s', 'project_description' => '%s', 'approved' => '%b', 'mail_site' => '%b',
-			    'mail_contest' => '%b', 'subscribe_date' => '%T');
+	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_name' => '%s', 
+			    'project_name' => '%s', 'project_category' => '%s', 'project_description' => '%s', 
+			    'approved' => '%b', 'mail_site' => '%b', 'mail_contest' => '%b', 'subscribe_date' => '%T');
 	    
 	    $data = array();
 	    $format = array();
@@ -199,26 +211,91 @@ function psc_admin_menu_item() {
 	    break;
 	    
 	}
+	break;
+
+     case 'psc_categories':
 	
-	echo psc_admin_notices(true);
-	ob_start();
-	include 'views/' . $page . '.php';
-	echo ob_get_clean();
+	if ($item) {
+	    $info = $wpdb->get_row("SELECT category_name FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item, ARRAY_A);
+	}
 	
+	switch($_GET['action']) {
+	    
+	 case 'delete':
+	    $psc_admin_notices['error'][] = sprintf(__("The category '%s' has been deleted.", PSC_PLUGIN), $info['category_name']);
+	    $wpdb->query("DELETE FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item);
+	    break;
+	    
+	 case 'edit':
+	    $page .= '_edit';
+	    break;
+	    
+	 case 'save':
+
+	    if ($item) {
+		$psc_admin_notices['updated'][] = sprintf(__("The category '%s' has been updated successfully.", PSC_PLUGIN), $info['category_name']);
+	    } else {
+		$psc_admin_notices['updated'][] = sprintf(__("The category '%s' has been added successfully.", PSC_PLUGIN), $_POST['category_name']);
+	    }
+	    
+	    $fields = array('category_name' => '%s', 'category_desc' => '%s', 'category_type' => '%s');
+	    
+	    $data = array();
+	    $format = array();
+	    foreach($fields as $field => $fmt) {
+		if (isset($_POST[$field])) {
+		    $val = $_POST[$field];
+		    if ($fmt == '%b' && $val == 'on') { $val = 1; }
+		    if ($fmt == '%T') { $val = strtotime($val); }
+		    $data[$field] = $val;
+		} else {
+		    if ($fmt == '%b' && $val != 'on') { $val = 0; }
+		    if ($fmt == '%T' && !$val) { $val = time(); }
+		    $data[$field] = '';
+		}
+		
+		if ($fmt == '%b') $fmt = '%d';
+		if ($fmt == '%T') $fmt = '%d';
+		
+		$format[] = $fmt;
+	    }
+	    
+	    if ($item) {
+		$wpdb->update(PSC_TABLE_CATEGORIES, $data, array('id' => $item), $format, array('%d'));
+	    } else {
+		$wpdb->insert(PSC_TABLE_CATEGORIES, $data, $format);
+	    }
+
+	    break;
+	    
+	    
+	}
 	break;
 	
-     case 'psc_overview':
      case 'psc_votes':
-     case 'psc_settings':
-	ob_start();
-	include 'views/' . $_GET['page'] . '.php';
-	echo ob_get_clean();
-	break;
+
+	if ($item) {
+	    $info = $wpdb->get_row("SELECT voter_email FROM " . PSC_TABLE_VOTES . " WHERE id=" . $item, ARRAY_A);
+	}
 	
-     default:
-	echo 'unknown section';
+	
+	$page = $_GET['page'];
+	
+	switch($_GET['action']) {
+	    
+	 case 'delete':
+	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been deleted.", PSC_PLUGIN), $info['voter_email']);
+	    $wpdb->query("DELETE FROM " . PSC_TABLE_VOTES . " WHERE id=" . $item);
+	    break;
+	}
+	
 	break;
     }
+
+    echo psc_admin_notices(true);
+    ob_start();
+    include 'views/' . $page . '.php';
+    echo ob_get_clean();
     
 }
 
@@ -417,4 +494,29 @@ function psc_parse_query() {
 	//add_filter('post_thumbnail_html','votes_the_post_thumbnail');
 	// add_filter('single_template', 'vote_body_class');
     }
+}
+
+function psc_get_category($type) {
+    global $wpdb;
+    $sql = "SELECT id, category_name, category_desc FROM " . PSC_TABLE_CATEGORIES . " WHERE category_type = '" . $type . "'";
+    $rows = $wpdb->get_results($sql, ARRAY_A);
+    return $rows;
+}
+
+function psc_get_category_by_id($type) {
+    $res = array();
+    $cats = psc_get_category($type);
+    foreach($cats as $cat) {
+	$res[$cat['id']] = $cat['category_name'];
+    }
+    return $res;
+}
+
+function psc_is_vote_open() {
+ 
+    $open_date = psc_get_option('vote_open_date');
+    $close_date = psc_get_option('vote_close_date');
+    
+    return ($open_date <= time() && $close_date >= time());
+    
 }
