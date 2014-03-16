@@ -224,6 +224,7 @@ function psc_admin_menu_item() {
 	 case 'delete':
 	    $psc_admin_notices['error'][] = sprintf(__("The category '%s' has been deleted.", PSC_PLUGIN), $info['category_name']);
 	    $wpdb->query("DELETE FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item);
+	    psc_unregister_string($item);
 	    break;
 	    
 	 case 'edit':
@@ -265,6 +266,8 @@ function psc_admin_menu_item() {
 	    } else {
 		$wpdb->insert(PSC_TABLE_CATEGORIES, $data, $format);
 	    }
+	    
+	    psc_unregister_string($item, $data['category_name'], $data['category_desc']);
 
 	    break;
 	    
@@ -500,6 +503,10 @@ function psc_get_category($type) {
     global $wpdb;
     $sql = "SELECT id, category_name, category_desc FROM " . PSC_TABLE_CATEGORIES . " WHERE category_type = '" . $type . "'";
     $rows = $wpdb->get_results($sql, ARRAY_A);
+    foreach($rows as &$row) {
+	$row['category_name'] = psc_name_t($row['id'], $row['category_name']);
+	$row['category_desc'] = psc_desc_t($row['id'], $row['category_desc']);
+    }
     return $rows;
 }
 
@@ -519,4 +526,42 @@ function psc_is_vote_open() {
     
     return ($open_date <= time() && $close_date >= time());
     
+}
+
+function psc_register_string($id, $title, $desc = '') {
+
+    if (function_exists('icl_register_string') ) {
+	$context = 'Contest Category ' . $id;
+	icl_register_string( $context, 'Category Name', $title );
+	icl_register_string( $context, 'Category Description', $desc );
+    }
+    
+}
+
+function psc_unregister_string($id) {
+    if (function_exists( 'icl_unregister_string' ) ) {
+	$context = 'Contest Category ' . $id;
+	icl_unregister_string( $context, 'Category Name' );
+	icl_unregister_string( $context, 'Category Description' );
+    }
+}
+
+function psc_name_t($id, $title) {
+    if (function_exists( 'icl_t' )) {
+	$context = 'Contest Category ' . $id;
+	$tran = icl_t( $context, 'Category Name', $title );
+    } else {
+	$tran = false;
+    }
+    return ($tran) ? $tran : $title;
+}
+
+function psc_desc_t($id, $desc) {
+    if (function_exists( 'icl_t' )) {
+	$context = 'Contest Category ' . $id;
+	$tran = icl_t( $context, 'Category Description', $desc );
+    } else {
+	$tran = false;
+    }
+    return ($tran) ? $tran : $title;
 }
