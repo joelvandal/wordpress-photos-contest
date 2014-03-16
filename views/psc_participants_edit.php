@@ -148,6 +148,17 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</td>
 			</tr>
 
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Project Image', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<img id="thumbnail" src="<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>" />
+					<br />
+					<a href="#" class="upload"><?php _e('Click here to upload a new image'); ?></a>
+				</td>
+			</tr>
+
 		</table>
 
 		<h3>Subscription</h3>
@@ -197,11 +208,68 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	</form>
 </div>
 
+<div id="uploadForm" style="display: none">
+	<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile">
+		<input type="hidden" id="hidden-participant" name="participant" value="<?php echo $info['email']; ?>">
+	</form>
+
+	<button id="uploadSubmit" class="button button-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button>
+	<button id="uploadClose" class="button button-secondary"><?php _e('Cancel', PSC_PLUGIN); ?></button>
+
+</div>
+
 <script type="text/javascript">
-	jQuery(document).ready(function(){
-		jQuery('.datepicker').datetimepicker({
-			format : "Y-m-d H:i"
-		});
+jQuery(document).ready(function(){
+	jQuery('.datepicker').datetimepicker({
+		format : "Y-m-d H:i"
 	});
+
+	jQuery("#uploadClose").on('click', function() {
+		jQuery.fancybox.close();
+	});
+
+	jQuery("a.upload").live('click', function(event) {
+
+		jQuery.fancybox({
+        		href	    : '#uploadForm',
+			margin	    : [20, 60, 20, 60],
+	        	fitToView   : false,
+	        	width       : '640px',
+		        height      : '480px',
+        		autoSize    : false,
+		        closeClick  : false,
+        		openEffect  : 'none',
+	        	closeEffect : 'none'
+		});
+
+	});
+
+Dropzone.options.dropfile = {
+	paramName: "file",
+	maxFilesize: 3,
+	addRemoveLinks: true,
+	acceptedFiles: 'image/*',
+	maxFiles: 1,
+        autoProcessQueue: false,
+
+	init: function () {
+		var myDropzone = this;
+
+		jQuery("#uploadSubmit").on('click', function() {
+			myDropzone.processQueue();
+		});
+
+		myDropzone.on("complete", function (file) {
+			var cdate = new Date().getTime();
+			jQuery("#thumbnail").attr('src', '<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
+			jQuery.fancybox.close();
+		});
+
+        }
+};
+
+
+
+});
 </script>
 

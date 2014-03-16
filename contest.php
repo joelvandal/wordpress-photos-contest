@@ -79,12 +79,17 @@ function psc_enqueue_scripts() {
 
 function psc_enqueue_admin_scripts() {
     
+    wp_enqueue_script('jquery');
+    
     // using jquery-ui
     wp_enqueue_script('jquery-ui-core');
     
 //    wp_enqueue_script('jquery-ui-datepicker');
     wp_enqueue_style('jquery-ui', PSC_PATH . '/css/jquery-ui.css');
 
+    wp_enqueue_style('dropzone', PSC_PATH . '/css/dropzone.css');
+    wp_enqueue_script('dropzone', PSC_PATH . '/js/dropzone.js', array('jquery'));
+    
     wp_register_script('jquery-ui-datetimepicker', PSC_PATH. '/js/jquery.datetimepicker.js');
     wp_enqueue_script('jquery-ui-datetimepicker', array('jquery'));
 
@@ -438,7 +443,7 @@ function psc_save_options() {
 }
 
 
-function psc_image($email) {
+function psc_image($email, $force = false) {
 
     $thumbW = 207;
     $thumbH = 136;
@@ -456,29 +461,30 @@ function psc_image($email) {
     if (!file_exists($image_file)) {
 	$image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.gif';
     }
-    
+
     if (!file_exists($image_file)) {
 	return false;
     }
     
     $thumbFile = $dest_file . '-thumb.png';
     
-    if (!file_exists($thumbFile)) {
+    if ($force || !file_exists($thumbFile)) {
 	$image_thumbs = wp_get_image_editor($image_file);
 	if (!is_wp_error($image_thumbs)) {
 	    $image_thumbs->resize($thumbW, $thumbH, true);
 	    $image_thumbs->save($thumbFile);
 	}
     }
-    
+
     $viewFile = $dest_file . '-view.png';
-    if (!file_exists($viewFile)) {
+    if ($force || !file_exists($viewFile)) {
 	$image_view = wp_get_image_editor($image_file); // WP_Image_Editor
 	if (!is_wp_error($image_view)) {
 	    $image_view->resize($viewW, $viewH, false);
 	    $image_view->save($viewFile);
 	}
     }
+    
 }
 
 function psc_shortcode_register() {
