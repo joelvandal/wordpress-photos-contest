@@ -12,12 +12,11 @@ class PSC_Table extends WP_List_Table {
 	global $status, $page;
 	
 	parent::__construct( array(
-				   'singular'  => __( 'book', 'mylisttable' ),     //singular name of the listed records
-				   'plural'    => __( 'books', 'mylisttable' ),   //plural name of the listed records
+				   'singular'  => __( 'item', PSC_PLUGIN ),     //singular name of the listed records
+				   'plural'    => __( 'items', PSC_PLUGIN ),   //plural name of the listed records
 				   'ajax'      => false        //does this table support ajax?
-				   
 				   ) );
-	
+
 	add_action( 'admin_head', array( &$this, 'admin_header' ) );            
 	
     }
