@@ -38,10 +38,7 @@ function psc_ajax_send_headers() {
 function psc_ajax_details() {
 
     global $wpdb;
-    
-    $tbl = $wpdb->prefix . 'psc_participants';
-
-    $sql = "SELECT * FROM " . $tbl . " WHERE id = " . intval($_REQUEST['id']);
+    $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($_REQUEST['id']);
     $item = $wpdb->get_row($sql, ARRAY_A);
     
     ob_start();
