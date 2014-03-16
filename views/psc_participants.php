@@ -22,4 +22,23 @@ jQuery("a.delete").live('click', function(event) {
 	}
 	event.prevendDefault();
 });
+
+jQuery("a.view").live('click', function(event) {
+
+	var url = '<?php echo PSC_PATH . 'ajax.php?action=details&id='; ?>' + jQuery(this).data('id');
+
+	jQuery.fancybox({
+        	href	    : url,
+	        type        : 'ajax',
+		margin	    : [20, 60, 20, 60],
+	        fitToView   : false,
+        	width       : '80%',
+	        height      : '80%',
+        	autoSize    : false,
+	        closeClick  : false,
+        	openEffect  : 'none',
+	        closeEffect : 'none'
+	});
+
+});
 </script>

@@ -31,8 +31,9 @@ define('PSC_TABLE_VOTES', $wpdb->prefix . 'psc_votes');
 define('PSC_TABLE_PARTICIPANTS', $wpdb->prefix . 'psc_participants');
 define('PSC_TABLE_CATEGORIES', $wpdb->prefix . 'psc_categories');
 
-$psc_category_types = array('school' => __('School', PSC_PLUGIN),
-			    'project' => __('Project', PSC_PLUGIN));
+$psc_category_types = array('school'     => __('School', PSC_PLUGIN),
+			    'class_name' => __('Class Name', PSC_PLUGIN),
+			    'project'    => __('Project', PSC_PLUGIN));
 
 require PSC_ABSPATH . 'lib/Tables.php';
 
@@ -54,7 +55,7 @@ add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
 add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
 
 add_action( 'admin_init', 'psc_admin_init' );
-add_action( 'admin_menu', 'psc_admin_menu' );
+add_action( 'admin_menu', 'psc_admin_menu', 100 );
 add_action( 'admin_head', 'psc_admin_headers' );
 
 add_filter( 'query_vars', 'psc_query_var' );
@@ -122,7 +123,8 @@ function psc_deactivation_init() {
 
 function psc_admin_init() {
     
-    switch ($_GET['page']) {
+    $page = isset($_GET['page']) ? $_GET['page'] : false;
+    switch ($page) {
      case 'psc_settings':
 	psc_save_options();
 	break;
@@ -144,8 +146,9 @@ function psc_admin_menu() {
 function psc_admin_menu_item() {
 
     global $wpdb, $psc_admin_notices;
-    $item = intval($_GET['item']);
-    $page = $_GET['page'];
+    $item = isset($_GET['item']) ? intval($_GET['item']) : false;
+    $page = isset($_GET['page']) ? $_GET['page'] : false;
+    $action = isset($_GET['action']) ? $_GET['action'] : false;
     
     switch ($_GET['page']) {
      case 'psc_participants':
@@ -154,9 +157,7 @@ function psc_admin_menu_item() {
 	    $info = $wpdb->get_row("SELECT email FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $item, ARRAY_A);
 	}
 	
-	$page = $_GET['page'];
-	
-	switch($_GET['action']) {
+	switch($action) {
 
 	 case 'approve':
 	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been approved.", PSC_PLUGIN), $info['email']);
@@ -219,7 +220,7 @@ function psc_admin_menu_item() {
 	    $info = $wpdb->get_row("SELECT category_name FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item, ARRAY_A);
 	}
 	
-	switch($_GET['action']) {
+	switch($action) {
 	    
 	 case 'delete':
 	    $psc_admin_notices['error'][] = sprintf(__("The category '%s' has been deleted.", PSC_PLUGIN), $info['category_name']);
@@ -267,7 +268,7 @@ function psc_admin_menu_item() {
 		$wpdb->insert(PSC_TABLE_CATEGORIES, $data, $format);
 	    }
 	    
-	    psc_unregister_string($item, $data['category_name'], $data['category_desc']);
+	    psc_register_string($item, $data['category_name'], $data['category_desc']);
 
 	    break;
 	    
@@ -281,10 +282,7 @@ function psc_admin_menu_item() {
 	    $info = $wpdb->get_row("SELECT voter_email FROM " . PSC_TABLE_VOTES . " WHERE id=" . $item, ARRAY_A);
 	}
 	
-	
-	$page = $_GET['page'];
-	
-	switch($_GET['action']) {
+	switch($action) {
 	    
 	 case 'delete':
 	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been deleted.", PSC_PLUGIN), $info['voter_email']);
@@ -346,7 +344,7 @@ function psc_admin_headers() {
 	
      case 'psc_participants':
 	echo '.wp-list-table .column-image { width: 160px; }';
-	echo '.wp-list-table .column-name { width: 10%; }';
+	echo '.wp-list-table .column-name { width: 15%; }';
 	echo '.wp-list-table .column-email { width: 10%; }';
 	echo '.wp-list-table .column-votes { width: 5%; text-align: center; }';
 	echo '.wp-list-table .column-subscribe_date { width: 130px; }';
@@ -567,6 +565,7 @@ function psc_is_vote_open() {
 
 function psc_register_string($id, $title, $desc = '') {
 
+    
     if (function_exists('icl_register_string') ) {
 	$context = 'Contest Category ' . $id;
 	icl_register_string( $context, 'Category Name', $title );
@@ -600,7 +599,7 @@ function psc_desc_t($id, $desc) {
     } else {
 	$tran = false;
     }
-    return ($tran) ? $tran : $title;
+    return ($tran) ? $tran : $desc;
 }
 
 function psc_shorturl($id) {

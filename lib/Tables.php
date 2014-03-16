@@ -5,7 +5,54 @@ if(!class_exists('WP_List_Table')) {
 }
 
 class PSC_Table extends WP_List_Table {
+
+    function __construct(){
+	global $status, $page;
+	
+	parent::__construct( array(
+				   'singular'  => __( 'book', 'mylisttable' ),     //singular name of the listed records
+				   'plural'    => __( 'books', 'mylisttable' ),   //plural name of the listed records
+				   'ajax'      => false        //does this table support ajax?
+				   
+				   ) );
+	
+	add_action( 'admin_head', array( &$this, 'admin_header' ) );            
+	
+    }
+
     
+    function display() {
+	extract( $this->_args );
+?>
+
+<form method="post">
+  <input type="hidden" name="page" value="psc_participants" />
+  <?php $this->search_box('search', 'search_id'); ?>
+</form>
+<?php	
+	$this->display_tablenav( 'top' );
+?>	
+<table class="wp-list-table <?php echo implode( ' ', $this->get_table_classes() ); ?>" cellspacing="0">
+	<thead>
+	<tr>
+		<?php $this->print_column_headers(); ?>
+	</tr>
+	</thead>
+
+	<tfoot>
+	<tr>
+		<?php $this->print_column_headers( false ); ?>
+	</tr>
+	</tfoot>
+
+	<tbody id="the-list"<?php if ( $singular ) echo " data-wp-lists='list:$singular'"; ?>>
+		<?php $this->display_rows_or_placeholder(); ?>
+	</tbody>
+</table>
+<?php
+	$this->display_tablenav( 'bottom' );
+    }
+
     function print_column_headers( $with_id = true ) {
 	list( $columns, $hidden, $sortable ) = $this->get_column_info();
 	
@@ -97,11 +144,37 @@ class PSC_Table extends WP_List_Table {
     }
     
     function usort_reorder( $a, $b ) {    
-	$orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'name';
+	$orderby = ( ! empty( $_GET['orderby'] ) ) ? $_GET['orderby'] : 'id';
 	$order = ( ! empty($_GET['order'] ) ) ? $_GET['order'] : 'asc';
         $result = strcmp( $a[$orderby], $b[$orderby] );
 	return ( $order === 'asc' ) ? $result : -$result;
     }
+
+    function search_box( $text, $input_id ) {
+	if ( empty( $_REQUEST['s'] ) && !$this->has_items() )
+	  return;
+	
+	$input_id = $input_id . '-search-input';
+	
+	if ( ! empty( $_REQUEST['type'] ) )
+	  echo '<input type="hidden" name="type" value="' . esc_attr( $_REQUEST['type'] ) . '" />';
+	if ( ! empty( $_REQUEST['orderby'] ) )
+	  echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
+	if ( ! empty( $_REQUEST['order'] ) )
+	  echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
+	if ( ! empty( $_REQUEST['post_mime_type'] ) )
+	  echo '<input type="hidden" name="post_mime_type" value="' . esc_attr( $_REQUEST['post_mime_type'] ) . '" />';
+	if ( ! empty( $_REQUEST['detached'] ) )
+	  echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
+	?>
+<p class="search-box">
+	<label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
+	<input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
+	<?php submit_button( $text, 'button', false, false, array('id' => 'search-submit') ); ?>
+</p>
+	<?php
+    }
+    
     
 
 }
@@ -131,6 +204,7 @@ class PSC_Participants_Table extends PSC_Table {
 			 'name'                 => __('Name', PSC_PLUGIN),
 			 'email'                => __('Email', PSC_PLUGIN),
 			 'school'               => __('School', PSC_PLUGIN),
+			 'class_name'           => __('Class Name', PSC_PLUGIN),
 			 'project_name'         => __('Project Name', PSC_PLUGIN),
 			 'project_category'     => __('Category', PSC_PLUGIN),
 			 'project_description'  => __('Description', PSC_PLUGIN),
@@ -169,7 +243,21 @@ class PSC_Participants_Table extends PSC_Table {
 	    
 	 case 'school':
 	    $cats = psc_get_category_by_id('school');
-	    return $cats[$item[$column_name]] . '<br /><i>' . $item['class_name'] . '</i>';
+	    if (isset($cats[$item[$column_name]])) {
+		$res = $cats[$item[$column_name]];
+	    } else {
+		$res = __('Undefined School', PSC_PLUGIN);
+	    }
+	    return $res;
+	    
+	 case 'class_name':
+	    $cats = psc_get_category_by_id('class_name');
+	    if (isset($cats[$item['class_name']])) {
+		$res = $cats[$item['class_name']];
+	    } else {
+		$res = __('Undefined Class Name', PSC_PLUGIN);
+	    }
+	    return $res;
 	    break;
 	    
 	 case 'project_category':
@@ -193,6 +281,7 @@ class PSC_Participants_Table extends PSC_Table {
 				  'name'  => array('name',false),
 				  'email' => array('email',false),
 				  'school' => array('school',false),
+				  'class_name' => array('class_name',false),
 				  'project_name'   => array('project_name',false),
 				  'project_category'   => array('project_category',false),
 				  'project_description'   => array('project_description',false),
@@ -209,6 +298,7 @@ class PSC_Participants_Table extends PSC_Table {
 			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __('Approve', PSC_PLUGIN)),
 			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __('Reject', PSC_PLUGIN)),
 			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
+			 'view'     => sprintf('<a data-id="%s" class="view" href="#">%s</a>', $item['id'], __('Preview', PSC_PLUGIN)),
 			 );
 	
 	if ($item['approved']) {
@@ -222,8 +312,8 @@ class PSC_Participants_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => 'Delete',
-			 'approve'   => 'Approve'
+			 'delete'    => __('Delete', PSC_PLUGIN),
+			 'approve'   => __('Approve', PSC_PLUGIN)
 		         );
 	return $actions;
     }
@@ -242,7 +332,6 @@ class PSC_Votes_Table extends PSC_Table {
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
 	foreach($rows as &$row) {
-	    psc_image($row['email']);
 	    $row['name'] = strtoupper($row['last_name']) . ', ' . $row['first_name'];
 	}
 	
@@ -301,7 +390,7 @@ class PSC_Votes_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => 'Delete'
+			 'delete'    => __('Delete', PSC_PLUGIN)
 		         );
 	return $actions;
     }
@@ -317,7 +406,7 @@ class PSC_Categories_Table extends PSC_Table {
 	global $wpdb;
 	
 	$sql = "SELECT * FROM " . PSC_TABLE_CATEGORIES;
-	if ($_GET['type']) {
+	if (isset($_GET['type']) && $_GET['type']) {
 	    $sql .= " WHERE category_type = '" . esc_sql($_GET['type']) . "'";
 	}
 	$sql .= " ORDER BY category_type DESC, category_name DESC"; //, category_type ASC";
@@ -369,7 +458,7 @@ class PSC_Categories_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => 'Delete',
+			 'delete'    => __('Delete', PSC_PLUGIN),
 		         );
 	return $actions;
     }

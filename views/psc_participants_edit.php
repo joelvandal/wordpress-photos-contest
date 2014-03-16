@@ -77,7 +77,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	    <?php
 	    $cats = psc_get_category('school');
 	    foreach($cats as $cat) {
-		$selected = ($cat['category_name'] == $info['school']) ? 'selected' : '';
+		$selected = ($cat['id'] == $info['school']) ? 'selected' : '';
 		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
 	    }
 	    ?>
@@ -92,7 +92,15 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e('Class Name', PSC_PLUGIN); ?>
 				</th>
 				<td>
-					<input type="text" size="60" name="class_name" value="<?php echo $info['class_name']; ?>" />
+		<select id="input-class-name" name="class_name" class="name">
+	    <?php
+	    $cats = psc_get_category('class_name');
+	    foreach($cats as $cat) {
+		$selected = ($cat['id'] == $info['class_name']) ? 'selected' : '';
+		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
+	    }
+	    ?>
+		</select>
 				</td>
 			</tr>
 
@@ -122,7 +130,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	    <?php
 	    $cats = psc_get_category('project');
 	    foreach($cats as $cat) {
-		$selected = ($cat['category_name'] == $info['project_category']) ? 'selected' : '';
+		$selected = ($cat['id'] == $info['project_category']) ? 'selected' : '';
 		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
 	    }
 	    ?>

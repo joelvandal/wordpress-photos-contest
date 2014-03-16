@@ -2,7 +2,7 @@
 if ($item) {
     $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item, ARRAY_A);
 } else {
-    $info = array();
+    $info = array('category_name' => '', 'category_desc' => '');
 }
 ?>
 
