@@ -29,6 +29,33 @@
 				</td>
 			</tr>
 		</table>
+
+		<h3><?php _e('Social Sharing',PSC_PLUGIN); ?></h3>
+
+		<table class="form-table">
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Twitter Message', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<textarea rows="2" cols="80" name="twitter_text"><?php echo psc_get_option('twitter_text'); ?></textarea>
+					<p class="description">
+						<?php _e('This is the Twitter Message. Maximum length of 140 characters.', PSC_PLUGIN);?>
+					</p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Twitter Message', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="30" name="twitter_hash" value="<?php echo psc_get_option('twitter_hash'); ?>" />
+					<p class="description">
+						<?php _e('This is the Twitter Hashtag', PSC_PLUGIN);?>
+					</p>
+				</td>
+			</tr>
+		</table>
 		
 		<h3><?php _e('Advanced options',PSC_PLUGIN); ?></h3>
 

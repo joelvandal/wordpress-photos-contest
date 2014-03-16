@@ -432,8 +432,17 @@ function psc_save_options() {
     if (isset($_POST['facebook_client_id'])) {
 	$options['facebook_client_id'] = $_POST['facebook_client_id'];
     }
+
     if (isset($_POST['facebook_secret_key'])) {
 	$options['facebook_secret_key'] = $_POST['facebook_secret_key'];
+    }
+    
+    if (isset($_POST['twitter_text'])) {
+	$options['twitter_text'] = $_POST['twitter_text'];
+    }
+    
+    if (isset($_POST['twitter_hash'])) {
+	$options['twitter_hash'] = $_POST['twitter_hash'];
     }
     
     update_option(PSC_PLUGIN, $options);
@@ -513,8 +522,26 @@ function psc_parse_query() {
     wp_enqueue_script('fancybox', array('jquery'));
     
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
-	add_filter( 'the_content', 'psc_show_participant' );
-    }
+	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
+    	add_filter( 'the_content', 'psc_show_participant' );
+}
+}
+
+function psc_open_graph( $tags ) {
+
+    global $wpdb;
+    
+    $id = $_GET['participant'];
+    $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $id, ARRAY_A);
+
+    unset( $tags['og:image'] );
+    $tags['og:url'] = psc_longurl($id);
+    $tags['og:title'] = esc_attr( $info['project_name'] );
+    $tags['og:image'][0] = esc_url( psc_get_image($info['email']));
+    $tags['og:description'] = esc_attr( $info['project_description'] );
+    $tags['og:type'] = 'website';
+    
+    return $tags;
 }
 
 function psc_show_participant() {
@@ -608,9 +635,18 @@ function psc_desc_t($id, $desc) {
     return ($tran) ? $tran : $desc;
 }
 
+function psc_get_image($email) {
+    return PSC_PATH . 'uploads/' . md5($email) . '-thumb.png';
+}
+
+function psc_longurl($id) {
+    $lurl = site_url('/?participant=' . $id);
+    return $lurl;
+}
+
 function psc_shorturl($id) {
 
-    $lurl = site_url('/?participant=' . $id);
+    $lurl = psc_longurl($id);
 
     $login = psc_get_option('bitly_login');
     $appkey = psc_get_option('bitly_api_key');
@@ -628,6 +664,6 @@ function psc_shorturl($id) {
     curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
     $data = curl_exec($ch);
     curl_close($ch);
-    return $data;
+    return trim($data);
     
 }
