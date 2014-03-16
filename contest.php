@@ -55,7 +55,7 @@ add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
 add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
 
 add_action( 'admin_init', 'psc_admin_init' );
-add_action( 'admin_menu', 'psc_admin_menu', 100 );
+add_action( 'admin_menu', 'psc_admin_menu' );
 add_action( 'admin_head', 'psc_admin_headers' );
 
 add_filter( 'query_vars', 'psc_query_var' );
@@ -139,12 +139,12 @@ function psc_admin_init() {
 
 function psc_admin_menu() {
     
-    add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
+    add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
     add_submenu_page('psc_overview', __('Overview', PSC_PLUGIN), __('Overview', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), __('Participants', PSC_PLUGIN), 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
-    add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
+    add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
     
 }
 

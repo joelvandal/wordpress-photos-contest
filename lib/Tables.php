@@ -6,6 +6,8 @@ if(!class_exists('WP_List_Table')) {
 
 class PSC_Table extends WP_List_Table {
 
+    var $filter = false;
+    
     function __construct(){
 	global $status, $page;
 	
@@ -27,7 +29,7 @@ class PSC_Table extends WP_List_Table {
 
 <form method="post">
   <input type="hidden" name="page" value="psc_participants" />
-  <?php $this->search_box('search', 'search_id'); ?>
+  <?php $this->search_box(__('Search', PSC_PLUGIN), 'search_id'); ?>
 </form>
 <?php	
 	$this->display_tablenav( 'top' );
@@ -156,8 +158,6 @@ class PSC_Table extends WP_List_Table {
 	
 	$input_id = $input_id . '-search-input';
 	
-	if ( ! empty( $_REQUEST['type'] ) )
-	  echo '<input type="hidden" name="type" value="' . esc_attr( $_REQUEST['type'] ) . '" />';
 	if ( ! empty( $_REQUEST['orderby'] ) )
 	  echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
 	if ( ! empty( $_REQUEST['order'] ) )
@@ -167,10 +167,23 @@ class PSC_Table extends WP_List_Table {
 	if ( ! empty( $_REQUEST['detached'] ) )
 	  echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
 	?>
+
+	<?php if ($this->filter): ?>
+                <?php _e( 'Filter', PSC_PLUGIN ) ?>
+                <select name="type">
+			<option value="" <?php if (!$_REQUEST['type']) { echo 'selected'; } ?>><?php _e('All', PSC_PLUGIN); ?></option>
+<?php foreach($this->filter as $ctype => $cname): ?>
+			<option <?php if ($_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+<?php endforeach; ?>
+                </select>
+	<?php submit_button( __('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
+<?php endif; ?>
 <p class="search-box">
+
+
 	<label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
 	<input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
-	<?php submit_button( $text, 'button', false, false, array('id' => 'search-submit') ); ?>
+	<?php submit_button( $text, 'primary', false, false, array('id' => 'search-submit') ); ?>
 </p>
 	<?php
     }
@@ -185,7 +198,14 @@ class PSC_Participants_Table extends PSC_Table {
     function get_data() {
 	global $wpdb;
 	
-	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id GROUP BY p.id ORDER BY p.subscribe_date DESC";
+	$where = '';
+	$search = isset($_REQUEST['s']) ? $_REQUEST['s'] : false;
+	if ($search) {
+	    $where = "WHERE p.first_name like '%str%' OR p.last_name like '%str%' OR p.email like '%str%' OR p.project_name like '%str%' OR p.project_description like '%str%'";
+	    $where = str_replace('%str%', '%' . esc_sql($search) . '%', $where);
+	}
+	
+	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id " .  $where . " GROUP BY p.id ORDER BY p.subscribe_date DESC";
 	
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
@@ -326,8 +346,15 @@ class PSC_Votes_Table extends PSC_Table {
 
     function get_data() {
 	global $wpdb;
-	
-	$sql = "SELECT v.*,p.first_name,p.last_name,p.project_name FROM " . PSC_TABLE_VOTES . " AS v INNER JOIN " . PSC_TABLE_PARTICIPANTS . " AS p ON p.id=v.participant_id ORDER BY v.vote_date DESC";
+
+	$where = '';
+	$search = isset($_REQUEST['s']) ? $_REQUEST['s'] : false;
+	if ($search) {
+	    $where = "WHERE v.voter_name like '%str%' OR v.voter_email  like '%str%' OR v.voter_ip  like '%str%'";
+	    $where = str_replace('%str%', '%' . esc_sql($search) . '%', $where);
+	}
+
+	$sql = "SELECT v.*,p.first_name,p.last_name,p.project_name FROM " . PSC_TABLE_VOTES . " AS v INNER JOIN " . PSC_TABLE_PARTICIPANTS . " AS p ON p.id=v.participant_id " . $where . " ORDER BY v.vote_date DESC";
 	
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
@@ -404,11 +431,24 @@ class PSC_Categories_Table extends PSC_Table {
 
     function get_data() {
 	global $wpdb;
+
+	$where = '';
+	$search = isset($_REQUEST['s']) ? $_REQUEST['s'] : false;
+	if ($search) {
+	    $where = "category_name like '%str%' OR category_desc like '%str%'";
+	    $where = str_replace('%str%', '%' . esc_sql($search) . '%', $where);
+	}
 	
 	$sql = "SELECT * FROM " . PSC_TABLE_CATEGORIES;
-	if (isset($_GET['type']) && $_GET['type']) {
-	    $sql .= " WHERE category_type = '" . esc_sql($_GET['type']) . "'";
+	if (isset($_REQUEST['type']) && $_REQUEST['type']) {
+	    $sql .= " WHERE category_type = '" . esc_sql($_REQUEST['type']) . "'";
+	    if ($where) {
+		$sql .= ' AND (' . $where . ')';
+	    }
+	} elseif ($where) {
+	    $sql .= ' WHERE ' . $where;
 	}
+	
 	$sql .= " ORDER BY category_type DESC, category_name DESC"; //, category_type ASC";
 
 	$rows = $wpdb->get_results($sql, ARRAY_A);
