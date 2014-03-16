@@ -414,6 +414,14 @@ function psc_save_options() {
 	}
     }
 
+    if (isset($_POST['bitly_login'])) {
+	$options['bitly_login'] = $_POST['bitly_login'];
+    }
+
+    if (isset($_POST['bitly_api_key'])) {
+	$options['bitly_api_key'] = $_POST['bitly_api_key'];
+    }
+
     if (isset($_POST['google_api_key'])) {
 	$options['google_api_key'] = $_POST['google_api_key'];
     }
@@ -489,18 +497,43 @@ function psc_shortcode_participants() {
 }
 			      
 function psc_query_var($vars) {
-	$vars[] = 'participants';
+	$vars[] = 'participant';
 	return $vars;
 }
 
 function psc_parse_query() {
     global $wp_query;
 
-    if(isset($wp_query->query_vars['participants']) && $wp_query->query_vars['participants'] != ''){
-	// add_filter('the_content','votes_content_update');
-	//add_filter('post_thumbnail_html','votes_the_post_thumbnail');
-	// add_filter('single_template', 'vote_body_class');
+    wp_enqueue_script('jquery');
+    wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
+    wp_enqueue_script('fancybox', array('jquery'));
+    
+    if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
+	add_filter( 'the_content', 'psc_show_participant' );
     }
+}
+
+function psc_show_participant() {
+    $id = $_GET['participant'];
+    $link =  PSC_PATH . 'ajax.php?action=details&id=' . $id;
+?>
+<script>
+jQuery(document).ready(function() {
+    jQuery.fancybox({
+        href	    : '<?php echo $link; ?>',
+        type        : 'ajax',
+	margin	    : [20, 60, 20, 60],
+        fitToView   : false,
+        width       : '80%',
+        height      : '80%',
+        autoSize    : false,
+        closeClick  : false,
+        openEffect  : 'none',
+        closeEffect : 'none'
+    });
+});
+</script>
+<?php	
 }
 
 function psc_get_category($type) {
@@ -568,4 +601,28 @@ function psc_desc_t($id, $desc) {
 	$tran = false;
     }
     return ($tran) ? $tran : $title;
+}
+
+function psc_shorturl($id) {
+
+    $lurl = site_url('/?participant=' . $id);
+
+    $login = psc_get_option('bitly_login');
+    $appkey = psc_get_option('bitly_api_key');
+    
+    if (!$login) {
+	return $lurl;
+    }
+    
+    $url = 'http://api.bit.ly/v3/shorten?login='.$login.'&apiKey='.$appkey.'&uri='.urlencode($lurl).'&format=txt';
+    
+    $ch = curl_init();
+    $timeout = 5;
+    curl_setopt($ch,CURLOPT_URL,$url);
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER,1);
+    curl_setopt($ch,CURLOPT_CONNECTTIMEOUT,$timeout);
+    $data = curl_exec($ch);
+    curl_close($ch);
+    return $data;
+    
 }

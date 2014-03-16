@@ -35,6 +35,30 @@
 		<table class="form-table">
 			<tr valign="top">
 				<th align="left">
+					<?php _e('Bit.ly Login', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="40" name="bitly_login" value="<?php echo psc_get_option('bitly_login'); ?>" />
+					<p class="description">
+						<?php _e('This is the Bit.ly Login', PSC_PLUGIN);?>
+					</p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Bit.ly API Key', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="40" name="bitly_api_key" value="<?php echo psc_get_option('bitly_api_key'); ?>" />
+					<p class="description">
+						<?php _e('This is the Bit.ly API Key', PSC_PLUGIN);?>
+					</p>
+				</td>
+			</tr>
+
+
+			<tr valign="top">
+				<th align="left">
 					<?php _e('Google API Key', PSC_PLUGIN); ?>
 				</th>
 				<td>
