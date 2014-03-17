@@ -141,11 +141,45 @@ function psc_admin_init() {
     
 }
 
+function psc_add_options() {
+    
+    /*
+    $option = 'per_page';
+    $args = array(
+		  'label' => 'Items',
+		  'default' => 10,
+		  'option' => 'items_per_page'
+		  );
+    add_screen_option( $option, $args );
+    */
+    
+    $page = isset($_GET['page']) ? $_GET['page'] : false;
+    switch($page) {
+     case 'psc_participants':
+	$my_table = new PSC_Participants_Table();
+	break;
+	
+     case 'psc_votes':
+	$my_table = new PSC_Votes_Table();
+	break;
+    }
+    
+    /*
+    $screen = get_current_screen();
+    $screen->add_help_tab( array( 
+				  'id' => $page,            //unique id for the tab
+				  'title' => 'xx',      //unique visible title for the tab
+				  'content' => 'xxx',  //actual help text
+				  ) );
+    */
+}
+
 function psc_admin_menu() {
     
     global $wpdb;
     
     add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
+    
     add_submenu_page('psc_overview', __('Overview', PSC_PLUGIN), __('Overview', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
     
     $cnt = $wpdb->get_row("SELECT count(*) as total FROM " . PSC_TABLE_PARTICIPANTS . " WHERE approved=0");
@@ -155,10 +189,15 @@ function psc_admin_menu() {
 	$name .= sprintf(' <span class="update-plugins" title="%s"><span class="update-count">%d</span></span>', __("Unapproved", PSC_PLUGIN), $cnt->total);
     }
     
-    add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), $name, 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    $hook = add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), $name, 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    add_action( "load-$hook", 'psc_add_options' );
     
-    add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
-    add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
+    $hook = add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
+    add_action( "load-$hook", 'psc_add_options' );
+    
+    $hook = add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
+    add_action( "load-$hook", 'psc_add_options' );
+    
     add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
     
 }
@@ -303,6 +342,17 @@ function psc_admin_menu_item() {
 	}
 	
 	switch($action) {
+
+
+	 case 'approve':
+	    $psc_admin_notices['updated'][] = sprintf(__("The vote from '%s' has been approved.", PSC_PLUGIN), $info['voter_email']);
+	    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE id=" . $item);
+	    break;
+	    
+	 case 'unapprove':
+	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been rejected.", PSC_PLUGIN), $info['voter_email']);
+	    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=0 WHERE id=" . $item);
+	    break;
 	    
 	 case 'delete':
 	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been deleted.", PSC_PLUGIN), $info['voter_email']);
@@ -357,9 +407,9 @@ function psc_admin_headers() {
 	break;
 	
      case 'psc_votes':
-	echo '.wp-list-table .column-name { width: 30%; }';
 	echo '.wp-list-table .column-ip_address { width: 200px; }';
 	echo '.wp-list-table .column-vote_date { width: 200px; }';
+	echo '.wp-list-table .column-status { width: 10%; }';
 	break;
 	
      case 'psc_participants':
@@ -434,32 +484,11 @@ function psc_save_options() {
 	}
     }
 
-    if (isset($_POST['bitly_login'])) {
-	$options['bitly_login'] = $_POST['bitly_login'];
-    }
-
-    if (isset($_POST['bitly_api_key'])) {
-	$options['bitly_api_key'] = $_POST['bitly_api_key'];
-    }
-
-    if (isset($_POST['google_api_key'])) {
-	$options['google_api_key'] = $_POST['google_api_key'];
-    }
+    $params = array('bitly_login', 'bitly_api_key', 'google_api_key', 'facebook_client_id', 'facebook_secret_key',
+		    'twitter_text', 'twitter_hash', 'vote_subject', 'vote_message', 'register_subject', 'register_message');
     
-    if (isset($_POST['facebook_client_id'])) {
-	$options['facebook_client_id'] = $_POST['facebook_client_id'];
-    }
-
-    if (isset($_POST['facebook_secret_key'])) {
-	$options['facebook_secret_key'] = $_POST['facebook_secret_key'];
-    }
-    
-    if (isset($_POST['twitter_text'])) {
-	$options['twitter_text'] = $_POST['twitter_text'];
-    }
-    
-    if (isset($_POST['twitter_hash'])) {
-	$options['twitter_hash'] = $_POST['twitter_hash'];
+    foreach($params as $param) {
+	if (isset($_POST[$param])) $options[$param] = $_POST[$param];
     }
     
     update_option(PSC_PLUGIN, $options);
@@ -540,8 +569,8 @@ function psc_parse_query() {
     
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
 	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
-    	add_filter( 'the_content', 'psc_show_participant' );
-}
+	add_filter( 'the_content', 'psc_show_participant' );
+    }
 }
 
 function psc_open_graph( $tags ) {
@@ -572,8 +601,8 @@ jQuery(document).ready(function() {
         type        : 'ajax',
 	margin	    : [20, 60, 20, 60],
         fitToView   : false,
-        width       : '80%',
-        height      : '80%',
+        width       : '90%',
+        height      : '90%',
         autoSize    : false,
         closeClick  : false,
         openEffect  : 'none',
@@ -819,3 +848,79 @@ function psc_get_vote_status($email, $id) {
     return false;
 }
 
+
+function psc_generate_signature($data) {
+    return md5(hash('SHA256', AUTH_KEY . $data));
+}
+
+function psc_verify_signature($data, $signature) {
+    $generated_signature = psc_generate_signature($data);
+    if ($generated_signature == $signature) {
+	return true;
+    }
+    return false;
+}
+
+function psc_parse_email($text, $vars) {
+    foreach($vars as $var => $val) {
+	$str = '[' . $var . ']';
+	$text = str_replace($str, $val, $text);
+    }
+    return $text;
+}
+
+function psc_email_register($email) {
+    
+    if (!is_email($email)) {
+	return false;
+    }
+
+    add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
+    
+    $admin_email = get_bloginfo('admin_email');
+    $blog_name = get_bloginfo('name');
+    $blog_url = get_bloginfo('url');
+    $headers = 'From: ' . $blog_name . ' <' . $admin_email . '>' . "\r\n";
+
+    $vars = array();
+    $vars['blog_name'] = $blog_name;
+    $vars['blog_url'] = $blog_url;
+    
+    $subject = psc_parse_email(psc_get_option('register_subject'), $vars);
+    $message = psc_parse_email(psc_get_option('register_message'), $vars);
+    
+    wp_mail($email, $subject, $message, $headers);
+    
+}
+
+function psc_email_vote($email) {
+    
+    global $wpdb;
+    
+    if (!is_email($email)) {
+	return false;
+    }
+    
+    $pincode = rand(1, 9) . rand(0, 9) . rand(0, 9) . rand(0, 9);
+    $signature = psc_generate_signature($email . '#' . $pincode);
+    
+    $wpdb->update(PSC_TABLE_VOTES, array('vote_code' => $signature, 'approved' => 0), array('voter_email' => $email), array('%s', '%d'), array('%s'));
+    
+    add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
+    
+    $admin_email = get_bloginfo('admin_email');
+    $blog_name = get_bloginfo('name');
+    $blog_url = get_bloginfo('url');
+    $headers = 'From: ' . $blog_name . ' <' . $admin_email . '>' . "\r\n";
+
+    $vars = array();
+    $vars['blog_name'] = $blog_name;
+    $vars['blog_url'] = $blog_url;
+    $vars['vote_link'] = site_url("?vote_confirm=$signature");
+    
+    $subject = psc_parse_email(psc_get_option('vote_subject'), $vars);
+    $message = psc_parse_email(psc_get_option('vote_message'), $vars);
+    
+    wp_mail($email, $subject, $message, $headers);
+    
+}

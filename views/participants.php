@@ -69,8 +69,8 @@ jQuery(document).ready(function() {
     jQuery(".more-info").fancybox({
 	margin	    : [20, 60, 20, 60],
         fitToView   : false,
-        width       : '80%',
-        height      : '80%',
+        width       : '90%',
+        height      : '90%',
         autoSize    : false,
         closeClick  : false,
         openEffect  : 'none',

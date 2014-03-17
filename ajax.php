@@ -26,6 +26,8 @@ add_action('send_headers', 'psc_ajax_send_headers');
 
 add_action('wp_ajax_nopriv_register', 'psc_ajax_register');
 add_action('wp_ajax_nopriv_details', 'psc_ajax_details');
+add_action('wp_ajax_nopriv_vote', 'psc_ajax_vote');
+add_action('wp_ajax_nopriv_reset_vote', 'psc_ajax_reset_vote');
 
 do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ); // Non-admin actions
 
@@ -99,6 +101,10 @@ function psc_ajax_register() {
     
     $errors = array();
     
+    if (!is_email($_REQUEST['email'])) {
+	$errors['valid_email'] = sprintf(__("The field '%s' is mandatory"), $arg['desc']);
+    }
+    
     foreach($params as $param => $arg) {
 	$val = $_REQUEST[$param];
 	if (isset($arg['required']) && $arg['required'] && empty($val)) {
@@ -127,6 +133,7 @@ function psc_ajax_register() {
     $output = array('status' => 'error', 'error' => $errors);
 
     if (!count($errors)) {
+	psc_email_register($REQUEST['email']);
 	$output = array('status' => 'ok');
     }
     
@@ -156,4 +163,47 @@ function psc_db_register($data) {
     return true;
     
 }
+
+function psc_ajax_vote() {
+
+    $id = isset($_REQUEST['participant_id']) ? $_REQUEST['participant_id'] : null;
+    $email = isset($_REQUEST['email']) ? $_REQUEST['email'] : false;
+    $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : false;
+
+    if (!$email) {
+	$errors['email'] = __('The Email field is mandatory', PSC_PLUGIN);
+    } elseif (!is_email($email)) {
+	$errors['email'] = __('The Email is invalid', PSC_PLUGIN);
+    } else {
+	$errors = array();
+	$status = psc_get_vote_status($email, $id);
+	
+	if ($status) {
+	    $errors['email'] = __("The Email is already registered", PSC_PLUGIN);
+	}
+    }
+
+    if (!$name) {
+	$errors['name'] = __('The Name field is mandatory', PSC_PLUGIN);
+    }
     
+    $output = array('status' => 'error', 'error' => implode('<br />', $errors));
+
+    if (!count($errors)) {
+	$output = array('status' => 'ok');
+	
+	psc_add_vote($id, $name, $email);
+	psc_set_vote_email($email);
+	psc_email_vote($email);
+    }
+    
+    echo json_encode($output);
+    wp_die();
+}
+
+function psc_ajax_reset_vote() {
+    psc_set_vote_email();
+    $output = array('status' => 'ok');
+    echo json_encode($output);
+    wp_die();
+}

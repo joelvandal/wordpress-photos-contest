@@ -17,11 +17,10 @@ class PSC_Table extends WP_List_Table {
 				   'ajax'      => false        //does this table support ajax?
 				   ) );
 
-	add_action( 'admin_head', array( &$this, 'admin_header' ) );            
-	
+//	add_action( 'admin_head', array( &$this, 'admin_header' ) );            
+
     }
 
-    
     function display() {
 	extract( $this->_args );
 ?>
@@ -122,10 +121,7 @@ class PSC_Table extends WP_List_Table {
 	
 	$this->table_data = $this->get_data();
 	
-	$columns = $this->get_columns();
-	$hidden = array();
-	$sortable = $this->get_sortable_columns();
-	$this->_column_headers = array($columns, $hidden, $sortable);
+	$this->_column_headers = $this->get_column_info();
 
 	usort( $this->table_data, array( &$this, 'usort_reorder' ) );
 	
@@ -384,6 +380,7 @@ class PSC_Votes_Table extends PSC_Table {
 			 'project_name'         => __('Project Name', PSC_PLUGIN),
 			 'voter_ip'             => __('IP Address', PSC_PLUGIN),
 			 'vote_date'            => __('Vote Date', PSC_PLUGIN),
+			 'status'               => __('Status', PSC_PLUGIN)
 		         );
 	return $columns;
     }
@@ -397,6 +394,9 @@ class PSC_Votes_Table extends PSC_Table {
 	 case 'voter_ip':
 	    return $item[ $column_name ];
 	    break;
+
+	 case 'status':
+	    return $item['approved'] ? __('Accepted', PSC_PLUGIN) : __('Not Approved', PSC_PLUGIN);
 	    
 	 case 'vote_date':
 	    return psc_format_datetime($item[ $column_name ]);
@@ -419,8 +419,16 @@ class PSC_Votes_Table extends PSC_Table {
 
     function column_voter_name($item) {    
 	$actions = array(
-			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
+			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __('Approve', PSC_PLUGIN)),
+			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __('Reject', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN))
 			 );
+			 
+	if ($item['approved']) {
+	    unset($actions['accept']);
+	} else {
+	    unset($actions['reject']);
+	}
 	
 	return sprintf('%1$s %2$s', $item['voter_name'], $this->row_actions($actions) );
     }

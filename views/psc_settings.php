@@ -30,6 +30,56 @@
 			</tr>
 		</table>
 
+		<h3><?php _e('Email Notification',PSC_PLUGIN); ?></h3>
+
+		<table class="form-table">
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Vote Subject', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="80" name="vote_subject" value="<?php echo psc_get_option('vote_subject'); ?>" />
+					<p class="description">
+					</p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Vote Message', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<textarea rows="6" cols="80" name="vote_message"><?php echo psc_get_option('vote_message'); ?></textarea>
+					<p class="description">
+					<?php _e('Available variables: [blog_name], [blog_url], [vote_link]'); ?>
+					</p>
+				</td>
+			</tr>
+		</table>
+
+		<table class="form-table">
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Register Subject', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<input type="text" size="80" name="register_subject" value="<?php echo psc_get_option('register_subject'); ?>" />
+					<p class="description">
+					</p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th align="left">
+					<?php _e('Register Message', PSC_PLUGIN); ?>
+				</th>
+				<td>
+					<textarea rows="6" cols="80" name="register_message"><?php echo psc_get_option('register_message'); ?></textarea>
+					<p class="description">
+					<?php _e('Available variables: [blog_name], [blog_url]'); ?>
+					</p>
+				</td>
+			</tr>
+		</table>
+		
 		<h3><?php _e('Social Sharing',PSC_PLUGIN); ?></h3>
 
 		<table class="form-table">
