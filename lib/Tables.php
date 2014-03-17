@@ -210,7 +210,7 @@ class PSC_Participants_Table extends PSC_Table {
 	
 	foreach($rows as &$row) {
 	    psc_image($row['email']);
-	    $row['name'] = strtoupper($row['last_name']) . ', ' . $row['first_name'];
+	    $row['name'] = ucwords(strtolower($row['first_name'] . ' ' . $row['last_name']));
 	}
 	
 	return $rows;
@@ -287,8 +287,10 @@ class PSC_Participants_Table extends PSC_Table {
 	 case 'name':
 	 case 'email':
 	 case 'project_name':
+	    return psc_trim($item[ $column_name ], 50);
+	    
 	 case 'project_description':
-	    return $item[ $column_name ];
+	    return psc_trim($item[ $column_name ], 250);
 	    
 	 default:
 	    return print_r( $item, true ) ; //Show the whole array for troubleshooting purposes

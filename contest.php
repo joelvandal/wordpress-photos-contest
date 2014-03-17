@@ -351,6 +351,8 @@ function psc_admin_headers() {
 	echo '.wp-list-table .column-image { width: 160px; }';
 	echo '.wp-list-table .column-name { width: 15%; }';
 	echo '.wp-list-table .column-email { width: 10%; }';
+	
+	echo '.wp-list-table .column-project_description { width: 225px; }';
 	echo '.wp-list-table .column-votes { width: 5%; text-align: center; }';
 	echo '.wp-list-table .column-subscribe_date { width: 130px; }';
 	echo '.wp-list-table .column-status { width: 10%; }';
@@ -587,6 +589,21 @@ function psc_get_category_by_id($type) {
     return $res;
 }
 
+function psc_get_school($id) {
+    $cats = psc_get_category_by_id('school');
+    return $cats[$id];
+}
+
+function psc_get_class($id) {
+    $cats = psc_get_category_by_id('class_name');
+    return $cats[$id];
+}
+
+function psc_get_project($id) {
+    $cats = psc_get_category_by_id('project');
+    return $cats[$id];
+}
+
 function psc_is_vote_open() {
  
     $open_date = psc_get_option('vote_open_date');
@@ -666,4 +683,48 @@ function psc_shorturl($id) {
     curl_close($ch);
     return trim($data);
     
+}
+
+function psc_trim($input, $length, $ellipses = true, $strip_html = true) {
+    //strip tags, if desired
+    if ($strip_html) {
+	$input = strip_tags($input);
+    }
+    
+    //strip leading and trailing whitespace
+    $input = trim($input);
+    
+    //no need to trim, already shorter than trim length
+    if (strlen($input) <= $length) {
+	return $input;
+    }
+    
+    //leave space for the ellipses (...)
+    if ($ellipses) {
+	$length -= 3;
+    }
+    
+    //this would be dumb, but I've seen dumber
+    if ($length <= 0) {
+	return '';
+    }
+    
+    //find last space within length
+    //(add 1 to length to allow space after last character - it may be your lucky day)
+    $last_space = strrpos(substr($input, 0, $length + 1), ' ');
+    if ($last_space === false) {
+	//lame, no spaces - fallback to pure substring
+	$trimmed_text = substr($input, 0, $length);
+    }
+    else {
+	//found last space, trim to it
+	$trimmed_text = substr($input, 0, $last_space);
+    }
+    
+    //add ellipses (...)
+    if ($ellipses) {
+	$trimmed_text .= '...';
+    }
+    
+    return $trimmed_text;
 }
