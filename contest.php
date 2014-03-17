@@ -557,6 +557,7 @@ function psc_shortcode_participants() {
 			      
 function psc_query_var($vars) {
 	$vars[] = 'participant';
+	$vars[] = 'vote_confirm';
 	return $vars;
 }
 
@@ -570,6 +571,10 @@ function psc_parse_query() {
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
 	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
 	add_filter( 'the_content', 'psc_show_participant' );
+    }
+    
+    if(isset($wp_query->query_vars['vote_confirm']) && $wp_query->query_vars['vote_confirm'] != ''){
+	add_filter( 'the_content', 'psc_confirm_vote' );
     }
 }
 
@@ -588,6 +593,31 @@ function psc_open_graph( $tags ) {
     $tags['og:type'] = 'website';
     
     return $tags;
+}
+
+function psc_confirm_vote() {
+    $code = $_GET['vote_confirm'];
+    $link =  PSC_PATH . 'ajax.php?action=confirm_vote&code=' . $code;
+
+?>
+<script>
+jQuery(document).ready(function() {
+    jQuery.fancybox({
+        href	    : '<?php echo $link; ?>',
+        type        : 'ajax',
+	margin	    : [20, 60, 20, 60],
+        fitToView   : false,
+        width       : '550px',
+        height      : '35px',
+        autoSize    : false,
+        closeClick  : false,
+        openEffect  : 'none',
+        closeEffect : 'none'
+    });
+});
+</script>
+<?php	
+    
 }
 
 function psc_show_participant() {

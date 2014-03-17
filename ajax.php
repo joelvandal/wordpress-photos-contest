@@ -28,6 +28,7 @@ add_action('wp_ajax_nopriv_register', 'psc_ajax_register');
 add_action('wp_ajax_nopriv_details', 'psc_ajax_details');
 add_action('wp_ajax_nopriv_vote', 'psc_ajax_vote');
 add_action('wp_ajax_nopriv_reset_vote', 'psc_ajax_reset_vote');
+add_action('wp_ajax_nopriv_confirm_vote', 'psc_ajax_confirm_vote');
 
 do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ); // Non-admin actions
 
@@ -206,4 +207,32 @@ function psc_ajax_reset_vote() {
     $output = array('status' => 'ok');
     echo json_encode($output);
     wp_die();
+}
+
+function psc_ajax_confirm_vote() {
+    
+    global $wpdb;
+    if (!isset($_REQUEST['code']) || empty($_REQUEST['code'])) {
+	echo __('Invalid Code', PSC_PLUGIN);
+	wp_die();
+    }
+    
+    $sql = "SELECT id FROM " . PSC_TABLE_VOTES . " WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'";
+    $item = $wpdb->get_row($sql);
+
+    if (!isset($item->id)) {
+	echo __('Invalid Code', PSC_PLUGIN);
+	wp_die();
+    }
+
+    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'");
+    
+    echo '<h1>';
+    echo __('Thanks, your vote is now approved!', PSC_PLUGIN);
+    echo '</h1>';
+    echo '<br />';
+    echo '<p>';
+    echo '<button onclick="jQuery.fancybox.close()">' . __('Close', PSC_PLUGIN) . '</button>';
+    echo '</p>';
+    
 }
