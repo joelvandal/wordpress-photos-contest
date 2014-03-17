@@ -200,8 +200,17 @@ class PSC_Participants_Table extends PSC_Table {
 	$where = '';
 	$search = isset($_REQUEST['s']) ? $_REQUEST['s'] : false;
 	if ($search) {
-	    $where = "WHERE p.first_name like '%str%' OR p.last_name like '%str%' OR p.email like '%str%' OR p.project_name like '%str%' OR p.project_description like '%str%'";
+	    $where = "WHERE (p.first_name like '%str%' OR p.last_name like '%str%' OR p.email like '%str%' OR p.project_name like '%str%' OR p.project_description like '%str%')";
 	    $where = str_replace('%str%', '%' . esc_sql($search) . '%', $where);
+	}
+
+	if (isset($_REQUEST['type']) && $_REQUEST['type']) {
+	    $v = $_REQUEST['type'] == 'on' ? 1 : 0;
+	    if ($where) {
+		$where .= " AND approved = $v";
+	    } else {
+		$where = " WHERE approved = $v";
+	    }
 	}
 	
 	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id " .  $where . " GROUP BY p.id ORDER BY p.subscribe_date DESC";

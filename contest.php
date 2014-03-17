@@ -139,9 +139,20 @@ function psc_admin_init() {
 
 function psc_admin_menu() {
     
+    global $wpdb;
+    
     add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
     add_submenu_page('psc_overview', __('Overview', PSC_PLUGIN), __('Overview', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
-    add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), __('Participants', PSC_PLUGIN), 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    
+    $cnt = $wpdb->get_row("SELECT count(*) as total FROM " . PSC_TABLE_PARTICIPANTS . " WHERE approved=0");
+    
+    $name = __('Participants', PSC_PLUGIN);
+    if ($cnt->total) {
+	$name .= sprintf(' <span class="update-plugins" title="%s"><span class="update-count">%d</span></span>', __("Unapproved", PSC_PLUGIN), $cnt->total);
+    }
+    
+    add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), $name, 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    
     add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
     add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');

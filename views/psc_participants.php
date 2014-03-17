@@ -5,6 +5,8 @@
 <?php
 
 $my_table = new PSC_Participants_Table();
+$my_table->filter = array('on' => __("Approved", PSC_PLUGIN),
+			  'off' => __("Unapproved", PSC_PLUGIN));
 $my_table->prepare_items(); 
 $my_table->display();
 ?>
