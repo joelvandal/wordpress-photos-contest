@@ -31,6 +31,8 @@ define('PSC_TABLE_VOTES', $wpdb->prefix . 'psc_votes');
 define('PSC_TABLE_PARTICIPANTS', $wpdb->prefix . 'psc_participants');
 define('PSC_TABLE_CATEGORIES', $wpdb->prefix . 'psc_categories');
 
+define('PSC_VOTE_COOKIE', 'PSC_Contest_Vote');
+
 $psc_category_types = array('school'     => __('School', PSC_PLUGIN),
 			    'class_name' => __('Class Name', PSC_PLUGIN),
 			    'project'    => __('Project', PSC_PLUGIN));
@@ -110,7 +112,9 @@ function psc_activation_init() {
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_CATEGORIES . " (id int(11) not null auto_increment, category_name varchar(255), category_desc TEXT, category_type varchar(30), primary key(id), key(category_type))";
     $wpdb->query($ptbl);
 
-    $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_VOTES . " (id int(11) not null auto_increment, voter_name varchar(255), voter_email varchar(255), voter_ip varchar(80), vote_date int(11), participant_id int(11), primary key(id), key(participant_id))";
+    $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_VOTES . " (id int(11) not null auto_increment, voter_name varchar(255), voter_email varchar(255), voter_ip varchar(80), vote_date int(11), 
+								 participant_id int(11), vvote_code varchar(32), approved int(1) default 0, 
+								 primary key(id), key(participant_id))";
     $wpdb->query($ptbl);
     
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
@@ -615,15 +619,6 @@ function psc_get_project($id) {
     return $cats[$id];
 }
 
-function psc_is_vote_open() {
- 
-    $open_date = psc_get_option('vote_open_date');
-    $close_date = psc_get_option('vote_close_date');
-    
-    return ($open_date <= time() && $close_date >= time());
-    
-}
-
 function psc_register_string($id, $title, $desc = '') {
 
     
@@ -739,3 +734,88 @@ function psc_trim($input, $length, $ellipses = true, $strip_html = true) {
     
     return $trimmed_text;
 }
+
+function psc_get_client_ip() {
+    $ipaddress = '';
+    if (getenv('HTTP_CLIENT_IP'))
+      $ipaddress = getenv('HTTP_CLIENT_IP');
+    else if(getenv('HTTP_X_FORWARDED_FOR'))
+      $ipaddress = getenv('HTTP_X_FORWARDED_FOR');
+    else if(getenv('HTTP_X_FORWARDED'))
+      $ipaddress = getenv('HTTP_X_FORWARDED');
+    else if(getenv('HTTP_FORWARDED_FOR'))
+      $ipaddress = getenv('HTTP_FORWARDED_FOR');
+    else if(getenv('HTTP_FORWARDED'))
+      $ipaddress = getenv('HTTP_FORWARDED');
+    else if(getenv('REMOTE_ADDR'))
+      $ipaddress = getenv('REMOTE_ADDR');
+    else
+      $ipaddress = 'UNKNOWN';
+    
+    return $ipaddress;
+}
+
+function psc_add_vote($id, $name, $email) {
+    global $wpdb;
+
+    $ipaddr = psc_get_client_ip();
+    
+    $data = array('voter_email' => $email,
+		  'voter_name' => $name,
+		  'voter_ip' => $ipaddr,
+		  'vote_date' => time(),
+		  'participant_id' => $id);
+
+    $format = array('%s', '%s', '%s', '%d', '%d');
+    $wpdb->insert(PSC_TABLE_VOTES, $data, $format);
+}
+
+function psc_count_vote($id) {
+    global $wpdb;
+    $res = $wpdb->get_row("SELECT count(*) as total FROM " . PSC_TABLE_VOTES . " WHERE approved = 1 AND  participant_id = " . intval($id));
+    return $res->total;
+}
+
+function psc_is_vote_open() {
+ 
+    $open_date = psc_get_option('vote_open_date');
+    $close_date = psc_get_option('vote_close_date');
+    
+    return ($open_date <= time() && $close_date >= time());
+    
+}
+
+function psc_get_vote_email() {
+    
+    if (!isset($_COOKIE[PSC_VOTE_COOKIE])) return null;
+    
+    $c = explode('#', $_COOKIE[PSC_VOTE_COOKIE]);
+    
+    if (!isset($c[1]) || empty($c[1])) return null;
+    
+    $h2 = hash_hmac('SHA256', $c[0], AUTH_KEY);
+    if ($h2 == $c[1]) return $c[0];
+    
+    return null;
+}
+
+function psc_set_vote_email($email = null) {
+    
+    if ($email == null) {
+	setcookie(PSC_VOTE_COOKIE, null, -1, '/');
+    } else {
+	$cookie_voter = $email . '#' . hash_hmac('SHA256', $email, AUTH_KEY);
+	setcookie(PSC_VOTE_COOKIE, $cookie_voter, 0, '/');
+    }
+}
+
+function psc_get_vote_status($email, $id) {
+    global $wpdb;
+    
+    $res = $wpdb->get_row("SELECT vote_date,participant_id FROM " . PSC_TABLE_VOTES . " WHERE voter_email = '" . esc_sql($email) . "'");
+    if (isset($res->participant_id)) {
+	return true;
+    }
+    return false;
+}
+

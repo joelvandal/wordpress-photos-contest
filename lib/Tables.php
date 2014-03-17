@@ -213,7 +213,7 @@ class PSC_Participants_Table extends PSC_Table {
 	    }
 	}
 	
-	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id " .  $where . " GROUP BY p.id ORDER BY p.subscribe_date DESC";
+	$sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id AND v.approved=1 " .  $where . " GROUP BY p.id ORDER BY p.subscribe_date DESC";
 	
 	$rows = $wpdb->get_results($sql, ARRAY_A);
 	
