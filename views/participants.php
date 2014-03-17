@@ -40,15 +40,14 @@ foreach($rows as $item) {
     } else {
 	$title = sprintf(__("%s by %s %s (%d vote)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);
     }
-    $link =  PSC_PATH . 'ajax.php?action=details&id=' . $item['id'];
     
     echo '<div class="item' . (($i%4 == 0) ? ' last' : '') . '">';
     echo '<div class="item-image">';
-    echo '<a class="fancybox.ajax" href="' . $link . '" title="' . $title . '">';
+    echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" title="' . $title . '">';
     echo '<img class="portfolio" src="' . $thumb . '">';
     echo '<span class="overlay"></span>';
     echo '</a>';
-    echo '<a class="more-info" href="' . $link . '" rel="participants"></a>';
+    echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" rel="participants"></a>';
     echo '</div> <!-- end .item-image -->';
     echo '</div> <!-- end .item -->';
 
@@ -66,16 +65,24 @@ echo '<div class="clear"></div>';
 <script>
 
 jQuery(document).ready(function() {
-    jQuery(".more-info").fancybox({
-	margin	    : [20, 60, 20, 60],
-        fitToView   : false,
-        width       : '90%',
-        height      : '90%',
-        autoSize    : false,
-        closeClick  : false,
-        openEffect  : 'none',
-        closeEffect : 'none'
-    });
+
+	jQuery("a.more-info").live('click', function(event) {
+
+	var url = '<?php echo PSC_PATH . 'ajax.php?action=details&id='; ?>' + jQuery(this).data('id');
+
+		jQuery.fancybox({
+	        	href	    : url,
+		        type        : 'ajax',
+			margin	    : [20, 60, 20, 60],
+		        fitToView   : false,
+        		width       : '90%',
+	        	height      : '90%',
+	        	autoSize    : false,
+		        closeClick  : false,
+        		openEffect  : 'none',
+		        closeEffect : 'none'
+		});
+	});
 });
 
 </script>
