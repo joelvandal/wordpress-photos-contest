@@ -154,8 +154,9 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</th>
 				<td>
 					<img id="thumbnail" src="<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>" />
-					<br />
-					<a href="#" class="upload"><?php _e('Click here to upload a new image'); ?></a>
+					<p>
+						<a href="#" class="upload tb-btn tb-btn-warning"><?php _e('Change Image'); ?></a>
+					</p>
 				</td>
 			</tr>
 
@@ -208,15 +209,16 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	</form>
 </div>
 
-<div id="uploadForm" style="display: none; position: absolute">
-<div class="modal-dialog">
-	<div class="modal-content">
-		<div class="modal-header header-color-blue">
-			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<div class="tb-modal tb-modal-wide tb-fade" id="uploadForm" style="display: none;">
+
+<div class="tb-modal-dialog">
+	<div class="tb-modal-content">
+		<div class="tb-modal-header">
+			<button type="button" class="tb-close" data-dismiss="modal" aria-hidden="true">&times;</button>
 			<h3><?php _e('Upload Image', PSC_PLUGIN); ?></h3>
 		</div>
 
-		<div class="modal-body overflow-visible">
+		<div class="tb-modal-body tb-overflow-visible">
 
 	<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile">
 		<input type="hidden" id="hidden-participant" name="participant" value="<?php echo $info['email']; ?>">
@@ -224,13 +226,12 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 		</div>
 
-		<div class="modal-footer">
-		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e('Cancel', PSC_PLUGIN); ?></button>
-			<div class="pull-right"><button id="uploadSubmit" class="btn btn-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button></div>
+		<div class="tb-modal-footer">
+			<div class="tb-pull-left"><button type="button" class="tb-btn tb-btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e('Cancel', PSC_PLUGIN); ?></button></div>
+			<div class="tb-pull-right"><button id="uploadSubmit" class="tb-btn tb-btn-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button></div>
 		</div>
 	</div>
 </div>
-
 </div>
 
 <script type="text/javascript">
@@ -240,7 +241,7 @@ jQuery(document).ready(function(){
 	});
 
 	jQuery("#uploadClose").on('click', function() {
-//		jQuery.fancybox.close();
+		jQuery('#uploadForm').modal('hide');
 	});
 
 	jQuery("a.upload").live('click', function(event) {
@@ -265,7 +266,7 @@ Dropzone.options.dropfile = {
 		myDropzone.on("complete", function (file) {
 			var cdate = new Date().getTime();
 			jQuery("#thumbnail").attr('src', '<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
-//			jQuery.fancybox.close();
+			jQuery('#uploadForm').modal('hide');
 		});
 
         }
@@ -274,5 +275,6 @@ Dropzone.options.dropfile = {
 
 
 });
+
 </script>
 

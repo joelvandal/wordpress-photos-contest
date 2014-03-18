@@ -57,25 +57,33 @@ add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
 add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
 
 add_action( 'admin_init', 'psc_admin_init' );
-add_action( 'admin_menu', 'psc_admin_menu' );
 add_action( 'admin_head', 'psc_admin_headers' );
+
+add_action( 'admin_menu', 'psc_admin_menu' );
 
 add_filter( 'query_vars', 'psc_query_var' );
 add_action( 'parse_query','psc_parse_query' );
 
-//add_action( 'admin_notices', 'psc_admin_notices' );
+// add_action( 'admin_notices', 'psc_admin_notices' );
 
 function psc_enqueue_scripts() {
-    
+
     wp_enqueue_script('jquery');
+    
     wp_enqueue_style('dropzone', PSC_PATH . '/css/dropzone.css');
     wp_enqueue_script('dropzone', PSC_PATH . '/js/dropzone.js', array('jquery'));
-    
+
     wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.css');
     wp_enqueue_style('bootstrap');
     
     wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.min.js');
     wp_enqueue_script('bootstrap');
+
+    wp_register_style('contest', PSC_PATH . '/css/contest.css');
+    wp_enqueue_style('contest');
+
+    wp_register_script('contest', PSC_PATH . '/js/contest.js');
+    wp_enqueue_script('contest');
     
 }
 
@@ -98,7 +106,13 @@ function psc_enqueue_admin_scripts() {
     wp_register_style('jquery-ui-datetimepicker', PSC_PATH . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('jquery-ui-datetimepicker');
 
-    psc_enqueue_scripts();
+    $page = isset($_GET['page']) ? $_GET['page'] : false;
+
+    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.prefixed.css');
+    wp_enqueue_style('bootstrap');
+    
+    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.min.prefixed.js');
+    wp_enqueue_script('bootstrap');
     
 }
 
@@ -138,7 +152,7 @@ function psc_admin_init() {
 }
 
 function psc_add_options() {
-    
+
     /*
     $option = 'per_page';
     $args = array(
@@ -150,6 +164,9 @@ function psc_add_options() {
     */
     
     $page = isset($_GET['page']) ? $_GET['page'] : false;
+    $action = isset($_GET['action']) ? $_GET['action'] : false;
+    if ($action !== false) return false;
+    
     switch($page) {
      case 'psc_participants':
 	$my_table = new PSC_Participants_Table();
@@ -158,8 +175,11 @@ function psc_add_options() {
      case 'psc_votes':
 	$my_table = new PSC_Votes_Table();
 	break;
+	
+     case 'psc_categories':
+	$my_table = new PSC_Categories_Table();
+	break;
     }
-    
     /*
     $screen = get_current_screen();
     $screen->add_help_tab( array( 
@@ -392,6 +412,7 @@ function psc_admin_notices($return = false) {
 }
 
 function psc_admin_headers() {
+    
     $page = ( isset($_GET['page'] ) ) ? esc_attr( $_GET['page'] ) : false;
 
     echo '<style type="text/css">';
@@ -607,13 +628,6 @@ jQuery(document).ready(function(e) {
 	});
 });
 
-jQuery('body').on('hidden.bs.modal', '.modal', function() {
-	jQuery(this).remove();
-});
-
-jQuery('body').on('shown.bs.modal', '.modal', function() {
-	jQuery('#indicator').hide();
-});
 
 </script>
 <?php	
@@ -626,12 +640,10 @@ function psc_show_participant() {
     $link =  PSC_PATH . 'ajax.php?action=details&id=' . $id;
 ?>
 
-<img class="modal fade" src="<?php echo PSC_PATH . 'css/fancybox_loading.gif'; ?>" id="indicator" style="display:none" />
-
 <script>
 jQuery(document).ready(function(e) {
 
-	jQuery('#indicator').show();
+//	jQuery('#indicator').show();
 	jQuery.ajax({
 		url : '<?php echo $link; ?>',
 		type: "GET",
@@ -639,14 +651,6 @@ jQuery(document).ready(function(e) {
 			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
 		}
 	});
-});
-
-jQuery('body').on('hidden.bs.modal', '.modal', function() {
-	jQuery(this).remove();
-});
-
-jQuery('body').on('shown.bs.modal', '.modal', function() {
-	jQuery('#indicator').hide();
 });
 
 </script>

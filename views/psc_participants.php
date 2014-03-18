@@ -27,20 +27,16 @@ jQuery("a.delete").live('click', function(event) {
 
 jQuery("a.view").live('click', function(event) {
 
-	var url = '<?php echo PSC_PATH . 'ajax.php?action=details&id='; ?>' + jQuery(this).data('id');
+	var url = '<?php echo PSC_PATH . 'ajax.php?preview=true&action=details&id='; ?>' + jQuery(this).data('id');
 
 	jQuery.ajax({
 		url : url,
 		type: "GET",
 		success: function(response) {
-			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+			jQuery('<div class="tb-modal tb-modal-wide tb-fade"></div>').html(response).modal(); //.evalScripts();
 		}
 	});
 
-});
-
-jQuery('body').on('hidden.bs.modal', '.modal', function() {
-	jQuery(this).remove();
 });
 
 
