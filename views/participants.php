@@ -1,22 +1,3 @@
-<style>
-
-.fancybox-nav span {
-    visibility: visible;
-}
-
-.fancybox-nav {
-    width: 80px;
-}
-
-.fancybox-prev {
-    left: -80px;
-}
-
-.fancybox-next {
-    right: -80px;
-}
-</style>
-
 <div id="gallery">
 	<div id="portfolio-items" class="clearfix">
 
@@ -70,19 +51,19 @@ jQuery(document).ready(function() {
 
 	var url = '<?php echo PSC_PATH . 'ajax.php?action=details&id='; ?>' + jQuery(this).data('id');
 
-		jQuery.fancybox({
-	        	href	    : url,
-		        type        : 'ajax',
-			margin	    : [20, 60, 20, 60],
-		        fitToView   : false,
-        		width       : '90%',
-	        	height      : '90%',
-	        	autoSize    : false,
-		        closeClick  : false,
-        		openEffect  : 'none',
-		        closeEffect : 'none'
+		jQuery.ajax({
+			url : url,
+			type: "GET",
+			success: function(response) {
+				jQuery('<div class="modal modal-wide fade"></div>').html(response).removeClass('hide').modal(); //.evalScripts();
+			}
 		});
+
 	});
+});
+
+jQuery('body').on('hidden.bs.modal', '.modal', function() {
+	jQuery(this).remove();
 });
 
 </script>

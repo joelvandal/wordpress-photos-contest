@@ -71,11 +71,11 @@ function psc_enqueue_scripts() {
     wp_enqueue_style('dropzone', PSC_PATH . '/css/dropzone.css');
     wp_enqueue_script('dropzone', PSC_PATH . '/js/dropzone.js', array('jquery'));
     
-    wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
-    wp_enqueue_script('fancybox', array('jquery'));
+    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.css');
+    wp_enqueue_style('bootstrap');
     
-    wp_register_style('fancybox', PSC_PATH . '/css/fancybox.css');
-    wp_enqueue_style('fancybox');
+    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.min.js');
+    wp_enqueue_script('bootstrap');
     
 }
 
@@ -97,12 +97,8 @@ function psc_enqueue_admin_scripts() {
 
     wp_register_style('jquery-ui-datetimepicker', PSC_PATH . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('jquery-ui-datetimepicker');
-    
-    wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
-    wp_enqueue_script('fancybox', array('jquery'));
-    
-    wp_register_style('fancybox', PSC_PATH . '/css/fancybox.css');
-    wp_enqueue_style('fancybox');
+
+    psc_enqueue_scripts();
     
 }
 
@@ -564,9 +560,7 @@ function psc_query_var($vars) {
 function psc_parse_query() {
     global $wp_query;
 
-    wp_enqueue_script('jquery');
-    wp_register_script('fancybox', PSC_PATH. '/js/fancybox.js');
-    wp_enqueue_script('fancybox', array('jquery'));
+    psc_enqueue_scripts();
     
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
 	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
@@ -601,22 +595,29 @@ function psc_confirm_vote() {
 
 ?>
 <script>
-jQuery(document).ready(function() {
-    jQuery.fancybox({
-        href	    : '<?php echo $link; ?>',
-        type        : 'ajax',
-	margin	    : [20, 60, 20, 60],
-        fitToView   : false,
-        width       : '550px',
-        height      : '35px',
-        autoSize    : false,
-        closeClick  : false,
-        openEffect  : 'none',
-        closeEffect : 'none'
-    });
+jQuery(document).ready(function(e) {
+
+	jQuery('#indicator').show();
+	jQuery.ajax({
+		url : '<?php echo $link; ?>',
+		type: "GET",
+		success: function(response) {
+			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+		}
+	});
 });
+
+jQuery('body').on('hidden.bs.modal', '.modal', function() {
+	jQuery(this).remove();
+});
+
+jQuery('body').on('shown.bs.modal', '.modal', function() {
+	jQuery('#indicator').hide();
+});
+
 </script>
 <?php	
+    remove_filter( current_filter(), __FUNCTION__ );
     
 }
 
@@ -624,23 +625,34 @@ function psc_show_participant() {
     $id = $_GET['participant'];
     $link =  PSC_PATH . 'ajax.php?action=details&id=' . $id;
 ?>
+
+<img class="modal fade" src="<?php echo PSC_PATH . 'css/fancybox_loading.gif'; ?>" id="indicator" style="display:none" />
+
 <script>
-jQuery(document).ready(function() {
-    jQuery.fancybox({
-        href	    : '<?php echo $link; ?>',
-        type        : 'ajax',
-	margin	    : [20, 60, 20, 60],
-        fitToView   : false,
-        width       : '90%',
-        height      : '90%',
-        autoSize    : false,
-        closeClick  : false,
-        openEffect  : 'none',
-        closeEffect : 'none'
-    });
+jQuery(document).ready(function(e) {
+
+	jQuery('#indicator').show();
+	jQuery.ajax({
+		url : '<?php echo $link; ?>',
+		type: "GET",
+		success: function(response) {
+			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+		}
+	});
 });
+
+jQuery('body').on('hidden.bs.modal', '.modal', function() {
+	jQuery(this).remove();
+});
+
+jQuery('body').on('shown.bs.modal', '.modal', function() {
+	jQuery('#indicator').hide();
+});
+
 </script>
-<?php	
+<?php
+    remove_filter( current_filter(), __FUNCTION__ );
+    
 }
 
 function psc_get_category($type) {

@@ -44,8 +44,9 @@ function psc_ajax_details() {
     $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($_REQUEST['id']);
     $item = $wpdb->get_row($sql, ARRAY_A);
     
-    ob_start();
+    ob_start();    
     include 'views/details.php';
+    
     echo ob_get_clean();
     
 }
@@ -212,27 +213,28 @@ function psc_ajax_reset_vote() {
 function psc_ajax_confirm_vote() {
     
     global $wpdb;
+    
+    $msg = false;
     if (!isset($_REQUEST['code']) || empty($_REQUEST['code'])) {
-	echo __('Invalid Code', PSC_PLUGIN);
-	wp_die();
+	$msg = __('Invalid Code', PSC_PLUGIN);
+    } 
+    
+    if (!$msg) {
+	$sql = "SELECT id FROM " . PSC_TABLE_VOTES . " WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'";
+	$item = $wpdb->get_row($sql);
+	
+	if (!isset($item->id)) {
+	    $msg = __('Invalid Code', PSC_PLUGIN);
+	}
     }
     
-    $sql = "SELECT id FROM " . PSC_TABLE_VOTES . " WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'";
-    $item = $wpdb->get_row($sql);
-
-    if (!isset($item->id)) {
-	echo __('Invalid Code', PSC_PLUGIN);
-	wp_die();
+    if (!$msg) {
+	$wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'");
+	$msg = __('Thanks, your vote is now approved!', PSC_PLUGIN);
     }
-
-    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'");
     
-    echo '<h1>';
-    echo __('Thanks, your vote is now approved!', PSC_PLUGIN);
-    echo '</h1>';
-    echo '<br />';
-    echo '<p>';
-    echo '<button onclick="jQuery.fancybox.close()">' . __('Close', PSC_PLUGIN) . '</button>';
-    echo '</p>';
+    ob_start();    
+    include 'views/confirm.php';
+    echo ob_get_clean();
     
 }

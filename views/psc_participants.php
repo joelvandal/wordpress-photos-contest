@@ -29,18 +29,19 @@ jQuery("a.view").live('click', function(event) {
 
 	var url = '<?php echo PSC_PATH . 'ajax.php?action=details&id='; ?>' + jQuery(this).data('id');
 
-	jQuery.fancybox({
-        	href	    : url,
-	        type        : 'ajax',
-		margin	    : [20, 60, 20, 60],
-	        fitToView   : false,
-        	width       : '90%',
-	        height      : '90%',
-        	autoSize    : false,
-	        closeClick  : false,
-        	openEffect  : 'none',
-	        closeEffect : 'none'
+	jQuery.ajax({
+		url : url,
+		type: "GET",
+		success: function(response) {
+			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+		}
 	});
 
 });
+
+jQuery('body').on('hidden.bs.modal', '.modal', function() {
+	jQuery(this).remove();
+});
+
+
 </script>

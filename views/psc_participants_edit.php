@@ -208,13 +208,28 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	</form>
 </div>
 
-<div id="uploadForm" style="display: none">
+<div id="uploadForm" style="display: none; position: absolute">
+<div class="modal-dialog">
+	<div class="modal-content">
+		<div class="modal-header header-color-blue">
+			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<h3><?php _e('Upload Image', PSC_PLUGIN); ?></h3>
+		</div>
+
+		<div class="modal-body overflow-visible">
+
 	<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile">
 		<input type="hidden" id="hidden-participant" name="participant" value="<?php echo $info['email']; ?>">
 	</form>
 
-	<button id="uploadSubmit" class="button button-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button>
-	<button id="uploadClose" class="button button-secondary"><?php _e('Cancel', PSC_PLUGIN); ?></button>
+		</div>
+
+		<div class="modal-footer">
+		<button type="button" class="btn btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e('Cancel', PSC_PLUGIN); ?></button>
+			<div class="pull-right"><button id="uploadSubmit" class="btn btn-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button></div>
+		</div>
+	</div>
+</div>
 
 </div>
 
@@ -225,23 +240,11 @@ jQuery(document).ready(function(){
 	});
 
 	jQuery("#uploadClose").on('click', function() {
-		jQuery.fancybox.close();
+//		jQuery.fancybox.close();
 	});
 
 	jQuery("a.upload").live('click', function(event) {
-
-		jQuery.fancybox({
-        		href	    : '#uploadForm',
-			margin	    : [20, 60, 20, 60],
-	        	fitToView   : false,
-	        	width       : '640px',
-		        height      : '480px',
-        		autoSize    : false,
-		        closeClick  : false,
-        		openEffect  : 'none',
-	        	closeEffect : 'none'
-		});
-
+		jQuery('#uploadForm').modal('show');
 	});
 
 Dropzone.options.dropfile = {
@@ -262,7 +265,7 @@ Dropzone.options.dropfile = {
 		myDropzone.on("complete", function (file) {
 			var cdate = new Date().getTime();
 			jQuery("#thumbnail").attr('src', '<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
-			jQuery.fancybox.close();
+//			jQuery.fancybox.close();
 		});
 
         }
