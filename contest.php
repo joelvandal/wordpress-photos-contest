@@ -73,10 +73,10 @@ function psc_enqueue_scripts() {
     wp_enqueue_style('dropzone', PSC_PATH . '/css/dropzone.css');
     wp_enqueue_script('dropzone', PSC_PATH . '/js/dropzone.js', array('jquery'));
 
-    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.css');
+    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.prefixed.css');
     wp_enqueue_style('bootstrap');
     
-    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.min.js');
+    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.prefixed.js');
     wp_enqueue_script('bootstrap');
 
     wp_register_style('contest', PSC_PATH . '/css/contest.css');
@@ -105,8 +105,6 @@ function psc_enqueue_admin_scripts() {
 
     wp_register_style('jquery-ui-datetimepicker', PSC_PATH . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('jquery-ui-datetimepicker');
-
-    $page = isset($_GET['page']) ? $_GET['page'] : false;
 
     wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.prefixed.css');
     wp_enqueue_style('bootstrap');
@@ -569,7 +567,6 @@ function psc_shortcode_participants() {
     ob_start();
     include 'views/participants.php';
     return ob_get_clean();
-    
 }
 			      
 function psc_query_var($vars) {
@@ -581,8 +578,6 @@ function psc_query_var($vars) {
 function psc_parse_query() {
     global $wp_query;
 
-    psc_enqueue_scripts();
-    
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
 	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
 	add_filter( 'the_content', 'psc_show_participant' );
@@ -623,7 +618,7 @@ jQuery(document).ready(function(e) {
 		url : '<?php echo $link; ?>',
 		type: "GET",
 		success: function(response) {
-			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+			jQuery('<div class="tb-modal tb-modal-wide tb-fade"></div>').html(response).modal(); //.evalScripts();
 		}
 	});
 });
@@ -648,7 +643,7 @@ jQuery(document).ready(function(e) {
 		url : '<?php echo $link; ?>',
 		type: "GET",
 		success: function(response) {
-			jQuery('<div class="modal modal-wide fade"></div>').html(response).modal(); //.evalScripts();
+			jQuery('<div class="tb-modal tb-modal-wide tb-fade"></div>').html(response).modal(); //.evalScripts();
 		}
 	});
 });

@@ -55,14 +55,14 @@ jQuery(document).ready(function() {
 			url : url,
 			type: "GET",
 			success: function(response) {
-				jQuery('<div class="modal modal-wide fade"></div>').html(response).removeClass('hide').modal(); //.evalScripts();
+				jQuery('<div class="tb-modal tb-modal-wide tb-fade"></div>').html(response).removeClass('hide').modal(); //.evalScripts();
 			}
 		});
 
 	});
 });
 
-jQuery('body').on('hidden.bs.modal', '.modal', function() {
+jQuery('body').on('hidden.bs.modal', '.tb-modal', function() {
 	jQuery(this).remove();
 });
 

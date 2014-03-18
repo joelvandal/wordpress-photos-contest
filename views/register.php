@@ -123,7 +123,7 @@
 
 	</div>
 
-	<button id="register-button" class="btn" style="display:none"><?php _e('Register &#187;', PSC_PLUGIN); ?></button>
+	<button id="register-button" class="tb-btn tb-btn-primary" style="display:none"><?php _e('Register &#187;', PSC_PLUGIN); ?></button>
 
 
 <script type="text/javascript">

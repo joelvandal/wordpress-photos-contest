@@ -44,8 +44,6 @@ function psc_ajax_details() {
     $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($_REQUEST['id']);
     $item = $wpdb->get_row($sql, ARRAY_A);
 
-    $prefix = isset($_REQUEST['preview']) ? 'tb-' : '';
-    
     ob_start();    
     include 'views/details.php';
     

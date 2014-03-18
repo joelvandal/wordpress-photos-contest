@@ -42,40 +42,40 @@
 	background-image: url("https://ssl.gstatic.com/s2/oz/images/faviconr2.ico"); 
 }
 
-.<?php echo $prefix; ?>popover {
+.tb-popover {
     width:200px;
 //    height:250px;    
 }
 
-.<?php echo $prefix; ?>modal.<?php echo $prefix; ?>modal-wide .<?php echo $prefix; ?>modal-dialog {
+.tb-modal.tb-modal-wide .tb-modal-dialog {
 	width: 80%;
 //	height: 60%;
 }
 
-.<?php echo $prefix; ?>modal-wide .<?php echo $prefix; ?>modal-body {
+.tb-modal-wide .tb-modal-body {
 //height: 60%;
 	overflow-y: auto;
 }
 
-.<?php echo $prefix; ?>img-responsive {
+.tb-img-responsive {
     display: block;
     width: auto;
     height: 80%;
 }
 </style>
 
-<div id="modal-window" class="<?php echo $prefix; ?>modal-dialog">
-	<div class="<?php echo $prefix; ?>modal-content">
-		<div class="<?php echo $prefix; ?>modal-header">
-			<button type="button" class="<?php echo $prefix; ?>close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h4><?php _e('Information about this participant', PSC_PLUGIN); ?></h4>
+<div id="modal-window" class="tb-modal-dialog">
+	<div class="tb-modal-content">
+		<div class="tb-modal-header">
+			<button type="button" class="tb-close" data-dismiss="modal" aria-hidden="true">&times;</button>
+			<div class="tb-h3"><?php _e('Information about this participant', PSC_PLUGIN); ?></div>
 		</div>
-		<div class="<?php echo $prefix; ?>modal-body <?php echo $prefix; ?>overflow-visible">
+		<div class="tb-modal-body tb-overflow-visible">
 
-			<div class="<?php echo $prefix; ?>row">
-				<div class="<?php echo $prefix; ?>col-xs-12 <?php echo $prefix; ?>col-sm-12 <?php echo $prefix; ?>col-lg-5 <?php echo $prefix; ?>col-md-5">
+			<div class="tb-row">
+				<div class="tb-col-xs-12 tb-col-sm-12 tb-col-lg-5 tb-col-md-5">
 	
-					<table class="<?php echo $prefix; ?>table <?php echo $prefix; ?>table-striped <?php echo $prefix; ?>table-hover <?php echo $prefix; ?>table-responsive <?php echo $prefix; ?>text-left">
+					<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 					<tbody>
 						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
 						<tr><th>Project Type:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
@@ -92,26 +92,26 @@
 			<?php if ($email = psc_get_vote_email()): ?>
 						<div id="alreadyVoted">
 
-			<div class="<?php echo $prefix; ?>alert <?php echo $prefix; ?>alert-warning">
-				<div class="<?php echo $prefix; ?>text-center">
+			<div class="tb-alert tb-alert-warning">
+				<div class="tb-text-center">
 				<?php echo sprintf(__('You already voted using %s!', PSC_PLUGIN), $email); ?>
 <br /><br />
-				<button class="<?php echo $prefix; ?>btn <?php echo $prefix; ?>btn-warning" id="resetVote"><?php _e('Use a different Email', PSC_PLUGIN); ?></button>
+				<button class="tb-btn tb-btn-warning" id="resetVote"><?php _e('Use a different Email', PSC_PLUGIN); ?></button>
 				</div>
 			</div>
 </div>
 
 <?php else: ?>
 
-			<div class="<?php echo $prefix; ?>text-center">
-				<button class="<?php echo $prefix; ?>btn <?php echo $prefix; ?>btn-primary" id="showVote"><?php _e('Vote for this participant', PSC_PLUGIN); ?></button>
+			<div class="tb-text-center">
+				<button class="tb-btn tb-btn-primary" id="showVote"><?php _e('Vote for this participant', PSC_PLUGIN); ?></button>
 			</div>
 
 
 			<?php endif; ?>
 		<?php else: ?>
-			<div class="<?php echo $prefix; ?>alert <?php echo $prefix; ?>alert-danger">
-				<div class="<?php echo $prefix; ?>text-center">
+			<div class="tb-alert tb-alert-danger">
+				<div class="tb-text-center">
 					<b><?php _e('Vote is currently closed!', PSC_PLUGIN); ?></b>
 				</div>
 			</div>
@@ -120,40 +120,40 @@
 					<div style="display: none" class="voteMessage"></div>
 		
 <?php if (psc_is_vote_open()): ?>
-					<div id="voterDetails" style="display: none;" class="<?php echo $prefix; ?>text-left">
-					<h4 class="<?php echo $prefix; ?>text-left">Vote for this participant:</h4>
+					<div id="voterDetails" style="display: none;" class="tb-text-left">
+					<h4 class="tb-text-left">Vote for this participant:</h4>
 
-						<table class="<?php echo $prefix; ?>table <?php echo $prefix; ?>table-striped <?php echo $prefix; ?>table-hover <?php echo $prefix; ?>table-responsive <?php echo $prefix; ?>text-left">
+						<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 						<tbody>
 							<tr>
 								<th style="width: 150px; vertical-align: middle"><label for="voter_email"><?php _e('Enter your Email:', PSC_PLUGIN); ?></label></th>
-								<td><div class="form-input" id="form_email"><input type="text" class="form-control" id="voter_email" placeholder="Enter email"></div></td>
+								<td><div class="tb-form-input" id="form_email"><input type="text" class="tb-form-control" id="voter_email" placeholder="Enter email"></div></td>
 							</tr>
 		
 							<tr>
 								<th style="width: 150px; vertical-align: middle"><label for="voter_name"><?php _e('Enter your Name:', PSC_PLUGIN); ?></label></th>
-								<td><div class="form-input" id="form_name"><input type="text" class="<?php echo $prefix; ?>form-control" id="voter_name" placeholder="Enter name"></div></td>
+								<td><div class="tb-form-input" id="form_name"><input type="text" class="tb-form-control" id="voter_name" placeholder="Enter name"></div></td>
 							</tr>
 						</tbody>
 						</table>
 		
-						<div class="<?php echo $prefix; ?>pull-right">
-							<button class="<?php echo $prefix; ?>btn <?php echo $prefix; ?>btn-sm <?php echo $prefix; ?>btn-success" id="sendVote"><?php _e('Vote Now', PSC_PLUGIN); ?></button>
-							<button class="<?php echo $prefix; ?>btn <?php echo $prefix; ?>btn-sm <?php echo $prefix; ?>btn-danger" id="cancelVote"><?php _e('Cancel', PSC_PLUGIN); ?></button>
+						<div class="tb-pull-right">
+							<button class="tb-btn tb-btn-sm tb-btn-success" id="sendVote"><?php _e('Vote Now', PSC_PLUGIN); ?></button>
+							<button class="tb-btn tb-btn-sm tb-btn-danger" id="cancelVote"><?php _e('Cancel', PSC_PLUGIN); ?></button>
 						</div>
 					</div>
 <?php endif; ?>
 
 				</div>
 
-				<div class="<?php echo $prefix; ?>col-xs-12 <?php echo $prefix; ?>col-sm-12 <?php echo $prefix; ?>col-md-7 <?php echo $prefix; ?>col-lg-7">
-					<img class="<?php echo $prefix; ?>img-responsive <?php echo $prefix; ?>img-thumbnail <?php echo $prefix; ?>text-center" style="height:auto;" src="<?php echo PSC_PATH . 'uploads/' . md5($item['email']) . '-view.png'; ?>" />
+				<div class="tb-col-xs-12 tb-col-sm-12 tb-col-md-7 tb-col-lg-7">
+					<img class="tb-img-responsive tb-img-thumbnail tb-text-center" style="height:auto;" src="<?php echo PSC_PATH . 'uploads/' . md5($item['email']) . '-view.png'; ?>" />
 				</div>
 			</div>
 		</div>
 
-		<div class="<?php echo $prefix; ?>modal-footer">
-			<div class="share <?php echo $prefix; ?>text-center">
+		<div class="tb-modal-footer">
+			<div class="share tb-text-center">
 				<b><?php echo __("Share this picture on", PSC_PLUGIN); ?></b>
 				<li class="share-item">
 					<a data-network="facebook" class="share-link ico-facebook" href="#" rel="nofollow">Facebook</a>
@@ -224,24 +224,22 @@ jQuery('#sendVote').on('click', function() {
 		participant_id: '<?php echo $item['id']; ?>'
 	};
 
-//  jQuery('#voter_email').popover('hide');
-//  jQuery('#voter_name').popover('hide');
-jQuery('#form_email').addClass('has-success');
-jQuery('#form_name').addClass('has-success');
+	jQuery('#form_email').addClass('tb-has-success');
+	jQuery('#form_name').addClass('tb-has-success');
 
 	jQuery.post(
 		'<?php echo PSC_PATH . 'ajax.php'; ?>',
 		params,
 		function(data) {
 			if (data.status == 'ok') {
-				jQuery(".voteMessage").html('<div class="<?php echo $prefix; ?>alert <?php echo $prefix; ?>alert-info"><?php esc_html_e(__("Thanks! Please check your email to validate your vote!", PSC_PLUGIN)); ?></div>').show();
+				jQuery(".voteMessage").html('<div class="tb-alert tb-alert-info"><?php esc_html_e(__("Thanks! Please check your email to validate your vote!", PSC_PLUGIN)); ?></div>').show();
 				jQuery('#voterDetails').hide();
 				jQuery('#div-desc').show();
 			} else {
 				var msg = '';
 
 				jQuery.each( data.error, function( i, val ) {
-					jQuery('#form_' + i).removeClass('has-success').addClass('has-error');
+					jQuery('#form_' + i).removeClass('tb-has-success').addClass('tb-has-error');
 					jQuery('#voter_' + i).popover({ content: val }).popover('show');
 
 				});
@@ -288,7 +286,7 @@ function resizeModal() {
 	$myDialog.css('top',  (offset  + (viewportHeight/2)) - ($myDialog.outerHeight()/2))
 }
 
-jQuery(".<?php echo $prefix; ?>modal-wide").on("shown.bs.modal", function() {
+jQuery(".tb-modal-wide").on("shown.bs.modal", function() {
 	resizeModal();
 });
 </script>
