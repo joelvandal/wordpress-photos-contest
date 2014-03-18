@@ -477,6 +477,7 @@ class PSC_Categories_Table extends PSC_Table {
 	$columns = array(
 			 'cb'                   => '<input type="checkbox" />',
 			 'category_name'        => __('Name', PSC_PLUGIN),
+			 'category_desc'        => __('Description', PSC_PLUGIN),
 			 'category_type'        => __('Type', PSC_PLUGIN),
 		         );
 	return $columns;
@@ -485,6 +486,7 @@ class PSC_Categories_Table extends PSC_Table {
     function column_default( $item, $column_name ) {    
 	switch( $column_name ) {
 	 case 'category_name':
+	 case 'category_desc':
 	    return $item[ $column_name ];
 	    
 	 case 'category_type':
