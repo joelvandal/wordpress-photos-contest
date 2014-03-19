@@ -26,9 +26,9 @@ class PSC_Table extends WP_List_Table {
 ?>
 
 <form method="post">
-  <input type="hidden" name="page" value="psc_participants" />
+  <input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>" />
   <?php $this->search_box(__('Search', PSC_PLUGIN), 'search_id'); ?>
-</form>
+
 <?php	
 	$this->display_tablenav( 'top' );
 ?>	
@@ -51,6 +51,11 @@ class PSC_Table extends WP_List_Table {
 </table>
 <?php
 	$this->display_tablenav( 'bottom' );
+	
+?>
+</form>
+
+<?php
     }
 
     function print_column_headers( $with_id = true ) {
@@ -119,6 +124,8 @@ class PSC_Table extends WP_List_Table {
     
     function prepare_items() {
 	
+	$this->process_bulk_action();
+	
 	$this->table_data = $this->get_data();
 	
 	$this->_column_headers = $this->get_column_info();
@@ -134,6 +141,57 @@ class PSC_Table extends WP_List_Table {
 	$this->set_pagination_args( array( 'total_items' => $total_items, 'per_page'    => $per_page ) );
 	$this->items = $this->found_data;
 	
+    }
+
+    function process_bulk_action() {
+
+	global $wpdb;
+
+	switch($_REQUEST['page']) {
+	 case 'psc_participants':
+	    $table = PSC_TABLE_PARTICIPANTS;
+	    break;
+	    
+	 case 'psc_votes':
+	    $table = PSC_TABLE_VOTES;
+	    break;
+	    
+	 case 'psc_categories':
+	    $table = PSC_TABLE_CATEGORIES;
+	    break;
+	    
+	 default:
+	    return false;
+	}
+	
+	if (!isset($_POST['item'])) return false;
+	
+	$items = $_POST['item'];
+	
+	switch($this->current_action()) {
+	 case 'approve':
+	    $sql_str = "UPDATE %s SET approved = 1 WHERE id = %d";
+	    break;
+	    
+	 case 'unapprove':
+	    $sql_str = "UPDATE %s SET approved = 0 WHERE id = %d";
+	    break;
+	    
+	 case 'delete':
+	    $sql_str = "DELETE FROM %s WHERE id = %d";
+	    break;
+	    
+	 default:
+	    $sql_str = false;
+	    break;
+	}
+	
+	if (!$sql_str) return false;
+	
+	foreach($items as $item) {
+	    $wpdb->query(sprintf($sql_str, $table, $item));
+	}
+	    
     }
     
     function column_cb($item) {    
@@ -339,11 +397,12 @@ class PSC_Participants_Table extends PSC_Table {
     function get_bulk_actions() {    
 	$actions = array(
 			 'delete'    => __('Delete', PSC_PLUGIN),
-			 'approve'   => __('Approve', PSC_PLUGIN)
+			 'approve'   => __('Approve', PSC_PLUGIN),
+			 'unapprove' => __('Reject', PSC_PLUGIN)
 		         );
 	return $actions;
     }
-
+    
 }
 
 
@@ -435,7 +494,9 @@ class PSC_Votes_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => __('Delete', PSC_PLUGIN)
+			 'delete'    => __('Delete', PSC_PLUGIN),
+			 'approve'   => __('Approve', PSC_PLUGIN),
+			 'unapprove' => __('Reject', PSC_PLUGIN)
 		         );
 	return $actions;
     }
