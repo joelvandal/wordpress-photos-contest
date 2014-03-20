@@ -10,7 +10,7 @@
  * Plugin Name:		Photos Contest
  * Plugin URI:        	https://github.com/joelvandal/wordpress-photos-contest/wiki
  * Description:       	Create Photos Contest
- * Version:           	1.0.0
+ * Version:           	1.0.1
  * Author:       	Joel Vandal
  * Author URI:       	http://joel.vandal.ca/
  * Text Domain:       	photoscontest
@@ -470,7 +470,12 @@ function psc_get_option($key, $default = null) {
 
     global $psc_options;
     if (isset($psc_options[$key])) {
-	return $psc_options[$key];
+	
+	if (isset($_REQUEST['page']) && $_REQUEST['page'] == 'psc_settings') {
+	    return $psc_options[$key];
+	} else {
+	    return psc_setting_t($key, $psc_options[$key]);
+	}
     }
     
     return $default;
@@ -504,7 +509,9 @@ function psc_save_options() {
 		    'twitter_text', 'twitter_hash', 'vote_subject', 'vote_message', 'register_subject', 'register_message');
     
     foreach($params as $param) {
-	if (isset($_POST[$param])) $options[$param] = $_POST[$param];
+	$val = isset($_POST[$param]) ? $_POST[$param] : '';
+	if (isset($_POST[$param])) $options[$param] = $val;
+	psc_register_setting($param, $val);
     }
     
     update_option(PSC_PLUGIN, $options);
@@ -736,7 +743,6 @@ function psc_get_project($id) {
 
 function psc_register_string($id, $title, $desc = '') {
 
-    
     if (function_exists('icl_register_string') ) {
 	$context = 'Contest Category ' . $id;
 	icl_register_string( $context, 'Category Name', $title );
@@ -767,6 +773,25 @@ function psc_desc_t($id, $desc) {
     if (function_exists( 'icl_t' )) {
 	$context = 'Contest Category ' . $id;
 	$tran = icl_t( $context, 'Category Description', $desc );
+    } else {
+	$tran = false;
+    }
+    return ($tran) ? $tran : $desc;
+}
+	
+function psc_register_setting($id, $title, $desc = '') {
+	    
+    if (function_exists('icl_register_string') ) {
+	$context = 'Contest Setting ' . $id;
+	icl_register_string( $context, 'Category Option', $title );
+    }
+    
+}
+
+function psc_setting_t($id, $desc) {
+    if (function_exists( 'icl_t' )) {
+	$context = 'Contest Setting ' . $id;
+	$tran = icl_t( $context, 'Category Option', $desc );
     } else {
 	$tran = false;
     }
