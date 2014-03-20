@@ -33,9 +33,9 @@ define('PSC_TABLE_CATEGORIES', $wpdb->prefix . 'psc_categories');
 
 define('PSC_VOTE_COOKIE', 'PSC_Contest_Vote');
 
-$psc_category_types = array('school'     => __('School', PSC_PLUGIN),
-			    'class_name' => __('Class Name', PSC_PLUGIN),
-			    'project'    => __('Project', PSC_PLUGIN));
+$psc_category_types = array('school'     => __psc('School'),
+			    'class_name' => __psc('Class Name'),
+			    'project'    => __psc('Project'));
 
 require PSC_ABSPATH . 'lib/Tables.php';
 
@@ -193,27 +193,27 @@ function psc_admin_menu() {
     
     global $wpdb;
     
-    add_menu_page(__('Photos Contest', PSC_PLUGIN), __('Photos Contest', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
+    add_menu_page(__psc('Photos Contest'), __psc('Photos Contest'), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
     
-    add_submenu_page('psc_overview', __('Overview', PSC_PLUGIN), __('Overview', PSC_PLUGIN), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
+    add_submenu_page('psc_overview', __psc('Overview'), __psc('Overview'), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
     
     $cnt = $wpdb->get_row("SELECT count(*) as total FROM " . PSC_TABLE_PARTICIPANTS . " WHERE approved=0");
     
-    $name = __('Participants', PSC_PLUGIN);
+    $name = __psc('Participants');
     if ($cnt->total) {
-	$name .= sprintf(' <span class="update-plugins" title="%s"><span class="update-count">%d</span></span>', __("Unapproved", PSC_PLUGIN), $cnt->total);
+	$name .= sprintf(' <span class="update-plugins" title="%s"><span class="update-count">%d</span></span>', __psc("Unapproved"), $cnt->total);
     }
     
-    $hook = add_submenu_page('psc_overview', __('Participants', PSC_PLUGIN), $name, 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
+    $hook = add_submenu_page('psc_overview', __psc('Participants'), $name, 'edit_pages', 'psc_participants', 'psc_admin_menu_item');
     add_action( "load-$hook", 'psc_add_options' );
     
-    $hook = add_submenu_page('psc_overview', __('Votes', PSC_PLUGIN), __('Votes', PSC_PLUGIN), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
+    $hook = add_submenu_page('psc_overview', __psc('Votes'), __psc('Votes'), 'edit_pages', 'psc_votes', 'psc_admin_menu_item');
     add_action( "load-$hook", 'psc_add_options' );
     
-    $hook = add_submenu_page('psc_overview', __('Categories', PSC_PLUGIN), __('Categories', PSC_PLUGIN), 'edit_pages','psc_categories', 'psc_admin_menu_item');
+    $hook = add_submenu_page('psc_overview', __psc('Categories'), __psc('Categories'), 'edit_pages','psc_categories', 'psc_admin_menu_item');
     add_action( "load-$hook", 'psc_add_options' );
     
-    add_submenu_page('psc_overview', __('Configuration', PSC_PLUGIN), __('Configuration', PSC_PLUGIN), 'edit_pages','psc_settings', 'psc_admin_menu_item');
+    add_submenu_page('psc_overview', __psc('Configuration'), __psc('Configuration'), 'edit_pages','psc_settings', 'psc_admin_menu_item');
     
 }
 
@@ -234,17 +234,17 @@ function psc_admin_menu_item() {
 	switch($action) {
 
 	 case 'approve':
-	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been approved.", PSC_PLUGIN), $info['email']);
+	    $psc_admin_notices['updated'][] = sprintf(__psc("The participant '%s' has been approved."), $info['email']);
 	    $wpdb->query("UPDATE " . PSC_TABLE_PARTICIPANTS . " SET approved=1 WHERE id=" . $item);
 	    break;
 	    
 	 case 'unapprove':
-	    $psc_admin_notices['error'][] = sprintf(__("The participant '%s' has been rejected.", PSC_PLUGIN), $info['email']);
+	    $psc_admin_notices['error'][] = sprintf(__psc("The participant '%s' has been rejected."), $info['email']);
 	    $wpdb->query("UPDATE " . PSC_TABLE_PARTICIPANTS . " SET approved=0 WHERE id=" . $item);
 	    break;
 	    
 	 case 'delete':
-	    $psc_admin_notices['error'][] = sprintf(__("The participant '%s' has been deleted.", PSC_PLUGIN), $info['email']);
+	    $psc_admin_notices['error'][] = sprintf(__psc("The participant '%s' has been deleted."), $info['email']);
 	    $wpdb->query("DELETE FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $item);
 	    $wpdb->query("DELETE FROM " . PSC_TABLE_VOTES . " WHERE participant_id=" . $item);
 	    break;
@@ -255,9 +255,9 @@ function psc_admin_menu_item() {
 	    
 	 case 'save':
 
-	    $psc_admin_notices['updated'][] = sprintf(__("The participant '%s' has been updated successfully.", PSC_PLUGIN), $info['email']);
+	    $psc_admin_notices['updated'][] = sprintf(__psc("The participant '%s' has been updated successfully."), $info['email']);
 	    
-	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_name' => '%s', 
+	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'artist' => '%s', 'artist_show' => '%b', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_name' => '%s', 
 			    'project_name' => '%s', 'project_category' => '%s', 'project_description' => '%s', 
 			    'approved' => '%b', 'mail_site' => '%b', 'mail_contest' => '%b', 'subscribe_date' => '%T');
 	    
@@ -297,7 +297,7 @@ function psc_admin_menu_item() {
 	switch($action) {
 	    
 	 case 'delete':
-	    $psc_admin_notices['error'][] = sprintf(__("The category '%s' has been deleted.", PSC_PLUGIN), $info['category_name']);
+	    $psc_admin_notices['error'][] = sprintf(__psc("The category '%s' has been deleted."), $info['category_name']);
 	    $wpdb->query("DELETE FROM " . PSC_TABLE_CATEGORIES . " WHERE id=" . $item);
 	    psc_unregister_string($item);
 	    break;
@@ -309,9 +309,9 @@ function psc_admin_menu_item() {
 	 case 'save':
 
 	    if ($item) {
-		$psc_admin_notices['updated'][] = sprintf(__("The category '%s' has been updated successfully.", PSC_PLUGIN), $info['category_name']);
+		$psc_admin_notices['updated'][] = sprintf(__psc("The category '%s' has been updated successfully."), $info['category_name']);
 	    } else {
-		$psc_admin_notices['updated'][] = sprintf(__("The category '%s' has been added successfully.", PSC_PLUGIN), $_POST['category_name']);
+		$psc_admin_notices['updated'][] = sprintf(__psc("The category '%s' has been added successfully."), $_POST['category_name']);
 	    }
 	    
 	    $fields = array('category_name' => '%s', 'category_desc' => '%s', 'category_type' => '%s');
@@ -360,17 +360,17 @@ function psc_admin_menu_item() {
 
 
 	 case 'approve':
-	    $psc_admin_notices['updated'][] = sprintf(__("The vote from '%s' has been approved.", PSC_PLUGIN), $info['voter_email']);
+	    $psc_admin_notices['updated'][] = sprintf(__psc("The vote from '%s' has been approved."), $info['voter_email']);
 	    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE id=" . $item);
 	    break;
 	    
 	 case 'unapprove':
-	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been rejected.", PSC_PLUGIN), $info['voter_email']);
+	    $psc_admin_notices['error'][] = sprintf(__psc("The vote from '%s' has been rejected."), $info['voter_email']);
 	    $wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=0 WHERE id=" . $item);
 	    break;
 	    
 	 case 'delete':
-	    $psc_admin_notices['error'][] = sprintf(__("The vote from '%s' has been deleted.", PSC_PLUGIN), $info['voter_email']);
+	    $psc_admin_notices['error'][] = sprintf(__psc("The vote from '%s' has been deleted."), $info['voter_email']);
 	    $wpdb->query("DELETE FROM " . PSC_TABLE_VOTES . " WHERE id=" . $item);
 	    break;
 	}
@@ -643,10 +643,14 @@ function psc_show_participant_title() {
     
     $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($id);
     $item = $wpdb->get_row($sql, ARRAY_A);
-    
-    $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
 
-    return sprintf(__('%s created by %s', PSC_PLUGIN), $item['project_name'], $item['full_name']);
+    if ($item['artist_show'] && !empty($item['artist'])) {
+	$item['full_name'] = $item['artist'];
+    } else {
+	$item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+    }
+
+    return sprintf(__psc('%s created by %s'), $item['project_name'], $item['full_name']);
 }
 
 function psc_show_participant() {
@@ -729,6 +733,7 @@ function psc_get_project($id) {
     return $cats[$id];
 }
 
+
 function psc_register_string($id, $title, $desc = '') {
 
     
@@ -766,6 +771,33 @@ function psc_desc_t($id, $desc) {
 	$tran = false;
     }
     return ($tran) ? $tran : $desc;
+}
+
+function esc_html_e_psc($str) {
+    echo esc_html(psc_t($str));
+}
+
+function _e_psc($str) {
+    echo psc_t($str);
+}
+
+function __psc($str) {
+    return psc_t($str);
+}
+
+function psc_t($str) {
+    if (function_exists( 'icl_t' )) {
+	$context = 'Contest String ';
+	$tag = md5($str);
+	$res = icl_st_is_registered_string($context, $tag);
+	if (!$res) {
+	    icl_register_string( $context,  $tag, $str );
+	}
+	$tran = icl_t( $context, $tag, $str );
+    } else {
+	$tran = false;
+    }
+    return ($tran) ? $tran : $str;
 }
 
 function psc_get_image($email) {

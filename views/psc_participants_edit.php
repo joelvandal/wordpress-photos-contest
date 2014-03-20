@@ -4,7 +4,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 <div class="wrap">
 
-	<h2><?php _e('Photos Contest - Participants', PSC_PLUGIN); ?></h2>
+	<h2><?php _e_psc('Photos Contest - Participants'); ?></h2>
 
 	<form name="participant" id="participant" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 
@@ -14,7 +14,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('First Name', PSC_PLUGIN); ?>
+					<?php _e_psc('First Name'); ?>
 				</th>
 				<td>
 					<input type="text" size="30" name="first_name" value="<?php echo $info['first_name']; ?>" />
@@ -23,7 +23,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Last Name', PSC_PLUGIN); ?>
+					<?php _e_psc('Last Name'); ?>
 				</th>
 				<td>
 					<input type="text" size="30" name="last_name" value="<?php echo $info['last_name']; ?>" />
@@ -32,7 +32,25 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Email', PSC_PLUGIN); ?>
+					<?php _e_psc('Artist Name'); ?>
+				</th>
+				<td>
+					<input type="text" size="20" name="artist" value="<?php echo $info['artist']; ?>" />
+				</td>
+			</tr>
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e_psc('Use Artist Name ?'); ?>
+				</th>
+				<td>
+					<input type="checkbox" name="artist_show" <?php if ($info['artist_show']) { echo 'checked'; } ?> />
+				</td>
+			</tr>
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e_psc('Email'); ?>
 				</th>
 				<td>
 					<input type="text" size="50" name="email" value="<?php echo $info['email']; ?>" />
@@ -41,12 +59,12 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Sex', PSC_PLUGIN); ?>
+					<?php _e_psc('Sex'); ?>
 				</th>
 				<td>
 					<select name="sex">
-						<option <?php if ($info['sex'] == 'm') { echo 'selected'; } ?> value="m"><?php _e('Male', PSC_PLUGIN); ?></option>
-						<option <?php if ($info['sex'] == 'f') { echo 'selected'; } ?> value="f"><?php _e('Female', PSC_PLUGIN); ?></option>
+						<option <?php if ($info['sex'] == 'm') { echo 'selected'; } ?> value="m"><?php _e_psc('Male'); ?></option>
+						<option <?php if ($info['sex'] == 'f') { echo 'selected'; } ?> value="f"><?php _e_psc('Female'); ?></option>
 					</select>
 				</td>
 			</tr>
@@ -54,7 +72,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Age', PSC_PLUGIN); ?>
+					<?php _e_psc('Age'); ?>
 				</th>
 				<td>
 					<input type="number" name="age" min="1" max="99" value="<?php echo $info['age']; ?>">
@@ -69,7 +87,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('School Name', PSC_PLUGIN); ?>
+					<?php _e_psc('School Name'); ?>
 				</th>
 				<td>
 
@@ -89,7 +107,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 <!--
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Class Name', PSC_PLUGIN); ?>
+					<?php _e_psc('Class Name'); ?>
 				</th>
 				<td>
 		<select id="input-class-name" name="class_name" class="name">
@@ -113,7 +131,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Project Name', PSC_PLUGIN); ?>
+					<?php _e_psc('Project Name'); ?>
 				</th>
 				<td>
 					<input type="text" size="80" name="project_name" value="<?php echo $info['project_name']; ?>" />
@@ -122,7 +140,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Project Category', PSC_PLUGIN); ?>
+					<?php _e_psc('Project Category'); ?>
 				</th>
 				<td>
 
@@ -141,7 +159,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Project Description', PSC_PLUGIN); ?>
+					<?php _e_psc('Project Description'); ?>
 				</th>
 				<td>
 					<textarea cols="80" rows="5" name="project_description"><?php echo esc_textarea($info['project_description']); ?></textarea>
@@ -150,12 +168,12 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Project Image', PSC_PLUGIN); ?>
+					<?php _e_psc('Project Image'); ?>
 				</th>
 				<td>
 					<img id="thumbnail" src="<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>" />
 					<p>
-						<a href="#" class="upload tb-btn tb-btn-warning"><?php _e('Change Image'); ?></a>
+						<a href="#" class="upload tb-btn tb-btn-warning"><?php _e_psc('Change Image'); ?></a>
 					</p>
 				</td>
 			</tr>
@@ -168,7 +186,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Subscription Date', PSC_PLUGIN); ?>
+					<?php _e_psc('Subscription Date'); ?>
 				</th>
 				<td>
 					<input type="text" class="datepicker" name="subscribe_date" value="<?php echo psc_format_datetime($info['subscribe_date']); ?>" />
@@ -177,7 +195,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Approved', PSC_PLUGIN); ?>
+					<?php _e_psc('Approved'); ?>
 				</th>
 				<td>
 					<input type="checkbox" name="approved" <?php if ($info['approved']) { echo 'checked'; } ?> />
@@ -186,7 +204,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Mail Site', PSC_PLUGIN); ?>
+					<?php _e_psc('Mail Site'); ?>
 				</th>
 				<td>
 					<input type="checkbox" name="mail_site" <?php if ($info['mail_site']) { echo 'checked'; } ?> />
@@ -195,7 +213,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Mail Contest', PSC_PLUGIN); ?>
+					<?php _e_psc('Mail Contest'); ?>
 				</th>
 				<td>
 					<input type="checkbox" name="mail_contest" <?php if ($info['mail_contest']) { echo 'checked'; } ?> />
@@ -216,7 +234,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	<div class="tb-modal-content">
 		<div class="tb-modal-header">
 			<button type="button" class="tb-close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<h3><?php _e('Upload Image', PSC_PLUGIN); ?></h3>
+			<h3><?php _e_psc('Upload Image'); ?></h3>
 		</div>
 
 		<div class="tb-modal-body tb-overflow-visible">
@@ -228,8 +246,8 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 		</div>
 
 		<div class="tb-modal-footer">
-			<div class="tb-pull-left"><button type="button" class="tb-btn tb-btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e('Cancel', PSC_PLUGIN); ?></button></div>
-			<div class="tb-pull-right"><button id="uploadSubmit" class="tb-btn tb-btn-primary"><?php _e('Upload Image', PSC_PLUGIN); ?></button></div>
+			<div class="tb-pull-left"><button type="button" class="tb-btn tb-btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e_psc('Cancel'); ?></button></div>
+			<div class="tb-pull-right"><button id="uploadSubmit" class="tb-btn tb-btn-primary"><?php _e_psc('Upload Image'); ?></button></div>
 		</div>
 	</div>
 </div>

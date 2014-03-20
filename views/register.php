@@ -7,35 +7,39 @@
 	.register-form textarea { height: 150px; width: 450px; float: none; margin-bottom: 13px; }
 	.register-form input[type='radio'], .register-form input[type='checkbox'] { float: none; margin-bottom: 13px; }
 	.register-form label { margin-bottom: 3px; float: none; font-weight: bold; display: block; }
-	.register-form label.checkbox, .register-form label.radio { margin-bottom: 3px; float: none; font-weight: bold; display: inline-block; }
 	.register-form label span { color: #AAA; margin-left: 4px; font-weight: normal; }
 	.form-errors .form-error-message { color: red; }
 </style>
 
 <div id="display-form" class="register-form">
 
-	<h3><?php _e('Submitting your Idea', PSC_PLUGIN); ?></h3>
+	<h3><?php _e_psc('Submitting your Idea'); ?></h3>
 
-	<h4><?php _e('Please fill out this form and upload your image and idea description to register.', PSC_PLUGIN); ?></h4>
+	<h4><?php _e_psc('Please fill out this form and upload your image and idea description to register.'); ?></h4>
 	<br />
 	<p>
-	        <label for="input-first-name"><?php _e('Name', PSC_PLUGIN); ?> <span><?php _e('(required)'); ?></span></label>
-	        <input type="text" id="input-first-name" placeholder="<?php _e('First Name', PSC_PLUGIN); ?>" name="first_name" class="small">
+	        <label for="input-first-name"><?php _e_psc('Name'); ?> <span><?php _e('(required)'); ?></span></label>
+	        <input type="text" id="input-first-name" placeholder="<?php _e_psc('First Name'); ?>" name="first_name" class="small">
 		<br />
-	        <input type="text" id="input-last-name" placeholder="<?php _e('Last Name', PSC_PLUGIN); ?>" name="last_name" class="small">
+	        <input type="text" id="input-last-name" placeholder="<?php _e_psc('Last Name'); ?>" name="last_name" class="small">
+	</p>
 
+	<p>
+	        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(optional)'); ?></span></label>
+	        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
+		<label for="input-artist-show" class="input-label"><input type="checkbox" id="input-artist-show" name="artist_show"> <?php _e_psc('Please display my <i>Artist name</i> instead of my real name'); ?></label>
 	</p>
 
 	<p>
 		<div style="float: left; width: 170px">
-			<label class="input-label"><?php _e('Gender', PSC_PLUGIN); ?> <span><?php _e('(required)'); ?></span></label>
-			<input type="radio" name="input-sex" id="input-sex" value="m" checked> <?php _e('Male', PSC_PLUGIN); ?>
+			<label class="input-label"><?php _e_psc('Gender'); ?> <span><?php _e('(required)'); ?></span></label>
+			<input type="radio" name="input-sex" id="input-sex" value="m" checked> <?php _e_psc('Male'); ?>
 			<br />
-			<input type="radio" name="input-sex" id="input-sex" value="f"> <?php _e('Female', PSC_PLUGIN); ?>
+			<input type="radio" name="input-sex" id="input-sex" value="f"> <?php _e_psc('Female'); ?>
 		</div>
 
 		<div style="float: left; padding-left: 50px">
-			 <label class="input-label"><?php _e('Age', PSC_PLUGIN); ?> <span><?php _e('(required)'); ?></span></label>
+			 <label class="input-label"><?php _e_psc('Age'); ?> <span><?php _e('(required)'); ?></span></label>
 		<select id="input-age" class="small" name="age">
 	    <?php
 	    $cats = psc_get_category('school');
@@ -51,19 +55,19 @@
 	</p>
 
 	<p>
-		<label for="input-email" class="input-label"><?php _e('Enter Your Email', PSC_PLUGIN); ?> <span><?php _e('(required)'); ?></span></label>
-		<input type="email" id="input-email" placeholder="<?php _e('Your Email Address', PSC_PLUGIN); ?>" name="email" class="input-large">
+		<label for="input-email" class="input-label"><?php _e_psc('Enter Your Email'); ?> <span><?php _e('(required)'); ?></span></label>
+		<input type="email" id="input-email" placeholder="<?php _e_psc('Your Email Address'); ?>" name="email" class="input-large">
 	</p>
 
 <!--
-	<h4><?php _e('Please enter informations Your School/University', PSC_PLUGIN); ?></h4>
+	<h4><?php _e_psc('Please enter informations Your School/University'); ?></h4>
 -->
 
 	<p>
-		<label for="input-school" class="input-label"><?php _e('School Name', PSC_PLUGIN); ?></label>
+		<label for="input-school" class="input-label"><?php _e_psc('School Name'); ?></label>
 		<select id="input-school" name="school" class="name">
-			<option value=""><?php _e('- Select your School -'); ?></option>
-			<option value="NA"><?php _e('Not applicable'); ?></option>
+			<option value=""><?php _e_psc('- Select your School -'); ?></option>
+			<option value="NA"><?php _e_psc('Not applicable'); ?></option>
 	    <?php
 	    $cats = psc_get_category('school');
 	    foreach($cats as $cat) {
@@ -74,9 +78,9 @@
 	</p>
 <!--
 	<p>
-		<label for="input-classname" class="input-label"><?php _e('Class Name', PSC_PLUGIN); ?></label>
+		<label for="input-classname" class="input-label"><?php _e_psc('Class Name'); ?></label>
 		<select id="input-classname" name="class_name" class="name">
-			<option value=""><?php _e('- Select your Class Name -'); ?></option>
+			<option value=""><?php _e_psc('- Select your Class Name -'); ?></option>
 	    <?php
 	    $cats = psc_get_category('class_name');
 	    foreach($cats as $cat) {
@@ -90,14 +94,14 @@
 	<br />
 
 	<p>
-		<label for="input-project-name" class="input-label"><?php _e('Project Name', PSC_PLUGIN); ?></label>
-		<input type="text" maxlength="30" id="input-project-name" placeholder="<?php _e('Project Name', PSC_PLUGIN); ?>" name="project">
+		<label for="input-project-name" class="input-label"><?php _e_psc('Project Name'); ?></label>
+		<input type="text" maxlength="30" id="input-project-name" placeholder="<?php _e_psc('Project Name'); ?>" name="project">
 	</p>
 
 	<p>
-		<label for="input-project-category" class="input-label"><?php _e('Project Category', PSC_PLUGIN); ?></label>
+		<label for="input-project-category" class="input-label"><?php _e_psc('Project Category'); ?></label>
 		<select id="input-project-category" name="category" class="name">
-			<option value=""><?php _e('- Select your Category -'); ?></option>
+			<option value=""><?php _e_psc('- Select your Category -'); ?></option>
 	    <?php
 	    $cats = psc_get_category('project');
 	    foreach($cats as $cat) {
@@ -108,7 +112,7 @@
 	</p>
 
 	<p>
-		<label for="dropfile" class="input-label"><?php _e('Upload your image', PSC_PLUGIN); ?></label>
+		<label for="dropfile" class="input-label"><?php _e_psc('Upload your image'); ?></label>
 
 		<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile" style="width: 400px">
 			<input type="hidden" id="hidden-participant" name="participant" value="">
@@ -116,25 +120,25 @@
 	</p>
 
 	<p>
-		<label for="input-project-description" class="input-label"><?php _e('Project Description', PSC_PLUGIN); ?></label>
-		<textarea id="input-project-description" placeholder="<?php _e('Project Description', PSC_PLUGIN); ?>" name="category"></textarea>
+		<label for="input-project-description" class="input-label"><?php _e_psc('Project Description'); ?></label>
+		<textarea id="input-project-description" placeholder="<?php _e_psc('Project Description'); ?>" name="category"></textarea>
 	</p>
 
 	</div>
 
 	<p>                                        
 <!--	
-		<label for="input-rules" class="input-label"><input type="checkbox" id="input-rules" name="agree_rule"> <?php _e('I Accept contest rules', PSC_PLUGIN); ?></label>
+		<label for="input-rules" class="input-label"><input type="checkbox" id="input-rules" name="agree_rule"> <?php _e_psc('I Accept contest rules'); ?></label>
 -->
-		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php _e('I Accept the terms and conditions in regards to this entry.', PSC_PLUGIN); ?></label>
+		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php _e_psc('I Accept the terms and conditions in regards to this entry.'); ?></label>
 <br />
-		<label for="input-mail-site" class="input-label"><input type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __('I would like to receive the monthly <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> <a target="_new" href="http://charlesbombardier.us5.list-manage2.com/subscribe?u=2482d3d37ec5b825819c9f81b&id=4beaff647a">Newsletters</a>.', PSC_PLUGIN); ?></label>
+		<label for="input-mail-site" class="input-label"><input type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the monthly <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> <a target="_new" href="http://charlesbombardier.us5.list-manage2.com/subscribe?u=2482d3d37ec5b825819c9f81b&id=4beaff647a">Newsletters</a>.'); ?></label>
 <br />
-		<label for="input-mail-contest" class="input-label"><input type="checkbox" id="input-mail-contest" name="agree_mail_contest"> <?php _e('I Accept to be notified by e-mail regarding my concept idea', PSC_PLUGIN); ?></label>
+		<label for="input-mail-contest" class="input-label"><input type="checkbox" id="input-mail-contest" name="agree_mail_contest"> <?php _e_psc('I Accept to be notified by e-mail regarding my concept idea'); ?></label>
 
 	</p>
 
-	<button id="register-button" class="readmore" style="display:none"><?php _e('Submit', PSC_PLUGIN); ?></button>
+	<button id="register-button" class="readmore" style="display:none"><?php _e_psc('Submit'); ?></button>
 
 </div>
 
@@ -152,7 +156,7 @@
 		</div>
 
 		<div class="tb-modal-footer">
-			<div class="tb-pull-right"><button type="button" id="btnClose" class="tb-btn tb-btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e('Close', PSC_PLUGIN); ?></button></div>
+			<div class="tb-pull-right"><button type="button" id="btnClose" class="tb-btn tb-btn-danger" data-dismiss="modal" aria-hidden="true"><?php _e_psc('Close'); ?></button></div>
 		</div>
 	</div>
 </div>
@@ -247,6 +251,9 @@ jQuery('#register-button').on('click', function() {
 		email: jQuery("#input-email").val(),
 		first_name: jQuery("#input-first-name").val(),
 		last_name: jQuery("#input-last-name").val(),
+		artist: jQuery("#input-artist").val(),
+		artist_show: jQuery("#input-artist-show").is(':checked'),
+		last_name: jQuery("#input-last-name").val(),
 		sex: jQuery("#input-sex").val(),
 		age: jQuery("#input-age").val(),
 		school: jQuery("#input-school").val(),
@@ -266,7 +273,7 @@ jQuery('#register-button').on('click', function() {
 			if (data.status == 'ok') {
 
 				jQuery(".tb-close").remove();
-				msg = '<?php _e('Thanks for your subscription, we will contact you by email shortly!', PSC_PLUGIN); ?>';
+				msg = '<?php _e_psc('Thanks for your subscription, we will contact you by email shortly!'); ?>';
 
 				jQuery("#btnClose").on("click", function() {
 					window.location.href="/imagine";
@@ -274,7 +281,7 @@ jQuery('#register-button').on('click', function() {
 
 
 				jQuery("#registerModal").modal('show');
-				jQuery("#modal-title").html('<?php _e('Registration', PSC_PLUGIN); ?>');
+				jQuery("#modal-title").html('<?php _e_psc('Registration'); ?>');
 				jQuery("#modal-body").html(msg);
 
 
@@ -289,7 +296,7 @@ jQuery('#register-button').on('click', function() {
 				msg += '</ul>';
 
 				jQuery("#registerModal").modal('show');
-				jQuery("#modal-title").html('<?php _e('Please fix the following error(s):', PSC_PLUGIN); ?>');
+				jQuery("#modal-title").html('<?php _e_psc('Please fix the following error(s):'); ?>');
 				jQuery("#modal-body").html(msg);
 
 			}

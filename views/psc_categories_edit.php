@@ -8,7 +8,7 @@ if ($item) {
 
 <div class="wrap">
 
-	<h2><?php _e('Photos Contest - Categories', PSC_PLUGIN); ?></h2>
+	<h2><?php _e_psc('Photos Contest - Categories'); ?></h2>
 
 	<form name="category" id="category" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 
@@ -18,7 +18,7 @@ if ($item) {
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Name', PSC_PLUGIN); ?>
+					<?php _e_psc('Name'); ?>
 				</th>
 				<td>
 					<input type="text" size="30" name="category_name" value="<?php echo $info['category_name']; ?>" />
@@ -27,7 +27,7 @@ if ($item) {
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Description', PSC_PLUGIN); ?>
+					<?php _e_psc('Description'); ?>
 				</th>
 				<td>
 					<textarea cols="80" rows="5" name="category_desc"><?php echo esc_textarea($info['category_desc']); ?></textarea>
@@ -36,7 +36,7 @@ if ($item) {
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e('Type', PSC_PLUGIN); ?>
+					<?php _e_psc('Type'); ?>
 				</th>
 				<td>
 					<select name="category_type">

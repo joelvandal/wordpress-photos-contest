@@ -65,7 +65,11 @@
 </style>
 
 <?php
-$item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+if ($item['artist_show'] && !empty($item['artist'])) {
+    $item['full_name'] = $item['artist'];
+} else {
+    $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+}
 ?>
 
 <?php if (!wp_is_mobile()): ?>
@@ -73,7 +77,7 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 	<div class="tb-modal-content">
 		<div class="tb-modal-header">
 			<button type="button" class="tb-close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<div class="tb-h3"><?php echo sprintf(__('%s created by %s', PSC_PLUGIN), $item['project_name'], $item['full_name']) ; ?></div>
+			<div class="tb-h3"><?php echo sprintf(__psc('%s created by %s'), $item['project_name'], $item['full_name']) ; ?></div>
 		</div>
 		<div class="tb-modal-body tb-overflow-visible">
 <?php endif; ?>
@@ -85,7 +89,9 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 						<tr><th>Name:</th><td><?php echo $item['full_name']; ?></td></tr>
 						<tr><th>Age:</th><td><?php echo $item['age']; ?></td></tr>
 						<tr><th>School Name:</th><td><?php echo psc_get_school($item['school']); ?></td></tr>
+<!--
 						<tr><th>Class Name:</th><td><?php echo psc_get_class($item['class_name']); ?></td></tr>
+-->
 
 						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
 						<tr><th>Category:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
@@ -101,9 +107,9 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 
 			<div class="tb-alert tb-alert-warning">
 				<div class="tb-text-center">
-				<?php echo sprintf(__('You already voted using %s!', PSC_PLUGIN), $email); ?>
+				<?php echo sprintf(__psc('You already voted using %s!'), $email); ?>
 <br /><br />
-				<button class="tb-btn tb-btn-warning" id="resetVote"><?php _e('Use a different Email', PSC_PLUGIN); ?></button>
+				<button class="tb-btn tb-btn-warning" id="resetVote"><?php _e_psc('Use a different Email'); ?></button>
 				</div>
 			</div>
 </div>
@@ -113,15 +119,15 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 			<div class="tb-row">
 <div class="tb-col-lg-3"></div>
 				<div class="tb-col-lg-6 tb-text-center">
-				<a class="readmore" id="closeVote" class="tb-close" data-dismiss="modal" aria-hidden="true"><span><?php _e('Close', PSC_PLUGIN); ?></span></a>
-				<a class="readmore" id="showVote"><span><?php _e('Vote for this participant', PSC_PLUGIN); ?></span></a>
+				<a class="readmore" id="closeVote" class="tb-close" data-dismiss="modal" aria-hidden="true"><span><?php _e_psc('Close'); ?></span></a>
+				<a class="readmore" id="showVote"><span><?php _e_psc('Vote for this participant'); ?></span></a>
 				</div>
  			</div>
 			<?php endif; ?>
 		<?php else: ?>
 			<div class="tb-alert tb-alert-danger">
 				<div class="tb-text-center">
-					<b><?php _e('Vote is currently closed!', PSC_PLUGIN); ?></b>
+					<b><?php _e_psc('Vote is currently closed!'); ?></b>
 				</div>
 			</div>
 		<?php endif; ?>
@@ -135,7 +141,7 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 						<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 						<tbody>
 							<tr>
-								<th><label for="voter_email"><?php _e('Enter your Email:', PSC_PLUGIN); ?></label></th>
+								<th><label for="voter_email"><?php _e_psc('Enter your Email:'); ?></label></th>
 <?php if (wp_is_mobile()): ?>
 							</tr>
 							<tr>
@@ -144,7 +150,7 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 							</tr>
 		
 							<tr>
-								<th style="width: 150px; vertical-align: middle"><label for="voter_name"><?php _e('Enter your Name:', PSC_PLUGIN); ?></label></th>
+								<th style="width: 150px; vertical-align: middle"><label for="voter_name"><?php _e_psc('Enter your Name:'); ?></label></th>
 <?php if (wp_is_mobile()): ?>
 							</tr>
 							<tr>
@@ -154,8 +160,8 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 						</tbody>
 						</table>
 						<div class="tb-pull-right">
-							<button class="tb-btn tb-btn-sm tb-btn-success" id="sendVote"><?php _e('Vote Now', PSC_PLUGIN); ?></button>
-							<button class="tb-btn tb-btn-sm tb-btn-danger" id="cancelVote"><?php _e('Cancel', PSC_PLUGIN); ?></button>
+							<button class="tb-btn tb-btn-sm tb-btn-success" id="sendVote"><?php _e_psc('Vote Now'); ?></button>
+							<button class="tb-btn tb-btn-sm tb-btn-danger" id="cancelVote"><?php _e_psc('Cancel'); ?></button>
 						</div>
 <p><br /></p>
 						<div style="margin-top: 10px"><br /></div>
@@ -174,7 +180,7 @@ $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $i
 		<div class="tb-modal-footer">
 <?php endif; ?>
 			<div class="share tb-text-center">
-				<b><?php echo __("Share this picture on", PSC_PLUGIN); ?></b>
+				<b><?php echo __psc("Share this picture on"); ?></b>
 <?php if (wp_is_mobile()): ?><br /><?php endif; ?>
 				<li class="share-item">
 					<a data-network="facebook" class="share-link ico-facebook" href="#" rel="nofollow">Facebook</a>
@@ -265,7 +271,7 @@ jQuery('#sendVote').on('click', function() {
 		params,
 		function(data) {
 			if (data.status == 'ok') {
-				jQuery(".voteMessage").html('<div class="tb-alert tb-alert-info"><?php esc_html_e(__("Thanks! Please check your email to validate your vote!", PSC_PLUGIN)); ?></div>').show();
+				jQuery(".voteMessage").html('<div class="tb-alert tb-alert-info"><?php esc_html_e_psc(__psc("Thanks! Please check your email to validate your vote!")); ?></div>').show();
 				jQuery('#voterDetails').hide();
 				jQuery('#div-desc').show();
 				jQuery('#div-desc2').show();
@@ -309,7 +315,7 @@ jQuery(".share-link").on('click', function() {
 			break;
 	}
 
-	window.open(url, '<?php echo __("Share", PSC_PLUGIN); ?>','scrollbars=yes,menubar=no,height=420,width=700,resizable=yes,toolbar=no,status=no');
+	window.open(url, '<?php echo __psc("Share"); ?>','scrollbars=yes,menubar=no,height=420,width=700,resizable=yes,toolbar=no,status=no');
 	return false;
 });
 

@@ -1,6 +1,6 @@
 <div class="wrap">
 
-	<h2><?php _e('Photos Contest - Categories', PSC_PLUGIN); ?></h2>
+	<h2><?php _e_psc('Photos Contest - Categories'); ?></h2>
 
 <?php
 global $psc_category_types;
@@ -12,4 +12,4 @@ $my_table->display();
 </div>
 
 <br />
-<a href="?page=psc_categories&action=edit" class="button button-primary"><?php _e('Add a new item', PSC_PLUGIN); ?></a>
+<a href="?page=psc_categories&action=edit" class="button button-primary"><?php _e_psc('Add a new item'); ?></a>

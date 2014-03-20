@@ -12,8 +12,8 @@ class PSC_Table extends WP_List_Table {
 	global $status, $page;
 	
 	parent::__construct( array(
-				   'singular'  => __( 'item', PSC_PLUGIN ),     //singular name of the listed records
-				   'plural'    => __( 'items', PSC_PLUGIN ),   //plural name of the listed records
+				   'singular'  => __psc( 'item', PSC_PLUGIN ),     //singular name of the listed records
+				   'plural'    => __psc( 'items', PSC_PLUGIN ),   //plural name of the listed records
 				   'ajax'      => false        //does this table support ajax?
 				   ) );
 
@@ -27,7 +27,7 @@ class PSC_Table extends WP_List_Table {
 
 <form method="post">
   <input type="hidden" name="page" value="<?php echo $_REQUEST['page']; ?>" />
-  <?php $this->search_box(__('Search', PSC_PLUGIN), 'search_id'); ?>
+  <?php $this->search_box(__psc('Search', PSC_PLUGIN), 'search_id'); ?>
 
 <?php	
 	$this->display_tablenav( 'top' );
@@ -78,7 +78,7 @@ class PSC_Table extends WP_List_Table {
 	
 	if ( ! empty( $columns['cb'] ) ) {
 	    static $cb_counter = 1;
-	    $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __( 'Select All' ) . '</label>'
+	    $columns['cb'] = '<label class="screen-reader-text" for="cb-select-all-' . $cb_counter . '">' . __psc( 'Select All' ) . '</label>'
 	      . '<input id="cb-select-all-' . $cb_counter . '" type="checkbox" />';
 	    $cb_counter++;
 	}
@@ -222,14 +222,14 @@ class PSC_Table extends WP_List_Table {
 	?>
 
 	<?php if ($this->filter): ?>
-                <?php _e( 'Filter', PSC_PLUGIN ) ?>
+                <?php _e_psc( 'Filter', PSC_PLUGIN ) ?>
                 <select name="type">
-			<option value="" <?php if (!@$_REQUEST['type']) { echo 'selected'; } ?>><?php _e('All', PSC_PLUGIN); ?></option>
+			<option value="" <?php if (!@$_REQUEST['type']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
 <?php foreach($this->filter as $ctype => $cname): ?>
 			<option <?php if (@$_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
 <?php endforeach; ?>
                 </select>
-	<?php submit_button( __('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
+	<?php submit_button( __psc('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
 <?php endif; ?>
 <p class="search-box">
 
@@ -282,18 +282,18 @@ class PSC_Participants_Table extends PSC_Table {
     function get_columns(){
 	$columns = array(
 			 'cb'                   => '<input type="checkbox" />',
-			 'image'                => __('Image', PSC_PLUGIN),
-			 'name'                 => __('Name', PSC_PLUGIN),
-			 'email'                => __('Email', PSC_PLUGIN),
-			 'school'               => __('School', PSC_PLUGIN),
-//			 'class_name'           => __('Class Name', PSC_PLUGIN),
-			 'project_name'         => __('Project Name', PSC_PLUGIN),
-			 'project_category'     => __('Category', PSC_PLUGIN),
-//			 'project_description'  => __('Description', PSC_PLUGIN),
-//			 'views'                => __('Views', PSC_PLUGIN),
-			 'votes'                => __('Votes', PSC_PLUGIN),
-			 'subscribe_date'       => __('Subscribe', PSC_PLUGIN),
-			 'status'               => __('Status', PSC_PLUGIN)
+			 'image'                => __psc('Image', PSC_PLUGIN),
+			 'name'                 => __psc('Name', PSC_PLUGIN),
+			 'email'                => __psc('Email', PSC_PLUGIN),
+			 'school'               => __psc('School', PSC_PLUGIN),
+//			 'class_name'           => __psc('Class Name', PSC_PLUGIN),
+			 'project_name'         => __psc('Project Name', PSC_PLUGIN),
+			 'project_category'     => __psc('Category', PSC_PLUGIN),
+//			 'project_description'  => __psc('Description', PSC_PLUGIN),
+//			 'views'                => __psc('Views', PSC_PLUGIN),
+			 'votes'                => __psc('Votes', PSC_PLUGIN),
+			 'subscribe_date'       => __psc('Subscribe', PSC_PLUGIN),
+			 'status'               => __psc('Status', PSC_PLUGIN)
 		         );
 	return $columns;
     }
@@ -311,12 +311,12 @@ class PSC_Participants_Table extends PSC_Table {
 	    break;
 
 	 case 'status':
-	    return $item['approved'] ? __('Accepted', PSC_PLUGIN) : __('Not Approved', PSC_PLUGIN);
+	    return $item['approved'] ? __psc('Accepted', PSC_PLUGIN) : __psc('Not Approved', PSC_PLUGIN);
 	    break;
 
 	 case 'views':
 	 case 'votes':
-	    return $item[ $column_name ] ? $item[ $column_name ] : __('N/A', PSC_PLUGIN);
+	    return $item[ $column_name ] ? $item[ $column_name ] : __psc('N/A', PSC_PLUGIN);
 	    break;
 
 	 case 'subscribe_date':
@@ -328,7 +328,7 @@ class PSC_Participants_Table extends PSC_Table {
 	    if (isset($cats[$item[$column_name]])) {
 		$res = $cats[$item[$column_name]];
 	    } else {
-		$res = __('Undefined School', PSC_PLUGIN);
+		$res = __psc('Undefined School', PSC_PLUGIN);
 	    }
 	    return $res;
 	    
@@ -337,7 +337,7 @@ class PSC_Participants_Table extends PSC_Table {
 	    if (isset($cats[$item['class_name']])) {
 		$res = $cats[$item['class_name']];
 	    } else {
-		$res = __('Undefined Class Name', PSC_PLUGIN);
+		$res = __psc('Undefined Class Name', PSC_PLUGIN);
 	    }
 	    return $res;
 	    break;
@@ -378,11 +378,11 @@ class PSC_Participants_Table extends PSC_Table {
 
     function column_name($item) {    
 	$actions = array(
-			 'edit'     => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'edit',$item['id'], __('Edit', PSC_PLUGIN)),
-			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __('Approve', PSC_PLUGIN)),
-			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __('Reject', PSC_PLUGIN)),
-			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
-			 'view'     => sprintf('<a data-id="%s" class="view" href="#">%s</a>', $item['id'], __('Preview', PSC_PLUGIN)),
+			 'edit'     => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'edit',$item['id'], __psc('Edit', PSC_PLUGIN)),
+			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __psc('Approve', PSC_PLUGIN)),
+			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __psc('Reject', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __psc('Delete', PSC_PLUGIN)),
+			 'view'     => sprintf('<a data-id="%s" class="view" href="#">%s</a>', $item['id'], __psc('Preview', PSC_PLUGIN)),
 			 );
 	
 	if ($item['approved']) {
@@ -396,9 +396,9 @@ class PSC_Participants_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => __('Delete', PSC_PLUGIN),
-			 'approve'   => __('Approve', PSC_PLUGIN),
-			 'unapprove' => __('Reject', PSC_PLUGIN)
+			 'delete'    => __psc('Delete', PSC_PLUGIN),
+			 'approve'   => __psc('Approve', PSC_PLUGIN),
+			 'unapprove' => __psc('Reject', PSC_PLUGIN)
 		         );
 	return $actions;
     }
@@ -433,13 +433,13 @@ class PSC_Votes_Table extends PSC_Table {
     function get_columns(){
 	$columns = array(
 			 'cb'                   => '<input type="checkbox" />',
-			 'voter_name'           => __('Voter Name', PSC_PLUGIN),
-			 'voter_email'          => __('Voter Email', PSC_PLUGIN),
-			 'name'                 => __('Participant Name', PSC_PLUGIN),
-			 'project_name'         => __('Project Name', PSC_PLUGIN),
-			 'voter_ip'             => __('IP Address', PSC_PLUGIN),
-			 'vote_date'            => __('Vote Date', PSC_PLUGIN),
-			 'status'               => __('Status', PSC_PLUGIN)
+			 'voter_name'           => __psc('Voter Name', PSC_PLUGIN),
+			 'voter_email'          => __psc('Voter Email', PSC_PLUGIN),
+			 'name'                 => __psc('Participant Name', PSC_PLUGIN),
+			 'project_name'         => __psc('Project Name', PSC_PLUGIN),
+			 'voter_ip'             => __psc('IP Address', PSC_PLUGIN),
+			 'vote_date'            => __psc('Vote Date', PSC_PLUGIN),
+			 'status'               => __psc('Status', PSC_PLUGIN)
 		         );
 	return $columns;
     }
@@ -455,7 +455,7 @@ class PSC_Votes_Table extends PSC_Table {
 	    break;
 
 	 case 'status':
-	    return $item['approved'] ? __('Accepted', PSC_PLUGIN) : __('Not Approved', PSC_PLUGIN);
+	    return $item['approved'] ? __psc('Accepted', PSC_PLUGIN) : __psc('Not Approved', PSC_PLUGIN);
 	    
 	 case 'vote_date':
 	    return psc_format_datetime($item[ $column_name ]);
@@ -478,9 +478,9 @@ class PSC_Votes_Table extends PSC_Table {
 
     function column_voter_name($item) {    
 	$actions = array(
-			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __('Approve', PSC_PLUGIN)),
-			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __('Reject', PSC_PLUGIN)),
-			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN))
+			 'accept'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'approve',$item['id'], __psc('Approve', PSC_PLUGIN)),
+			 'reject'   => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'unapprove',$item['id'], __psc('Reject', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __psc('Delete', PSC_PLUGIN))
 			 );
 			 
 	if ($item['approved']) {
@@ -494,9 +494,9 @@ class PSC_Votes_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => __('Delete', PSC_PLUGIN),
-			 'approve'   => __('Approve', PSC_PLUGIN),
-			 'unapprove' => __('Reject', PSC_PLUGIN)
+			 'delete'    => __psc('Delete', PSC_PLUGIN),
+			 'approve'   => __psc('Approve', PSC_PLUGIN),
+			 'unapprove' => __psc('Reject', PSC_PLUGIN)
 		         );
 	return $actions;
     }
@@ -537,9 +537,9 @@ class PSC_Categories_Table extends PSC_Table {
     function get_columns(){
 	$columns = array(
 			 'cb'                   => '<input type="checkbox" />',
-			 'category_name'        => __('Name', PSC_PLUGIN),
-			 'category_desc'        => __('Description', PSC_PLUGIN),
-			 'category_type'        => __('Type', PSC_PLUGIN),
+			 'category_name'        => __psc('Name', PSC_PLUGIN),
+			 'category_desc'        => __psc('Description', PSC_PLUGIN),
+			 'category_type'        => __psc('Type', PSC_PLUGIN),
 		         );
 	return $columns;
     }
@@ -570,8 +570,8 @@ class PSC_Categories_Table extends PSC_Table {
 
     function column_category_name($item) {    
 	$actions = array(
-			 'edit'     => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'edit',$item['id'], __('Edit', PSC_PLUGIN)),
-			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __('Delete', PSC_PLUGIN)),
+			 'edit'     => sprintf('<a href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'edit',$item['id'], __psc('Edit', PSC_PLUGIN)),
+			 'delete'   => sprintf('<a class="delete" href="?page=%s&action=%s&item=%s">%s</a>', $_REQUEST['page'],'delete',$item['id'], __psc('Delete', PSC_PLUGIN)),
 			 );
 	
 	return sprintf('%1$s %2$s', $item['category_name'], $this->row_actions($actions) );
@@ -579,7 +579,7 @@ class PSC_Categories_Table extends PSC_Table {
 
     function get_bulk_actions() {    
 	$actions = array(
-			 'delete'    => __('Delete', PSC_PLUGIN),
+			 'delete'    => __psc('Delete', PSC_PLUGIN),
 		         );
 	return $actions;
     }

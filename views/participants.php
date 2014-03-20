@@ -1,5 +1,13 @@
 <style>
         .post-meta { display:none; }
+	.item-label {
+font-size: 18px;
+width: 207px;
+text-align: center;
+position: absolute;
+top: 145px;
+	}
+
 </style>
 
 <div id="gallery">
@@ -21,19 +29,20 @@ foreach($rows as $item) {
     $thumb = PSC_PATH . 'uploads/' . md5($item['email']) . '-thumb.png';
     
     if ($item['votes'] > 1) {
-	$title = sprintf(__("%s by %s %s (%d votes)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);
+	$title = sprintf(__psc("%s by %s %s (%d votes)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);
     } else {
-	$title = sprintf(__("%s by %s %s (%d vote)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);
+	$title = sprintf(__psc("%s by %s %s (%d vote)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);
     }
     
     echo '<div class="item' . (($i%4 == 0) ? ' last' : '') . '">';
     echo '<div class="item-image">';
     echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" title="' . $title . '">';
-    echo '<img class="portfolio" src="' . $thumb . '">';
+    echo '<img width=207 height=136 class="portfolio" src="' . $thumb . '">';
     echo '<span class="overlay"></span>';
     echo '</a>';
     echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" rel="participants"></a>';
     echo '</div> <!-- end .item-image -->';
+    echo '<div class="item-label">' . $item['project_name'] . '</div>';
     echo '</div> <!-- end .item -->';
 
     $i++;

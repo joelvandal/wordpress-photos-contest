@@ -54,51 +54,51 @@ function psc_ajax_details() {
 function psc_ajax_register() {
 
     $params = array();
-    $params['first_name'] = array('desc' => __("First Name"),
+    $params['first_name'] = array('desc' => __psc("First Name"),
 				  'required' => true,
 				  'type' => 'text',
 				  'minlength' => 2);
     
-    $params['last_name'] = array('desc' => __("Last Name"),
+    $params['last_name'] = array('desc' => __psc("Last Name"),
 				 'required' => true,
 				 'type' => 'text',
 				 'minlength' => 2);
 
-    $params['sex'] = array('desc' => __("Sex"),
+    $params['sex'] = array('desc' => __psc("Sex"),
 			   'required' => true,
 			   'type' => 'enum',
 			   'params' => array('m', 'f')
 			   );
     
-    $params['age'] = array('desc' => __("Age"),
+    $params['age'] = array('desc' => __psc("Age"),
 			   'required' => true,
 			   'type' => 'enum',
 			   'params' => range(6, 99)
 			   );
     
-    $params['school'] = array('desc' => __("School"),
+    $params['school'] = array('desc' => __psc("School"),
 			      'required' => true,
 			      'type' => 'text',
 			   );
 
     /*
-    $params['class_name'] = array('desc' => __("Class Name"),
+    $params['class_name'] = array('desc' => __psc("Class Name"),
 				  'required' => true,
 				  'type' => 'text',
 				  );
     */
     
-    $params['project_name'] = array('desc' => __("Project Name"),
+    $params['project_name'] = array('desc' => __psc("Project Name"),
 				  'required' => true,
 				  'type' => 'text',
 				  );
     
-    $params['project_cat'] = array('desc' => __("Project Category"),
+    $params['project_cat'] = array('desc' => __psc("Project Category"),
 				   'required' => true,
 				   'type' => 'text',
 				   );
     
-    $params['project_desc'] = array('desc' => __("Project Description"),
+    $params['project_desc'] = array('desc' => __psc("Project Description"),
 				    'required' => true,
 				    'type' => 'text',
 				    );
@@ -106,23 +106,23 @@ function psc_ajax_register() {
     $errors = array();
     
     if (!is_email($_REQUEST['email'])) {
-	$errors['valid_email'] = __("The Email address is not valid");
+	$errors['valid_email'] = __psc("The Email address is not valid");
     }
     
     foreach($params as $param => $arg) {
 	$val = isset($_REQUEST[$param]) ? $_REQUEST[$param] : false;
 	if (isset($arg['required']) && $arg['required'] && empty($val)) {
-	    $errors[$param] = sprintf(__("The field '%s' is mandatory"), $arg['desc']);
+	    $errors[$param] = sprintf(__psc("The field '%s' is mandatory"), $arg['desc']);
 	    continue;
 	}
 
 	if (isset($arg['minlength']) && strlen($val) < $arg['minlength']) {
-	    $errors[$param] = sprintf(__("The minimum length of '%s' must be of %d characters"), $arg['desc'], $arg['minlength']);
+	    $errors[$param] = sprintf(__psc("The minimum length of '%s' must be of %d characters"), $arg['desc'], $arg['minlength']);
 	    continue;
 	}
 	
 	if ($arg['type'] == 'enum' && !in_array($val, $arg['params'])) {
-	    $errors[$param] = sprintf(__("The specified value for '%s' is invalid"), $arg['desc']);
+	    $errors[$param] = sprintf(__psc("The specified value for '%s' is invalid"), $arg['desc']);
 	}
 	
     }
@@ -130,7 +130,7 @@ function psc_ajax_register() {
     if (!count($errors)) {
 	$res = psc_db_register($_REQUEST);
 	if (!$res) {
-	    $errors['email'] = __("The email is already registered");
+	    $errors['email'] = __psc("The email is already registered");
 	}
     }
     
@@ -158,11 +158,12 @@ function psc_db_register($data) {
 	return false;
     } 
     
-    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, age, sex, school, class_name, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" . 
-		 $data['email'] . "', '" . $data['first_name'] . "', '" . $data['last_name'] . "', '" . $data['age'] . "', '" . $data['sex'] . "', '" .
-		 $data['school'] . "', '" . $data['class_name'] . "', '" . 
-		 $data['project_name'] . "', '" . $data['project_cat'] . "', '" . $data['project_desc'] . "', '" .
-		 ($data['mail_site'] ? 1 : 0) . "', '" . ($data['mail_contest'] ? 1 : 0) . "', " . time() . ")");
+    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, artist, artist_show, age, sex, school, class_name, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" .
+		 @$data['email'] . "', '" . @$data['first_name'] . "', '" . @$data['last_name'] . "', '" . 
+		 @$data['artist'] . "', '" . (@$data['artist_show'] ? 1 : 0) . "', '" .
+		 @$data['age'] . "', '" . @$data['sex'] . "', '" . @$data['school'] . "', '" . @$data['class_name'] . "', '" . 
+		 @$data['project_name'] . "', '" . @$data['project_cat'] . "', '" . @$data['project_desc'] . "', '" .
+		 (@$data['mail_site'] ? 1 : 0) . "', '" . (@$data['mail_contest'] ? 1 : 0) . "', " . time() . ")");
     
     return true;
     
@@ -175,20 +176,20 @@ function psc_ajax_vote() {
     $name = isset($_REQUEST['name']) ? $_REQUEST['name'] : false;
 
     if (!$email) {
-	$errors['email'] = __('The Email field is mandatory', PSC_PLUGIN);
+	$errors['email'] = __psc('The Email field is mandatory');
     } elseif (!is_email($email)) {
-	$errors['email'] = __('The Email is invalid', PSC_PLUGIN);
+	$errors['email'] = __psc('The Email is invalid');
     } else {
 	$errors = array();
 	$status = psc_get_vote_status($email, $id);
 	
 	if ($status) {
-	    $errors['email'] = __("The Email is already registered", PSC_PLUGIN);
+	    $errors['email'] = __psc("The Email is already registered");
 	}
     }
 
     if (!$name) {
-	$errors['name'] = __('The Name field is mandatory', PSC_PLUGIN);
+	$errors['name'] = __psc('The Name field is mandatory');
     }
     
     $output = array('status' => 'error', 'error' => $errors);
@@ -218,7 +219,7 @@ function psc_ajax_confirm_vote() {
     
     $msg = false;
     if (!isset($_REQUEST['code']) || empty($_REQUEST['code'])) {
-	$msg = __('Invalid Code', PSC_PLUGIN);
+	$msg = __psc('Invalid Code');
     } 
     
     if (!$msg) {
@@ -226,13 +227,13 @@ function psc_ajax_confirm_vote() {
 	$item = $wpdb->get_row($sql);
 	
 	if (!isset($item->id)) {
-	    $msg = __('Invalid Code', PSC_PLUGIN);
+	    $msg = __psc('Invalid Code');
 	}
     }
     
     if (!$msg) {
 	$wpdb->query("UPDATE " . PSC_TABLE_VOTES . " SET approved=1 WHERE vote_code = '" . esc_sql($_REQUEST['code']) . "'");
-	$msg = __('Thanks, your vote is now approved!', PSC_PLUGIN);
+	$msg = __psc('Thanks, your vote is now approved!');
     }
     
     ob_start();    
