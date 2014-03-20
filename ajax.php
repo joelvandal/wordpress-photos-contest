@@ -73,7 +73,7 @@ function psc_ajax_register() {
     $params['age'] = array('desc' => __("Age"),
 			   'required' => true,
 			   'type' => 'enum',
-			   'params' => range(6, 21)
+			   'params' => range(6, 99)
 			   );
     
     $params['school'] = array('desc' => __("School"),
@@ -81,10 +81,12 @@ function psc_ajax_register() {
 			      'type' => 'text',
 			   );
 
+    /*
     $params['class_name'] = array('desc' => __("Class Name"),
 				  'required' => true,
 				  'type' => 'text',
 				  );
+    */
     
     $params['project_name'] = array('desc' => __("Project Name"),
 				  'required' => true,
@@ -104,11 +106,11 @@ function psc_ajax_register() {
     $errors = array();
     
     if (!is_email($_REQUEST['email'])) {
-	$errors['valid_email'] = sprintf(__("The field '%s' is mandatory"), $arg['desc']);
+	$errors['valid_email'] = __("The Email address is not valid");
     }
     
     foreach($params as $param => $arg) {
-	$val = $_REQUEST[$param];
+	$val = isset($_REQUEST[$param]) ? $_REQUEST[$param] : false;
 	if (isset($arg['required']) && $arg['required'] && empty($val)) {
 	    $errors[$param] = sprintf(__("The field '%s' is mandatory"), $arg['desc']);
 	    continue;
@@ -135,7 +137,7 @@ function psc_ajax_register() {
     $output = array('status' => 'error', 'error' => $errors);
 
     if (!count($errors)) {
-	psc_email_register($REQUEST['email']);
+	psc_email_register($_REQUEST['email']);
 	$output = array('status' => 'ok');
     }
     

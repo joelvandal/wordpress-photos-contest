@@ -64,26 +64,33 @@
 }
 </style>
 
+<?php
+$item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+?>
+
+<?php if (!wp_is_mobile()): ?>
 <div id="modal-window" class="tb-modal-dialog">
 	<div class="tb-modal-content">
 		<div class="tb-modal-header">
 			<button type="button" class="tb-close" data-dismiss="modal" aria-hidden="true">&times;</button>
-			<div class="tb-h3"><?php _e('Information about this participant', PSC_PLUGIN); ?></div>
+			<div class="tb-h3"><?php echo sprintf(__('%s created by %s', PSC_PLUGIN), $item['project_name'], $item['full_name']) ; ?></div>
 		</div>
 		<div class="tb-modal-body tb-overflow-visible">
-
+<?php endif; ?>
 			<div class="tb-row">
 				<div class="tb-col-xs-12 tb-col-sm-12 tb-col-lg-5 tb-col-md-5">
 	
 					<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 					<tbody>
-						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
-						<tr><th>Project Type:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
-						<tr><th>Name:</th><td><?php echo ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name']))); ?></td></tr>
+						<tr><th>Name:</th><td><?php echo $item['full_name']; ?></td></tr>
 						<tr><th>Age:</th><td><?php echo $item['age']; ?></td></tr>
 						<tr><th>School Name:</th><td><?php echo psc_get_school($item['school']); ?></td></tr>
 						<tr><th>Class Name:</th><td><?php echo psc_get_class($item['class_name']); ?></td></tr>
-						<tr id="div-desc"><th>Description:</th><td><?php echo $item['project_description']; ?></td></tr>
+
+						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
+						<tr><th>Category:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
+						<tr id="div-desc"><th colspan=2>Description:</th></tr>
+						<tr id="div-desc2"><td colspan=2><?php echo $item['project_description']; ?></td></tr>
 					</tbody>
 					</table>
 
@@ -103,11 +110,13 @@
 
 <?php else: ?>
 
-			<div class="tb-text-center">
-				<button class="tb-btn tb-btn-primary" id="showVote"><?php _e('Vote for this participant', PSC_PLUGIN); ?></button>
-			</div>
-
-
+			<div class="tb-row">
+<div class="tb-col-lg-3"></div>
+				<div class="tb-col-lg-6 tb-text-center">
+				<a class="readmore" id="closeVote" class="tb-close" data-dismiss="modal" aria-hidden="true"><span><?php _e('Close', PSC_PLUGIN); ?></span></a>
+				<a class="readmore" id="showVote"><span><?php _e('Vote for this participant', PSC_PLUGIN); ?></span></a>
+				</div>
+ 			</div>
 			<?php endif; ?>
 		<?php else: ?>
 			<div class="tb-alert tb-alert-danger">
@@ -116,31 +125,40 @@
 				</div>
 			</div>
 		<?php endif; ?>
+			<br />
 
 					<div style="display: none" class="voteMessage"></div>
 		
 <?php if (psc_is_vote_open()): ?>
 					<div id="voterDetails" style="display: none;" class="tb-text-left">
 					<h4 class="tb-text-left">Vote for this participant:</h4>
-
 						<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 						<tbody>
 							<tr>
-								<th style="width: 150px; vertical-align: middle"><label for="voter_email"><?php _e('Enter your Email:', PSC_PLUGIN); ?></label></th>
+								<th><label for="voter_email"><?php _e('Enter your Email:', PSC_PLUGIN); ?></label></th>
+<?php if (wp_is_mobile()): ?>
+							</tr>
+							<tr>
+<?php endif; ?>		
 								<td><div class="tb-form-input" id="form_email"><input type="text" class="tb-form-control" id="voter_email" placeholder="Enter email"></div></td>
 							</tr>
 		
 							<tr>
 								<th style="width: 150px; vertical-align: middle"><label for="voter_name"><?php _e('Enter your Name:', PSC_PLUGIN); ?></label></th>
+<?php if (wp_is_mobile()): ?>
+							</tr>
+							<tr>
+<?php endif; ?>		
 								<td><div class="tb-form-input" id="form_name"><input type="text" class="tb-form-control" id="voter_name" placeholder="Enter name"></div></td>
 							</tr>
 						</tbody>
 						</table>
-		
 						<div class="tb-pull-right">
 							<button class="tb-btn tb-btn-sm tb-btn-success" id="sendVote"><?php _e('Vote Now', PSC_PLUGIN); ?></button>
 							<button class="tb-btn tb-btn-sm tb-btn-danger" id="cancelVote"><?php _e('Cancel', PSC_PLUGIN); ?></button>
 						</div>
+<p><br /></p>
+						<div style="margin-top: 10px"><br /></div>
 					</div>
 <?php endif; ?>
 
@@ -152,9 +170,12 @@
 			</div>
 		</div>
 
+<?php if (!wp_is_mobile()): ?>
 		<div class="tb-modal-footer">
+<?php endif; ?>
 			<div class="share tb-text-center">
 				<b><?php echo __("Share this picture on", PSC_PLUGIN); ?></b>
+<?php if (wp_is_mobile()): ?><br /><?php endif; ?>
 				<li class="share-item">
 					<a data-network="facebook" class="share-link ico-facebook" href="#" rel="nofollow">Facebook</a>
 				</li>
@@ -164,20 +185,23 @@
 				<li class="share-item">
 					<a data-network="google" class="share-link ico-google" href="#" rel="nofollow">Google+</a>
 				</li>
+<?php if (wp_is_mobile()): ?><br /><br /><?php endif; ?>
 				<li class="share-item">
 					<input type="text" readonly value="<?php echo psc_shorturl($item['id']); ?>">
 				</li>
 			</div>
 		</div>
+<?php if (!wp_is_mobile()): ?>
 	</div>
 </div>
-
+<?php endif; ?>
 <script>
 
 <?php if (psc_is_vote_open()): ?>
 
 <?php if ($email = psc_get_vote_email()): ?>
 jQuery('#showVote').hide();
+jQuery('#closeVote').hide();
 <?php endif; ?>
 
 jQuery('#resetVote').on('click', function() {
@@ -194,6 +218,7 @@ jQuery('#resetVote').on('click', function() {
 				jQuery("#voter_email").val('<?php echo $email; ?>'),
 				jQuery('#alreadyVoted').hide();
 				jQuery('#showVote').hide();
+				jQuery('#closeVote').hide();
 				jQuery('#voterDetails').show();
 			}
 		},
@@ -203,16 +228,24 @@ jQuery('#resetVote').on('click', function() {
 
 jQuery('#showVote').on('click', function() {
 	jQuery('#div-desc').hide();
+	jQuery('#div-desc2').hide();
 	jQuery('#showVote').hide();
+	jQuery('#closeVote').hide();
 	jQuery('#voterDetails').show();
 	jQuery(".voteMessage").hide();
 });
 
 jQuery('#cancelVote').on('click', function() {
 	jQuery('#div-desc').show();
+	jQuery('#div-desc2').show();
 	jQuery('#showVote').show();
+	jQuery('#closeVote').show();
 	jQuery('#voterDetails').hide();
 	jQuery(".voteMessage").hide();
+});
+
+jQuery('#closeVote').on('click', function() {
+//	jQuery('#modal-window').modal('hide');
 });
 
 jQuery('#sendVote').on('click', function() {
@@ -235,6 +268,7 @@ jQuery('#sendVote').on('click', function() {
 				jQuery(".voteMessage").html('<div class="tb-alert tb-alert-info"><?php esc_html_e(__("Thanks! Please check your email to validate your vote!", PSC_PLUGIN)); ?></div>').show();
 				jQuery('#voterDetails').hide();
 				jQuery('#div-desc').show();
+				jQuery('#div-desc2').show();
 			} else {
 				var msg = '';
 

@@ -106,10 +106,10 @@ function psc_enqueue_admin_scripts() {
     wp_register_style('jquery-ui-datetimepicker', PSC_PATH . '/css/jquery.datetimepicker.css');
     wp_enqueue_style('jquery-ui-datetimepicker');
 
-    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.min.prefixed.css');
+    wp_register_style('bootstrap', PSC_PATH . '/css/bootstrap.prefixed.css');
     wp_enqueue_style('bootstrap');
     
-    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.min.prefixed.js');
+    wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.prefixed.js');
     wp_enqueue_script('bootstrap');
     
 }
@@ -163,7 +163,8 @@ function psc_add_options() {
     
     $page = isset($_GET['page']) ? $_GET['page'] : false;
     $action = isset($_GET['action']) ? $_GET['action'] : false;
-    if ($action !== false) return false;
+
+    if (in_array($action, array('edit'))) return false;
     
     switch($page) {
      case 'psc_participants':
@@ -580,7 +581,12 @@ function psc_parse_query() {
 
     if(isset($wp_query->query_vars['participant']) && $wp_query->query_vars['participant'] != ''){
 	add_filter( 'jetpack_open_graph_tags', 'psc_open_graph' );
+	if (wp_is_mobile()) {
+	    add_filter( 'the_title', 'psc_show_participant_title');
+	}
 	add_filter( 'the_content', 'psc_show_participant' );
+//	add_filter( 'single_template', 'psc_show_participant_body');
+	
     }
     
     if(isset($wp_query->query_vars['vote_confirm']) && $wp_query->query_vars['vote_confirm'] != ''){
@@ -630,9 +636,43 @@ jQuery(document).ready(function(e) {
     
 }
 
+function psc_show_participant_title() {
+
+    global $wpdb;
+    $id = $_GET['participant'];
+    
+    $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($id);
+    $item = $wpdb->get_row($sql, ARRAY_A);
+    
+    $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+
+    return sprintf(__('%s created by %s', PSC_PLUGIN), $item['project_name'], $item['full_name']);
+}
+
 function psc_show_participant() {
+    
+//    remove_filter( current_filter(), __FUNCTION__ );
     $id = $_GET['participant'];
     $link =  PSC_PATH . 'ajax.php?action=details&id=' . $id;
+
+    
+//    remove_filter('wp_head');
+    if (wp_is_mobile()) {
+	global $wpdb;
+	get_header();
+
+	$sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($id);
+	$item = $wpdb->get_row($sql, ARRAY_A);
+	
+	ob_start();    
+	include 'views/details.php';
+	
+	echo ob_get_clean();
+	get_footer();
+	exit;
+	
+    }
+    
 ?>
 
 <script>

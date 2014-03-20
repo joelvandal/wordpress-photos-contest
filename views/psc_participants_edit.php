@@ -86,7 +86,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</td>
 			</tr>
 
-
+<!--
 			<tr valign="top">
 				<th align="left">
 					<?php _e('Class Name', PSC_PLUGIN); ?>
@@ -103,7 +103,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 		</select>
 				</td>
 			</tr>
-
+-->
 		</table>
 
 
@@ -209,6 +209,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	</form>
 </div>
 
+<div class="uploadModal">
 <div class="tb-modal tb-modal-wide tb-fade" id="uploadForm" style="display: none;">
 
 <div class="tb-modal-dialog">
@@ -233,15 +234,12 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 	</div>
 </div>
 </div>
+</div>
 
 <script type="text/javascript">
 jQuery(document).ready(function(){
 	jQuery('.datepicker').datetimepicker({
 		format : "Y-m-d H:i"
-	});
-
-	jQuery("#uploadClose").on('click', function() {
-		jQuery('#uploadForm').modal('hide');
 	});
 
 	jQuery("a.upload").live('click', function(event) {
@@ -266,7 +264,8 @@ Dropzone.options.dropfile = {
 		myDropzone.on("complete", function (file) {
 			var cdate = new Date().getTime();
 			jQuery("#thumbnail").attr('src', '<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
-			jQuery('#uploadForm').modal('hide');
+			jQuery('#uploadForm').hide();
+			jQuery('.tb-modal-backdrop').remove();
 		});
 
         }

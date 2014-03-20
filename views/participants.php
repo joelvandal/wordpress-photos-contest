@@ -1,3 +1,7 @@
+<style>
+        .post-meta { display:none; }
+</style>
+
 <div id="gallery">
 	<div id="portfolio-items" class="clearfix">
 

@@ -224,9 +224,9 @@ class PSC_Table extends WP_List_Table {
 	<?php if ($this->filter): ?>
                 <?php _e( 'Filter', PSC_PLUGIN ) ?>
                 <select name="type">
-			<option value="" <?php if (!$_REQUEST['type']) { echo 'selected'; } ?>><?php _e('All', PSC_PLUGIN); ?></option>
+			<option value="" <?php if (!@$_REQUEST['type']) { echo 'selected'; } ?>><?php _e('All', PSC_PLUGIN); ?></option>
 <?php foreach($this->filter as $ctype => $cname): ?>
-			<option <?php if ($_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+			<option <?php if (@$_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
 <?php endforeach; ?>
                 </select>
 	<?php submit_button( __('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
@@ -286,10 +286,10 @@ class PSC_Participants_Table extends PSC_Table {
 			 'name'                 => __('Name', PSC_PLUGIN),
 			 'email'                => __('Email', PSC_PLUGIN),
 			 'school'               => __('School', PSC_PLUGIN),
-			 'class_name'           => __('Class Name', PSC_PLUGIN),
+//			 'class_name'           => __('Class Name', PSC_PLUGIN),
 			 'project_name'         => __('Project Name', PSC_PLUGIN),
 			 'project_category'     => __('Category', PSC_PLUGIN),
-			 'project_description'  => __('Description', PSC_PLUGIN),
+//			 'project_description'  => __('Description', PSC_PLUGIN),
 //			 'views'                => __('Views', PSC_PLUGIN),
 			 'votes'                => __('Votes', PSC_PLUGIN),
 			 'subscribe_date'       => __('Subscribe', PSC_PLUGIN),
