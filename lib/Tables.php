@@ -206,8 +206,8 @@ class PSC_Table extends WP_List_Table {
     }
 
     function search_box( $text, $input_id ) {
-	if ( empty( $_REQUEST['s'] ) && !$this->has_items() )
-	  return;
+//	if ( empty( $_REQUEST['s'] ) && !$this->has_items() )
+//	  return;
 	
 	$input_id = $input_id . '-search-input';
 	
@@ -231,6 +231,7 @@ class PSC_Table extends WP_List_Table {
                 </select>
 	<?php submit_button( __psc('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
 <?php endif; ?>
+
 <p class="search-box">
 
 
@@ -248,6 +249,82 @@ class PSC_Table extends WP_List_Table {
 class PSC_Participants_Table extends PSC_Table {
     var $table_data = array();
 
+    
+    function search_box( $text, $input_id ) {
+//	if ( empty( $_REQUEST['s'] ) && !$this->has_items() )
+//	  return;
+	
+	$ages = array('6-10' => '6-10',
+		      '11-15' => '11-15',
+		      '16-20' => '16-20',
+		      '21-30' => '21-30',
+		      '30-99' => '30+');
+	
+	$sexs = array('m' => 'Male',
+		      'f' => 'Female');
+
+	$schools = psc_get_category_by_id('school');
+	
+	$input_id = $input_id . '-search-input';
+	
+	if ( ! empty( $_REQUEST['orderby'] ) )
+	  echo '<input type="hidden" name="orderby" value="' . esc_attr( $_REQUEST['orderby'] ) . '" />';
+	if ( ! empty( $_REQUEST['order'] ) )
+	  echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '" />';
+	if ( ! empty( $_REQUEST['post_mime_type'] ) )
+	  echo '<input type="hidden" name="post_mime_type" value="' . esc_attr( $_REQUEST['post_mime_type'] ) . '" />';
+	if ( ! empty( $_REQUEST['detached'] ) )
+	  echo '<input type="hidden" name="detached" value="' . esc_attr( $_REQUEST['detached'] ) . '" />';
+	?>
+
+	<?php if ($this->filter): ?>
+                <?php _e_psc( 'Status: ' ) ?>
+                <select name="type">
+			<option value="" <?php if (!@$_REQUEST['type']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+<?php foreach($this->filter as $ctype => $cname): ?>
+			<option <?php if (@$_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+<?php endforeach; ?>
+                </select>
+&nbsp;&nbsp;
+                <?php _e_psc( 'Age: ' ) ?>
+                <select name="age">
+			<option value="" <?php if (!@$_REQUEST['age']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+<?php foreach($ages as $ctype => $cname): ?>
+			<option <?php if (@$_REQUEST['age'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+<?php endforeach; ?>
+                </select>
+&nbsp;&nbsp;
+
+                <?php _e_psc( 'School: ' ) ?>
+                <select name="school">
+			<option value="" <?php if (!@$_REQUEST['school']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+<?php foreach($schools as $ctype => $cname): ?>
+			<option <?php if (@$_REQUEST['school'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+<?php endforeach; ?>
+                </select>
+&nbsp;&nbsp;
+
+                <?php _e_psc( 'Gender: ' ) ?>
+                <select name="sex">
+			<option value="" <?php if (!@$_REQUEST['sex']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+<?php foreach($sexs as $ctype => $cname): ?>
+			<option <?php if (@$_REQUEST['sex'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+<?php endforeach; ?>
+                </select>
+
+	<?php submit_button( __psc('Filter', PSC_PLUGIN), 'secondary', false, false, array('id' => 'search-submit') ); ?>
+<?php endif; ?>
+
+<p class="search-box">
+
+
+	<label class="screen-reader-text" for="<?php echo $input_id ?>"><?php echo $text; ?>:</label>
+	<input type="search" id="<?php echo $input_id ?>" name="s" value="<?php _admin_search_query(); ?>" />
+	<?php submit_button( $text, 'primary', false, false, array('id' => 'search-submit') ); ?>
+</p>
+	<?php
+    }
+    
     function get_data() {
 	global $wpdb;
 	
@@ -264,6 +341,37 @@ class PSC_Participants_Table extends PSC_Table {
 		$where .= " AND approved = $v";
 	    } else {
 		$where = " WHERE approved = $v";
+	    }
+	}
+
+	if (isset($_REQUEST['age']) && $_REQUEST['age']) {
+	    $v = $_REQUEST['age'];
+	    $a = explode('-', $v);
+	    $v1 = $a[0];
+	    $v2 = $a[1];
+	    
+	    if ($where) {
+		$where .= " AND (age >= $v1 AND age <= $v2)";
+	    } else {
+		$where = " WHERE (age = $v1 AND age <= $v2)";
+	    }
+	}
+	
+	if (isset($_REQUEST['school']) && $_REQUEST['school']) {
+	    $v = $_REQUEST['school'];
+	    if ($where) {
+		$where .= " AND school = $v";
+	    } else {
+		$where = " WHERE school = $v";
+	    }
+	}
+	
+	if (isset($_REQUEST['sex']) && $_REQUEST['sex']) {
+	    $v = esc_sql($_REQUEST['sex']);
+	    if ($where) {
+		$where .= " AND sex = '$v'";
+	    } else {
+		$where = " WHERE sex = '$v'";
 	    }
 	}
 	
