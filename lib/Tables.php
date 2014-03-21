@@ -410,12 +410,12 @@ class PSC_Participants_Table extends PSC_Table {
 	switch( $column_name ) {
 	 case 'image':
 	    
-	    $img = '/uploads/' . md5($item['email']) . '-thumb.png';
-	    if (!file_exists(PSC_ABSPATH . $img)) {
-		$img = '/images/user.jpg';
+	    $img = md5($item['email']) . '-thumb.png';
+	    if (file_exists(PSC_ABS_IMAGE . $img)) {
+		return '<img src="' . PSC_IMAGE . $img . '" />';
+	    } else {
+		return '[no image]';
 	    }
-		
-	    return '<img src="' . PSC_PATH . $img . '" />';
 	    break;
 
 	 case 'status':

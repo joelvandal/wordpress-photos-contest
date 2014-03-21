@@ -171,7 +171,7 @@ if ($item['artist_show'] && !empty($item['artist'])) {
 				</div>
 
 				<div class="tb-col-xs-12 tb-col-sm-12 tb-col-md-7 tb-col-lg-7">
-					<img class="tb-img-responsive tb-img-thumbnail tb-text-center" style="height:auto;" src="<?php echo PSC_PATH . 'uploads/' . md5($item['email']) . '-view.png'; ?>" />
+					<img class="tb-img-responsive tb-img-thumbnail tb-text-center" style="height:auto;" src="<?php echo PSC_IMAGE . md5($item['email']) . '-view.png'; ?>" />
 				</div>
 			</div>
 		</div>
@@ -299,7 +299,7 @@ jQuery(".share-link").on('click', function() {
 	var network = jQuery(this).data('network');
 	var shorturl = '<?php echo psc_shorturl($item['id']); ?>';
 	var longurl = '<?php echo psc_longurl($item['id']); ?>';
-	var imgurl = '<?php echo PSC_PATH . 'uploads/' . md5($item['email']) . '-view.png'; ?>';
+	var imgurl = '<?php echo PSC_IMAGE . md5($item['email']) . '-view.png'; ?>';
 
 	switch(network) {
 		case 'facebook':

@@ -171,7 +171,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<?php _e_psc('Project Image'); ?>
 				</th>
 				<td>
-					<img id="thumbnail" src="<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>" />
+					<img id="thumbnail" src="<?php echo PSC_IMAGE . md5($info['email']) . '-thumb.png'; ?>" />
 					<p>
 						<a href="#" class="upload tb-btn tb-btn-warning"><?php _e_psc('Change Image'); ?></a>
 					</p>
@@ -281,7 +281,7 @@ Dropzone.options.dropfile = {
 
 		myDropzone.on("complete", function (file) {
 			var cdate = new Date().getTime();
-			jQuery("#thumbnail").attr('src', '<?php echo PSC_PATH . '/uploads/' . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
+			jQuery("#thumbnail").attr('src', '<?php echo PSC_IMAGE . md5($info['email']) . '-thumb.png'; ?>?' + cdate);
 			jQuery('#uploadForm').hide();
 			jQuery('.tb-modal-backdrop').remove();
 		});

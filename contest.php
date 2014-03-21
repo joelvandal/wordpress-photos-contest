@@ -10,7 +10,7 @@
  * Plugin Name:		Photos Contest
  * Plugin URI:        	https://github.com/joelvandal/wordpress-photos-contest/wiki
  * Description:       	Create Photos Contest
- * Version:           	1.0.2
+ * Version:           	1.0.3
  * Author:       	Joel Vandal
  * Author URI:       	http://joel.vandal.ca/
  * Text Domain:       	photoscontest
@@ -27,6 +27,8 @@ define('PSC_PLUGIN', 'photoscontest');
 define('PSC_ABSPATH', dirname(__FILE__) . '/');
 define('PSC_PATH', plugin_dir_url(__FILE__));
 
+define('PSC_ABS_IMAGE', dirname(__FILE__) . '/../../uploads/contest/');
+define('PSC_IMAGE', plugin_dir_url(__FILE__) . '../../uploads/contest/');
 define('PSC_TABLE_VOTES', $wpdb->prefix . 'psc_votes');
 define('PSC_TABLE_PARTICIPANTS', $wpdb->prefix . 'psc_participants');
 define('PSC_TABLE_CATEGORIES', $wpdb->prefix . 'psc_categories');
@@ -38,6 +40,12 @@ $psc_category_types = array('school'     => __psc('School'),
 			    'project'    => __psc('Project'));
 
 require PSC_ABSPATH . 'lib/Tables.php';
+
+$image_path = PSC_ABS_IMAGE;
+if (!file_exists($image_path)) {
+    mkdir($image_path);
+}
+
 
 psc_load_options();
 
@@ -53,7 +61,7 @@ add_shortcode( 'remove_postedby', 'psc_shortcode_remove_postedby' );
 // add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
 register_activation_hook( __FILE__, 'psc_activation_init' );
-register_deactivation_hook( __FILE__, 'psc_deactivate_init' );
+// register_deactivation_hook( __FILE__, 'psc_deactivate_init' );
 
 add_action( 'wp_enqueue_scripts', 'psc_enqueue_scripts' );
 add_action( 'admin_enqueue_scripts', 'psc_enqueue_admin_scripts' );
@@ -537,15 +545,16 @@ function psc_image($email, $force = false) {
     $viewW = 1920;
     $viewH = 1440;
 
-    $image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.jpg';
-    $dest_file = PSC_ABSPATH . '/uploads/' . md5($email);
+    
+    $image_file = PSC_ABS_IMAGE . md5($email) . '.jpg';
+    $dest_file = PSC_ABS_IMAGE . md5($email);
     
     if (!file_exists($image_file)) {
-	$image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.png';
+	$image_file = PSC_ABS_IMAGE . md5($email) . '.png';
     }
     
     if (!file_exists($image_file)) {
-	$image_file = PSC_ABSPATH . '/uploads/' . md5($email) . '.gif';
+	$image_file = PSC_ABS_IMAGE . md5($email) . '.gif';
     }
 
     if (!file_exists($image_file)) {
@@ -842,7 +851,7 @@ function psc_t($str) {
 }
 
 function psc_get_image($email) {
-    return PSC_PATH . 'uploads/' . md5($email) . '-thumb.png';
+    return PSC_IMAGE . md5($email) . '-thumb.png';
 }
 
 function psc_longurl($id) {

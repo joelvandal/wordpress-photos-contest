@@ -26,7 +26,7 @@ $i = 1;
 
 foreach($rows as $item) {
 
-    $thumb = PSC_PATH . 'uploads/' . md5($item['email']) . '-thumb.png';
+    $thumb = PSC_IMAGE . md5($item['email']) . '-thumb.png';
     
     if ($item['votes'] > 1) {
 	$title = sprintf(__psc("%s by %s %s (%d votes)"), $item['project_name'], $item['first_name'], $item['last_name'], $item['votes']);

@@ -14,7 +14,7 @@ if (!isset($_REQUEST['participant'])) {
 }
 
 $participant = md5($_REQUEST['participant']);
-$targetPath = dirname( __FILE__ ) . '/uploads/';
+$targetPath = PSC_ABS_IMAGE;
 
 $files = glob($targetPath . $participant . '*');
 foreach($files as $file) unlink($file);
