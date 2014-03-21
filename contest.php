@@ -10,7 +10,7 @@
  * Plugin Name:		Photos Contest
  * Plugin URI:        	https://github.com/joelvandal/wordpress-photos-contest/wiki
  * Description:       	Create Photos Contest
- * Version:           	1.0.1
+ * Version:           	1.0.2
  * Author:       	Joel Vandal
  * Author URI:       	http://joel.vandal.ca/
  * Text Domain:       	photoscontest
@@ -67,6 +67,11 @@ add_filter( 'query_vars', 'psc_query_var' );
 add_action( 'parse_query','psc_parse_query' );
 
 // add_action( 'admin_notices', 'psc_admin_notices' );
+
+global $this_file;
+$this_file = __FILE__;
+$update_check = "http://joel.vandal.ca/plugins/wp-contest.chk";
+require_once('lib/Update.php');
 
 function psc_enqueue_scripts() {
 
