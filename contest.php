@@ -48,6 +48,8 @@ if (defined('WP_DEBUG') && WP_DEBUG) {
 add_shortcode( 'contest_register', 'psc_shortcode_register' );
 add_shortcode( 'contest_participants', 'psc_shortcode_participants' );
 
+add_shortcode( 'remove_postedby', 'psc_shortcode_remove_postedby' );
+
 // add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
 register_activation_hook( __FILE__, 'psc_activation_init' );
@@ -128,7 +130,8 @@ function psc_activation_init() {
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
 									last_name varchar(80), age int(11), sex varchar(1), school int(11), class_name varchar(80), 
 									project_name varchar(80), project_category varchar(80), project_description text,
-									mail_site int(1), mail_contest int(1), approved int(1) default 0, subscribe_date int(11), 
+									mail_site int(1), mail_contest int(1), approved int(1) default 0, subscribe_date int(11),
+									artist varchar(30), artist_show int(1) default 0,
 									primary key (id), key(email))";
     $wpdb->query($ptbl);
     
@@ -563,6 +566,14 @@ function psc_image($email, $force = false) {
 	}
     }
     
+}
+
+function psc_shortcode_remove_postedby() {
+    ob_start();
+    echo '<style>';
+    echo '.post-meta { display:none; }';
+    echo '</style>';
+    return ob_get_clean();
 }
 
 function psc_shortcode_register() {
