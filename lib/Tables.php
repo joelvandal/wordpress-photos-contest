@@ -279,18 +279,18 @@ class PSC_Participants_Table extends PSC_Table {
 
 	<?php if ($this->filter): ?>
                 <?php _e_psc( 'Status: ' ) ?>
-                <select name="type">
-			<option value="" <?php if (!@$_REQUEST['type']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+                <select name="filter_type">
+			<option value="" <?php if (!@$_REQUEST['filter_type']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
 <?php foreach($this->filter as $ctype => $cname): ?>
-			<option <?php if (@$_REQUEST['type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+			<option <?php if (@$_REQUEST['filter_type'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
 <?php endforeach; ?>
                 </select>
 &nbsp;&nbsp;
                 <?php _e_psc( 'Age: ' ) ?>
-                <select name="age">
-			<option value="" <?php if (!@$_REQUEST['age']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+                <select name="filter_age">
+			<option value="" <?php if (!@$_REQUEST['filter_age']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
 <?php foreach($ages as $ctype => $cname): ?>
-			<option <?php if (@$_REQUEST['age'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+			<option <?php if (@$_REQUEST['filter_age'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
 <?php endforeach; ?>
                 </select>
 &nbsp;&nbsp;
@@ -305,10 +305,10 @@ class PSC_Participants_Table extends PSC_Table {
 &nbsp;&nbsp;
 
                 <?php _e_psc( 'Gender: ' ) ?>
-                <select name="sex">
-			<option value="" <?php if (!@$_REQUEST['sex']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
+                <select name="filter_sex">
+			<option value="" <?php if (!@$_REQUEST['filter_sex']) { echo 'selected'; } ?>><?php _e_psc('All', PSC_PLUGIN); ?></option>
 <?php foreach($sexs as $ctype => $cname): ?>
-			<option <?php if (@$_REQUEST['sex'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
+			<option <?php if (@$_REQUEST['filter_sex'] == $ctype) { echo 'selected'; } ?> value="<?php echo $ctype; ?>"><?php echo $cname; ?></option>
 <?php endforeach; ?>
                 </select>
 
@@ -335,8 +335,8 @@ class PSC_Participants_Table extends PSC_Table {
 	    $where = str_replace('%str%', '%' . esc_sql($search) . '%', $where);
 	}
 
-	if (isset($_REQUEST['type']) && $_REQUEST['type']) {
-	    $v = $_REQUEST['type'] == 'on' ? 1 : 0;
+	if (isset($_REQUEST['filter_type']) && $_REQUEST['filter_type']) {
+	    $v = $_REQUEST['filter_type'] == 'on' ? 1 : 0;
 	    if ($where) {
 		$where .= " AND approved = $v";
 	    } else {
@@ -344,8 +344,8 @@ class PSC_Participants_Table extends PSC_Table {
 	    }
 	}
 
-	if (isset($_REQUEST['age']) && $_REQUEST['age']) {
-	    $v = $_REQUEST['age'];
+	if (isset($_REQUEST['filter_age']) && $_REQUEST['filter_age']) {
+	    $v = $_REQUEST['filter_age'];
 	    $a = explode('-', $v);
 	    $v1 = $a[0];
 	    $v2 = $a[1];
@@ -366,8 +366,8 @@ class PSC_Participants_Table extends PSC_Table {
 	    }
 	}
 	
-	if (isset($_REQUEST['sex']) && $_REQUEST['sex']) {
-	    $v = esc_sql($_REQUEST['sex']);
+	if (isset($_REQUEST['filter_sex']) && $_REQUEST['filter_sex']) {
+	    $v = esc_sql($_REQUEST['filter_sex']);
 	    if ($where) {
 		$where .= " AND sex = '$v'";
 	    } else {
@@ -627,8 +627,8 @@ class PSC_Categories_Table extends PSC_Table {
 	}
 	
 	$sql = "SELECT * FROM " . PSC_TABLE_CATEGORIES;
-	if (isset($_REQUEST['type']) && $_REQUEST['type']) {
-	    $sql .= " WHERE category_type = '" . esc_sql($_REQUEST['type']) . "'";
+	if (isset($_REQUEST['filter_type']) && $_REQUEST['filter_type']) {
+	    $sql .= " WHERE category_type = '" . esc_sql($_REQUEST['filter_type']) . "'";
 	    if ($where) {
 		$sql .= ' AND (' . $where . ')';
 	    }
