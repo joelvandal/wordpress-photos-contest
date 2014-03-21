@@ -130,15 +130,16 @@
 <!--	
 		<label for="input-rules" class="input-label"><input type="checkbox" id="input-rules" name="agree_rule"> <?php _e_psc('I Accept contest rules'); ?></label>
 -->
-		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php _e_psc('I Accept the terms and conditions in regards to this entry.'); ?></label>
+		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php _e_psc('I accept the terms and conditions in regards to my entry.'); ?></label>
 <br />
-		<label for="input-mail-site" class="input-label"><input type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the monthly <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> <a target="_new" href="http://charlesbombardier.us5.list-manage2.com/subscribe?u=2482d3d37ec5b825819c9f81b&id=4beaff647a">Newsletters</a>.'); ?></label>
+		<label for="input-mail-site" class="input-label"><input checked type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> monthly newsletter.'); ?></label>
+<!--
 <br />
 		<label for="input-mail-contest" class="input-label"><input type="checkbox" id="input-mail-contest" name="agree_mail_contest"> <?php _e_psc('I Accept to be notified by e-mail regarding my concept idea'); ?></label>
-
+-->
 	</p>
 
-	<button id="register-button" class="readmore" style="display:none"><?php _e_psc('Submit'); ?></button>
+	<button id="register-button" class="readmore"><?php _e_psc('Submit'); ?></button>
 
 </div>
 
@@ -200,51 +201,27 @@ jQuery.noConflict();
 
 jQuery("textarea").textareaCounter({ limit: 350 });
 
+var upload_image = false;
 var click_terms = false;
-var click_rules = false;
-var click_mail_site = false;
-var click_mail_contest = false;
-
-jQuery('#input-terms').on('click', function() {
-	check_project();
-});
-
-jQuery('#input-rules').on('click', function() {
-	check_project();
-});
-
-jQuery('#input-mail-site').on('click', function() {
-	check_project();
-});
-
-jQuery('#input-mail-contest').on('click', function() {
-	check_project();
-});
-
-function check_project() {
-
-	jQuery('#hidden-participant').val(jQuery('#input-email').val());
-
-	click_terms = jQuery('#input-terms').is(':checked');
-/*
-	click_rules = jQuery('#input-rules').is(':checked'); 
-*/
-
-	click_mail_site = jQuery('#input-terms').is(':checked');
-	click_mail_contest = jQuery('#input-rules').is(':checked');
-
-//	if (click_terms && click_rules) {
-	if (click_terms) {
-//		jQuery('#div-project').show();
-		jQuery('#register-button').show();
-
-	} else {
-//		jQuery('#div-project').hide();
-		jQuery('#register-button').hide();
-	}
-}
 
 jQuery('#register-button').on('click', function() {
+
+	click_terms = jQuery('#input-terms').is(':checked');
+	if (!click_terms) {
+		msg = '<?php _e_psc('You must agree Terms and Conditions in order to continue!'); ?>';
+		jQuery("#registerModal").modal('show');
+		jQuery("#modal-title").html('<?php _e_psc('Please fix the following error(s):'); ?>');
+		jQuery("#modal-body").html(msg);
+		return false;
+	}
+
+	if (!upload_image) {
+		msg = '<?php _e_psc('You must upload an image in order to continue!'); ?>';
+		jQuery("#registerModal").modal('show');
+		jQuery("#modal-title").html('<?php _e_psc('Please fix the following error(s):'); ?>');
+		jQuery("#modal-body").html(msg);
+		return false;
+	}
 
 	var params = {
 		action: 'register',
@@ -314,7 +291,16 @@ Dropzone.options.dropfile = {
 	maxFilesize: 3,
 	addRemoveLinks: true,
 	acceptedFiles: 'image/*',
-	maxFiles: 1
+	maxFiles: 1,
+	init: function () {
+		var myDropzone = this;
+
+		myDropzone.on("complete", function (file) {
+			upload_image = true;
+		});
+
+        }
+
 };
 
 </script>
