@@ -138,7 +138,7 @@ function psc_activation_init() {
     $wpdb->query($ptbl);
 
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_VOTES . " (id int(11) not null auto_increment, voter_name varchar(255), voter_email varchar(255), voter_ip varchar(80), vote_date int(11), 
-								 participant_id int(11), vvote_code varchar(32), approved int(1) default 0, 
+								 participant_id int(11), vote_code varchar(32), approved int(1) default 0, 
 								 primary key(id), key(participant_id))";
     $wpdb->query($ptbl);
     
@@ -677,12 +677,11 @@ function psc_confirm_vote() {
 <script>
 jQuery(document).ready(function(e) {
 
-	jQuery('#indicator').show();
 	jQuery.ajax({
 		url : '<?php echo $link; ?>',
 		type: "GET",
 		success: function(response) {
-			jQuery('<div class="tb-modal tb-modal-wide tb-fade"></div>').html(response).modal(); //.evalScripts();
+			jQuery('<div class="tb-modal tb-fade"></div>').html(response).modal(); //.evalScripts();
 		}
 	});
 });
@@ -1075,9 +1074,9 @@ function psc_email_register($email) {
     $vars['blog_name'] = $blog_name;
     $vars['blog_url'] = $blog_url;
     
-    $subject = psc_parse_email(psc_get_option('register_subject'), $vars);
-    $message = psc_parse_email(psc_get_option('register_message'), $vars);
-    
+    $subject = wp_unslash(psc_parse_email(psc_get_option('register_subject'), $vars));
+    $message = wp_unslash(psc_parse_email(psc_get_option('register_message'), $vars));
+
     wp_mail($email, $subject, $message, $headers);
     
 }
@@ -1107,8 +1106,8 @@ function psc_email_vote($email) {
     $vars['blog_url'] = $blog_url;
     $vars['vote_link'] = site_url("?vote_confirm=$signature");
     
-    $subject = psc_parse_email(psc_get_option('vote_subject'), $vars);
-    $message = psc_parse_email(psc_get_option('vote_message'), $vars);
+    $subject = wp_unslash(psc_parse_email(psc_get_option('vote_subject'), $vars));
+    $message = wp_unslash(psc_parse_email(psc_get_option('vote_message'), $vars));
     
     wp_mail($email, $subject, $message, $headers);
     

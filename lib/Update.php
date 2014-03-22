@@ -43,11 +43,12 @@ function contest_plugin_get($i) {
 }
 
 //check for update twice a day (same schedule as normal WP plugins)
-register_activation_hook($this_file, 'contest_check_activation');
-add_action('contest_check_event', 'contest_check_update');
-function contest_check_activation() {
-    wp_schedule_event(time(), 'twicedaily', 'contest_check_event');
-}
+//register_activation_hook($this_file, 'contest_check_activation');
+// add_action('contest_check_event', 'contest_check_update');
+// function contest_check_activation() {
+//    wp_schedule_event(time(), 'twicedaily', 'contest_check_event');
+// }
+
 function contest_check_update() {
     global $wp_version;
     global $this_file;

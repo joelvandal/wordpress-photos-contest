@@ -96,7 +96,7 @@ if ($item['artist_show'] && !empty($item['artist'])) {
 						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
 						<tr><th>Category:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
 						<tr id="div-desc"><th colspan=2>Description:</th></tr>
-						<tr id="div-desc2"><td colspan=2><?php echo $item['project_description']; ?></td></tr>
+						<tr id="div-desc2"><td colspan=2><?php echo wp_unslash($item['project_description']); ?></td></tr>
 					</tbody>
 					</table>
 
