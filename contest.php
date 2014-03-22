@@ -71,6 +71,8 @@ add_action( 'admin_head', 'psc_admin_headers' );
 
 add_action( 'admin_menu', 'psc_admin_menu' );
 
+add_filter( 'plugin_action_links', 'psc_action_links', 10, 2 );
+
 add_filter( 'query_vars', 'psc_query_var' );
 add_action( 'parse_query','psc_parse_query' );
 
@@ -205,6 +207,17 @@ function psc_add_options() {
     */
 }
 
+function psc_action_links( $links, $file ) {
+ 
+    $this_plugin = basename( PSC_ABSPATH ) . '/contest.php';
+    if ( $file == $this_plugin ) {
+	$links[] = '<a href="admin.php?page=psc_update">' . 'Check Update' . '</a>';
+    }
+    
+    return $links;
+    
+}
+
 function psc_admin_menu() {
     
     global $wpdb;
@@ -231,6 +244,8 @@ function psc_admin_menu() {
     
     add_submenu_page('psc_overview', __psc('Configuration'), __psc('Configuration'), 'edit_pages','psc_settings', 'psc_admin_menu_item');
     
+    add_submenu_page(null, __psc('Check Update'), __psc('Check Update'), 'edit_pages','psc_update', 'psc_admin_menu_item');
+    
 }
 
 function psc_admin_menu_item() {
@@ -241,6 +256,17 @@ function psc_admin_menu_item() {
     $action = isset($_GET['action']) ? $_GET['action'] : false;
     
     switch ($_GET['page']) {
+	
+     case 'psc_update':
+	$res = contest_check_update();
+	if ($res) {
+	    echo '<h2>An update is available!</h2>';
+	} else {
+	    echo '<h3>No update available!!!</h3>';
+	}
+	return false;
+	break;
+	
      case 'psc_participants':
 	
 	if ($item) {

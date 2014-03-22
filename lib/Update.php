@@ -69,7 +69,9 @@ function contest_check_update() {
     $o = (object) $a;
     $plugin_transient->response[$plugin_folder.'/'.$plugin_file] = $o;
     set_site_transient('update_plugins', $plugin_transient);
+    return true;
 }
+
 
 //remove cron task upon deactivation
 register_deactivation_hook($this_file, 'contest_check_deactivation');
