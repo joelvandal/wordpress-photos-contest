@@ -114,9 +114,11 @@
 	<p>
 		<label for="dropfile" class="input-label"><?php _e_psc('Upload your image'); ?></label>
 
-		<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile" style="width: 400px">
-			<input type="hidden" id="hidden-participant" name="participant" value="">
-		</form>
+		<div id="show-upload" style="display:none">
+			<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile" style="width: 400px">
+				<input type="hidden" id="hidden-participant" name="participant" value="">
+			</form>
+		</div>
 	</p>
 
 	<p>
@@ -203,6 +205,39 @@ jQuery("textarea").textareaCounter({ limit: 350 });
 
 var upload_image = false;
 var click_terms = false;
+var valid_email = false;
+
+jQuery('#input-email').on('change', function() {
+
+	jQuery('#hidden-participant').val(jQuery('#input-email').val());
+
+	var params = {
+		action: 'check_email',
+		email: jQuery("#input-email").val()
+	}
+
+	jQuery.post(
+		'<?php echo PSC_PATH . 'ajax.php'; ?>',
+		params,
+		function(data) {
+			if (data.status == 1) {
+				msg = '<?php _e_psc('The Email address is already registered!'); ?>';
+				jQuery("#registerModal").modal('show');
+				jQuery("#modal-title").html('<?php _e_psc('Please fix the following error(s):'); ?>');
+				jQuery("#modal-body").html(msg);
+				valid_email = false;
+				jQuery("#show-upload").hide();
+				return false;
+			} else {
+				jQuery("#show-upload").show();
+				valid_email = true;
+			}
+		},
+		'json'
+	);
+
+});
+
 
 jQuery('#register-button').on('click', function() {
 

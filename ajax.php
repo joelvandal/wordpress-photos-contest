@@ -30,12 +30,27 @@ add_action('wp_ajax_nopriv_vote', 'psc_ajax_vote');
 add_action('wp_ajax_nopriv_reset_vote', 'psc_ajax_reset_vote');
 add_action('wp_ajax_nopriv_confirm_vote', 'psc_ajax_confirm_vote');
 
+add_action('wp_ajax_nopriv_check_email', 'psc_ajax_check_email');
+
 do_action( 'wp_ajax_nopriv_' . $_REQUEST['action'] ); // Non-admin actions
 
 wp_die();
 
 function psc_ajax_send_headers() {
     header('Content-Type: application/json; charset=' . get_option('blog_charset'));
+}
+
+function psc_ajax_check_email() {
+
+    global $wpdb;
+    $sql = "SELECT email FROM " . PSC_TABLE_PARTICIPANTS . " WHERE email = '" . esc_sql($_REQUEST['email']) . "'";
+    $item = $wpdb->get_row($sql, ARRAY_A);
+    
+    $res = (isset($item['email']) && $_REQUEST['email'] == $item['email']) ? 1 : 0;
+    $output = array('status' => $res);
+    echo json_encode($output);
+    wp_die();
+    
 }
 
 function psc_ajax_details() {
