@@ -617,6 +617,9 @@ function psc_shortcode_remove_postedby() {
 }
 
 function psc_shortcode_register() {
+
+    $nonce = wp_create_nonce( 'wp-contest' );
+    
     ob_start();
     include 'views/register.php';
     return ob_get_clean();

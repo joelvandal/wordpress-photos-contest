@@ -25,9 +25,11 @@
 	</p>
 
 	<p>
-	        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(optional)'); ?></span></label>
-	        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
-		<label for="input-artist-show" class="input-label"><input type="checkbox" id="input-artist-show" name="artist_show"> <?php _e_psc('Please display my <i>Artist name</i> instead of my real name'); ?></label>
+		<label for="input-artist-show" class="input-label"><input type="checkbox" id="input-artist-show" name="artist_show"> <?php _e_psc('Please display my <i>Artist name</i> instead of my real name ?'); ?></label>
+		<div id="show-artist" style="display:none">
+		        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(required)'); ?></span></label>
+		        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
+		</div>
 	</p>
 
 	<p>
@@ -213,7 +215,8 @@ jQuery('#input-email').on('change', function() {
 
 	var params = {
 		action: 'check_email',
-		email: jQuery("#input-email").val()
+		email: jQuery("#input-email").val(),
+		_ajax_nonce: '<?php echo $nonce ?>'
 	}
 
 	jQuery.post(
@@ -238,10 +241,28 @@ jQuery('#input-email').on('change', function() {
 
 });
 
+jQuery('#input-artist-show').on('click', function() {
+
+	if (jQuery("#input-artist-show").is(':checked')) {
+		jQuery('#show-artist').show();
+	} else {
+		jQuery('#show-artist').hide();
+	}
+
+});
 
 jQuery('#register-button').on('click', function() {
 
 	click_terms = jQuery('#input-terms').is(':checked');
+
+	if (!valid_email) {
+		msg = '<?php _e_psc('You must enter a valid Email address in order to continue!'); ?>';
+		jQuery("#registerModal").modal('show');
+		jQuery("#modal-title").html('<?php _e_psc('Please fix the following error(s):'); ?>');
+		jQuery("#modal-body").html(msg);
+		return false;
+	}
+
 	if (!click_terms) {
 		msg = '<?php _e_psc('You must agree Terms and Conditions in order to continue!'); ?>';
 		jQuery("#registerModal").modal('show');
@@ -275,7 +296,8 @@ jQuery('#register-button').on('click', function() {
 		project_desc: jQuery("#input-project-description").val(),
 		project_photo: jQuery("#input-project-photo").val(),
 		mail_site: jQuery("#input-mail-site").is(':checked'),
-		mail_contest: jQuery("#input-mail-contest").is(':checked')
+		mail_contest: jQuery("#input-mail-contest").is(':checked'),
+		_ajax_nonce: '<?php echo $nonce ?>'
 	}; 
 
 	jQuery.post(
@@ -298,7 +320,6 @@ jQuery('#register-button').on('click', function() {
 
 
 			} else {
-				console.dir(data.status);
 
 				msg = '';
 				msg += '<ul>';

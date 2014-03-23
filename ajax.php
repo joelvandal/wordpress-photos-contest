@@ -42,6 +42,8 @@ function psc_ajax_send_headers() {
 
 function psc_ajax_check_email() {
 
+    check_ajax_referer( "wp-contest" );
+    
     global $wpdb;
     $sql = "SELECT email FROM " . PSC_TABLE_PARTICIPANTS . " WHERE email = '" . esc_sql($_REQUEST['email']) . "'";
     $item = $wpdb->get_row($sql, ARRAY_A);
@@ -68,6 +70,8 @@ function psc_ajax_details() {
 
 function psc_ajax_register() {
 
+    check_ajax_referer( "wp-contest" );
+    
     $params = array();
     $params['first_name'] = array('desc' => __psc("First Name"),
 				  'required' => true,
@@ -79,6 +83,13 @@ function psc_ajax_register() {
 				 'type' => 'text',
 				 'minlength' => 2);
 
+    if (isset($_REQUEST['artist_show']) && $_REQUEST['artist_show']) {
+	$params['artist'] = array('desc' => __psc("Artist Name"),
+				     'required' => true,
+				     'type' => 'text',
+				     'minlength' => 1);
+    }
+    
     $params['sex'] = array('desc' => __psc("Sex"),
 			   'required' => true,
 			   'type' => 'enum',
