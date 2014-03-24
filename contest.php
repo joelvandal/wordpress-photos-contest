@@ -10,7 +10,7 @@
  * Plugin Name:		Photos Contest
  * Plugin URI:        	https://github.com/joelvandal/wordpress-photos-contest/wiki
  * Description:       	Create Photos Contest
- * Version:           	1.0.6
+ * Version:           	1.0.7
  * Author:       	Joel Vandal
  * Author URI:       	http://joel.vandal.ca/
  * Text Domain:       	photoscontest
@@ -57,6 +57,7 @@ add_shortcode( 'contest_register', 'psc_shortcode_register' );
 add_shortcode( 'contest_participants', 'psc_shortcode_participants' );
 
 add_shortcode( 'remove_postedby', 'psc_shortcode_remove_postedby' );
+add_shortcode( 'remove_title', 'psc_shortcode_remove_title' );
 
 // add_shortcode( 'contest_register', 'psc_shortcode_register' );
 
@@ -96,6 +97,9 @@ function psc_enqueue_scripts() {
     wp_register_script('bootstrap', PSC_PATH . '/js/bootstrap.prefixed.js');
     wp_enqueue_script('bootstrap');
 
+//    wp_register_script('typeahead', PSC_PATH . '/js/bootstrap-typeahead.min.js');
+//    wp_enqueue_script('typeahead');
+    
     wp_register_style('contest', PSC_PATH . '/css/contest.css');
     wp_enqueue_style('contest');
 
@@ -612,6 +616,14 @@ function psc_shortcode_remove_postedby() {
     ob_start();
     echo '<style>';
     echo '.post-meta { display:none; }';
+    echo '</style>';
+    return ob_get_clean();
+}
+
+function psc_shortcode_remove_title() {
+    ob_start();
+    echo '<style>';
+    echo '.entry h1.title { display:none; }';
     echo '</style>';
     return ob_get_clean();
 }
