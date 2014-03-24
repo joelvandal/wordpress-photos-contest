@@ -1,5 +1,6 @@
 <style>
         .post-meta { display:none; }
+	.entry h1.title { display:none; }
 	.register-form .clear-form { clear: both; font-size: 16px; }
 	.register-form input[type='text'], .register-form input[type='email'] { width: 300px; margin-bottom: 13px; }
 	.register-form select { margin-bottom: 13px; width: 300px }

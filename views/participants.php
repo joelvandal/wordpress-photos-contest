@@ -1,4 +1,5 @@
 <style>
+	.entry h1.title { display:none; }
         .post-meta { display:none; }
 	.item-label {
 font-size: 18px;
@@ -35,7 +36,7 @@ foreach($rows as $item) {
     }
     
     echo '<div class="item' . (($i%4 == 0) ? ' last' : '') . '">';
-    echo '<div class="item-image">';
+    echo '<div class="item-image"  style="width: 207px; height: 136px">';
     echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" title="' . $title . '">';
     echo '<img width=207 height=136 class="portfolio" src="' . $thumb . '">';
     echo '<span class="overlay"></span>';
