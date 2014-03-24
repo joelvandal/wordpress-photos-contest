@@ -38,7 +38,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<input type="text" size="20" name="artist" value="<?php echo $info['artist']; ?>" />
 				</td>
 			</tr>
-
+<!--
 			<tr valign="top">
 				<th align="left">
 					<?php _e_psc('Use Artist Name ?'); ?>
@@ -47,25 +47,13 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<input type="checkbox" name="artist_show" <?php if ($info['artist_show']) { echo 'checked'; } ?> />
 				</td>
 			</tr>
-
+-->
 			<tr valign="top">
 				<th align="left">
 					<?php _e_psc('Email'); ?>
 				</th>
 				<td>
 					<input type="text" size="50" name="email" value="<?php echo $info['email']; ?>" />
-				</td>
-			</tr>
-
-			<tr valign="top">
-				<th align="left">
-					<?php _e_psc('Sex'); ?>
-				</th>
-				<td>
-					<select name="sex">
-						<option <?php if ($info['sex'] == 'm') { echo 'selected'; } ?> value="m"><?php _e_psc('Male'); ?></option>
-						<option <?php if ($info['sex'] == 'f') { echo 'selected'; } ?> value="f"><?php _e_psc('Female'); ?></option>
-					</select>
 				</td>
 			</tr>
 
@@ -87,6 +75,19 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
+					<?php _e_psc('Level'); ?>
+				</th>
+				<td>
+					<select name="class_level">
+						<option <?php if ($info['class_level'] == 'primary') { echo 'selected'; } ?> value="primary"><?php _e_psc('Primary'); ?></option>
+						<option <?php if ($info['class_level'] == 'high school') { echo 'selected'; } ?> value="high school"><?php _e_psc('High School'); ?></option>
+					</select>
+				</td>
+			</tr>
+
+
+			<tr valign="top">
+				<th align="left">
 					<?php _e_psc('School Name'); ?>
 				</th>
 				<td>
@@ -104,24 +105,14 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</td>
 			</tr>
 
-<!--
 			<tr valign="top">
 				<th align="left">
-					<?php _e_psc('Class Name'); ?>
+					<?php _e_psc('Teacher Name'); ?>
 				</th>
 				<td>
-		<select id="input-class-name" name="class_name" class="name">
-	    <?php
-	    $cats = psc_get_category('class_name');
-	    foreach($cats as $cat) {
-		$selected = ($cat['id'] == $info['class_name']) ? 'selected' : '';
-		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
-	    }
-	    ?>
-		</select>
+					<input type="text" size="80" name="class_name" value="<?php echo $info['class_name']; ?>" />
 				</td>
 			</tr>
--->
 		</table>
 
 
@@ -210,7 +201,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<input type="checkbox" name="mail_site" <?php if ($info['mail_site']) { echo 'checked'; } ?> />
 				</td>
 			</tr>
-
+<!--
 			<tr valign="top">
 				<th align="left">
 					<?php _e_psc('Mail Contest'); ?>
@@ -219,7 +210,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 					<input type="checkbox" name="mail_contest" <?php if ($info['mail_contest']) { echo 'checked'; } ?> />
 				</td>
 			</tr>
-
+-->
 		</table>
 
 		<?php submit_button(); ?>

@@ -65,11 +65,7 @@
 </style>
 
 <?php
-if ($item['artist_show'] && !empty($item['artist'])) {
-    $item['full_name'] = $item['artist'];
-} else {
-    $item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
-}
+$item['full_name'] = @$item['artist'];
 ?>
 
 <?php if (!wp_is_mobile()): ?>

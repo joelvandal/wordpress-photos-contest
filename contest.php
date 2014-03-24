@@ -147,12 +147,13 @@ function psc_activation_init() {
     $wpdb->query($ptbl);
     
     $ptbl = "CREATE TABLE IF NOT EXISTS " . PSC_TABLE_PARTICIPANTS . " (id int(11) not null auto_increment, email varchar(128), first_name varchar(80),
-									last_name varchar(80), age int(11), sex varchar(1), school int(11), class_name varchar(80), 
+									last_name varchar(80), age int(11), sex varchar(1), school int(11), class_level varchar(80), class_name varchar(80), 
 									project_name varchar(80), project_category varchar(80), project_description text,
 									mail_site int(1), mail_contest int(1), approved int(1) default 0, subscribe_date int(11),
 									artist varchar(30), artist_show int(1) default 0,
 									primary key (id), key(email))";
     $wpdb->query($ptbl);
+    
     
 }
 
@@ -303,7 +304,7 @@ function psc_admin_menu_item() {
 
 	    $psc_admin_notices['updated'][] = sprintf(__psc("The participant '%s' has been updated successfully."), $info['email']);
 	    
-	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'artist' => '%s', 'artist_show' => '%b', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_name' => '%s', 
+	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'artist' => '%s', 'artist_show' => '%b', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_level' => '%s', 'class_name' => '%s', 
 			    'project_name' => '%s', 'project_category' => '%s', 'project_description' => '%s', 
 			    'approved' => '%b', 'mail_site' => '%b', 'mail_contest' => '%b', 'subscribe_date' => '%T');
 	    
@@ -716,12 +717,12 @@ function psc_show_participant_title() {
     $sql = "SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id = " . intval($id);
     $item = $wpdb->get_row($sql, ARRAY_A);
 
-    if ($item['artist_show'] && !empty($item['artist'])) {
-	$item['full_name'] = $item['artist'];
-    } else {
-	$item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
-    }
-
+    //    if ($item['artist_show'] && !empty($item['artist'])) {
+    $item['full_name'] = @$item['artist'];
+    //    } else {
+    //	$item['full_name'] = ucwords(strtolower(sprintf("%s %s", $item['first_name'], $item['last_name'])));
+    //    }
+    
     return sprintf(__psc('%s created by %s'), $item['project_name'], $item['full_name']);
 }
 

@@ -83,18 +83,18 @@ function psc_ajax_register() {
 				 'type' => 'text',
 				 'minlength' => 2);
 
-    if (isset($_REQUEST['artist_show']) && $_REQUEST['artist_show']) {
-	$params['artist'] = array('desc' => __psc("Artist Name"),
-				     'required' => true,
-				     'type' => 'text',
-				     'minlength' => 1);
-    }
-    
+    $params['artist'] = array('desc' => __psc("Artist Name"),
+			      'required' => true,
+			      'type' => 'text',
+			      'minlength' => 1);
+
+    /*
     $params['sex'] = array('desc' => __psc("Sex"),
 			   'required' => true,
 			   'type' => 'enum',
 			   'params' => array('m', 'f')
 			   );
+    */
     
     $params['age'] = array('desc' => __psc("Age"),
 			   'required' => true,
@@ -107,12 +107,10 @@ function psc_ajax_register() {
 			      'type' => 'text',
 			   );
 
-    /*
-    $params['class_name'] = array('desc' => __psc("Class Name"),
+    $params['class_name'] = array('desc' => __psc("Teacher Name"),
 				  'required' => true,
 				  'type' => 'text',
 				  );
-    */
     
     $params['project_name'] = array('desc' => __psc("Project Name"),
 				  'required' => true,
@@ -184,10 +182,10 @@ function psc_db_register($data) {
 	return false;
     } 
     
-    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, artist, artist_show, age, sex, school, class_name, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" .
+    $wpdb->query("INSERT INTO " . $tbl . " (email, first_name, last_name, artist, artist_show, age, sex, school, class_level, class_name, project_name, project_category, project_description, mail_site, mail_contest, subscribe_date) VALUES ('" .
 		 @$data['email'] . "', '" . @$data['first_name'] . "', '" . @$data['last_name'] . "', '" . 
 		 @$data['artist'] . "', '" . (@$data['artist_show'] ? 1 : 0) . "', '" .
-		 @$data['age'] . "', '" . @$data['sex'] . "', '" . @$data['school'] . "', '" . @$data['class_name'] . "', '" . 
+		 @$data['age'] . "', '" . @$data['sex'] . "', '" . @$data['school'] . "', '" . @$data['class_level'] . "', '" . @$data['class_name'] . "', '" . 
 		 @$data['project_name'] . "', '" . @$data['project_cat'] . "', '" . @$data['project_desc'] . "', '" .
 		 (@$data['mail_site'] ? 1 : 0) . "', '" . (@$data['mail_contest'] ? 1 : 0) . "', " . time() . ")");
     

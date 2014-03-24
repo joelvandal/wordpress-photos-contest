@@ -20,37 +20,34 @@
 	<br />
 	<p>
 	        <label for="input-first-name"><?php _e_psc('Name'); ?> <span><?php _e('(required)'); ?></span></label>
-	        <input type="text" id="input-first-name" placeholder="<?php _e_psc('First Name'); ?>" name="first_name" class="small">
-		<br />
-	        <input type="text" id="input-last-name" placeholder="<?php _e_psc('Last Name'); ?>" name="last_name" class="small">
+	        <input type="text" id="input-first-name" placeholder="<?php _e_psc('First Name'); ?>" name="first_name" style="width: 150px">
+	        <input type="text" id="input-last-name" placeholder="<?php _e_psc('Last Name'); ?>" name="last_name"  style="width: 150px">
 	</p>
 
 	<p>
-		<label for="input-artist-show" class="input-label"><input type="checkbox" id="input-artist-show" name="artist_show"> <?php _e_psc('Please display my <i>Artist name</i> instead of my real name ?'); ?></label>
-		<div id="show-artist" style="display:none">
-		        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(required)'); ?></span></label>
-		        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
-		</div>
+	        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(required)'); ?></span></label>
+	        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
+		<label for="input-artist-show" class="input-label"> <?php _e_psc('Your artist name will be displayed next to your idea instead of your name'); ?></label>
 	</p>
 
 	<p>
-		<div style="float: left; width: 170px">
-			<label class="input-label"><?php _e_psc('Gender'); ?> <span><?php _e('(required)'); ?></span></label>
-			<input type="radio" name="input-sex" id="input-sex" value="m" checked> <?php _e_psc('Male'); ?>
-			<br />
-			<input type="radio" name="input-sex" id="input-sex" value="f"> <?php _e_psc('Female'); ?>
-		</div>
-
-		<div style="float: left; padding-left: 50px">
+		<div style="float: left; width: 150px">
 			 <label class="input-label"><?php _e_psc('Age'); ?> <span><?php _e('(required)'); ?></span></label>
-		<select id="input-age" class="small" name="age">
+			<select id="input-age" class="small" name="age">
 	    <?php
 	    $cats = psc_get_category('school');
 	    for($i = 6; $i <= 99; $i++) {
 		echo sprintf('<option value="%s">%s</option>', $i, $i);
 	    }
 	    ?>	
-		</select>
+			</select>
+		</div>
+
+		<div style="float: left; padding-left: 50px">
+			<label class="input-label"><?php _e_psc('Level'); ?> <span><?php _e('(required)'); ?></span></label>
+			<input type="radio" name="input-level" id="input-level" value="primary" checked> <?php _e_psc('Primary'); ?>
+			<br />
+			<input type="radio" name="input-level" id="input-level" value="high school"> <?php _e_psc('High School'); ?>
 
 		</div>
 
@@ -67,7 +64,7 @@
 -->
 
 	<p>
-		<label for="input-school" class="input-label"><?php _e_psc('School Name'); ?></label>
+		<label for="input-school" class="input-label"><?php _e_psc('School'); ?></label>
 		<select id="input-school" name="school" class="name">
 			<option value=""><?php _e_psc('- Select your School -'); ?></option>
 			<option value="NA"><?php _e_psc('Not applicable'); ?></option>
@@ -79,20 +76,10 @@
 	    ?>	
 		</select>
 	</p>
-<!--
 	<p>
-		<label for="input-classname" class="input-label"><?php _e_psc('Class Name'); ?></label>
-		<select id="input-classname" name="class_name" class="name">
-			<option value=""><?php _e_psc('- Select your Class Name -'); ?></option>
-	    <?php
-	    $cats = psc_get_category('class_name');
-	    foreach($cats as $cat) {
-		echo sprintf('<option value="%s">%s</option>', $cat['id'], $cat['category_name']);
-	    }
-	    ?>	
-		</select>
+		<label for="input-classname" class="input-label"><?php _e_psc('Teacher Name'); ?></label>
+		<input type="text" maxlength="30" id="input-classname" placeholder="<?php _e_psc('Teacher Name'); ?>" name="classname">
 	</p>
--->
 
 	<br />
 
@@ -286,11 +273,10 @@ jQuery('#register-button').on('click', function() {
 		first_name: jQuery("#input-first-name").val(),
 		last_name: jQuery("#input-last-name").val(),
 		artist: jQuery("#input-artist").val(),
-		artist_show: jQuery("#input-artist-show").is(':checked'),
 		last_name: jQuery("#input-last-name").val(),
-		sex: jQuery("#input-sex").val(),
 		age: jQuery("#input-age").val(),
 		school: jQuery("#input-school").val(),
+		class_level: jQuery("#input-level").val(),
 		class_name: jQuery("#input-classname").val(),
 		project_name: jQuery("#input-project-name").val(),
 		project_cat: jQuery("#input-project-category").val(),
