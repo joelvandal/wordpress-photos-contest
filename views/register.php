@@ -46,7 +46,6 @@
 		<div style="float: left; padding-left: 50px">
 			<label class="input-label"><?php _e_psc('Level'); ?> <span><?php _e('(required)'); ?></span></label>
 			<input type="radio" name="input-level" id="input-level" value="primary" checked> <?php _e_psc('Primary'); ?>
-			<br />
 			<input type="radio" name="input-level" id="input-level" value="high school"> <?php _e_psc('High School'); ?>
 
 		</div>
@@ -78,14 +77,14 @@
 	</p>
 	<p>
 		<label for="input-classname" class="input-label"><?php _e_psc('Teacher Name'); ?></label>
-		<input type="text" maxlength="30" id="input-classname" placeholder="<?php _e_psc('Teacher Name'); ?>" name="classname">
+		<input type="text" maxlength="30" id="input-classname" placeholder="<?php _e_psc("Type your teacher's name here"); ?>" name="classname">
 	</p>
 
 	<br />
 
 	<p>
-		<label for="input-project-name" class="input-label"><?php _e_psc('Project Name'); ?></label>
-		<input type="text" maxlength="30" id="input-project-name" placeholder="<?php _e_psc('Project Name'); ?>" name="project">
+		<label for="input-project-name" class="input-label"><?php _e_psc('Project Name'); ?> <span><?php _e('(required)'); ?></span></label>
+		<input type="text" maxlength="30" id="input-project-name" placeholder="<?php _e_psc('Type your concept title here'); ?>" name="project">
 	</p>
 
 	<p>
@@ -102,9 +101,9 @@
 	</p>
 
 	<p>
-		<label for="dropfile" class="input-label"><?php _e_psc('Upload your image'); ?></label>
 
 		<div id="show-upload" style="display:none">
+			<label for="dropfile" class="input-label"><?php _e_psc('Upload your image'); ?></label>
 			<form action="<?php echo PSC_PATH . 'upload.php'; ?>" class="dropzone" id="dropfile" style="width: 400px">
 				<input type="hidden" id="hidden-participant" name="participant" value="">
 			</form>
@@ -112,7 +111,7 @@
 	</p>
 
 	<p>
-		<label for="input-project-description" class="input-label"><?php _e_psc('Project Description'); ?></label>
+		<label for="input-project-description" class="input-label"><?php _e_psc('Project Description'); ?> <span><?php _e('(required)'); ?></span></label>
 		<textarea id="input-project-description" placeholder="<?php _e_psc('Project Description'); ?>" name="category"></textarea>
 	</p>
 
@@ -297,7 +296,7 @@ jQuery('#register-button').on('click', function() {
 				msg = '<?php _e_psc('Thanks for your subscription, we will contact you by email shortly!'); ?>';
 
 				jQuery("#btnClose").on("click", function() {
-					window.location.href="/imagine";
+					window.location.href="/gallery?lang=<?php echo isset($_GET['lang']) ? $_GET['lang'] : 'en'; ?>";
 				});
 
 
