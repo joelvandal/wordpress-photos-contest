@@ -79,6 +79,30 @@
 				</td>
 			</tr>
 		</table>
+
+		<table class="form-table">
+			<tr valign="top">
+				<th align="left">
+					<?php _e_psc('Approval Subject'); ?>
+				</th>
+				<td>
+					<input type="text" size="80" name="approval_subject" value="<?php echo psc_get_option('approval_subject'); ?>" />
+					<p class="description">
+					</p>
+				</td>
+			</tr>
+			<tr valign="top">
+				<th align="left">
+					<?php _e_psc('Approval Message'); ?>
+				</th>
+				<td>
+					<textarea rows="6" cols="80" name="approval_message"><?php echo psc_get_option('approval_message'); ?></textarea>
+					<p class="description">
+					<?php _e_psc('Available variables: [first_name], [last_name], [project_name], [project-id], [blog_name], [blog_url]'); ?>
+					</p>
+				</td>
+			</tr>
+		</table>
 		
 		<h3><?php _e_psc('Social Sharing'); ?></h3>
 

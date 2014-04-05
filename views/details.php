@@ -116,7 +116,7 @@ $item['full_name'] = @$item['artist'];
 <div class="tb-col-lg-3"></div>
 				<div class="tb-col-lg-6 tb-text-center">
 				<a class="readmore" id="closeVote" class="tb-close" data-dismiss="modal" aria-hidden="true"><span><?php _e_psc('Close'); ?></span></a>
-				<a class="readmore" id="showVote"><span><?php _e_psc('Vote for this participant'); ?></span></a>
+				<a class="readmore" id="showVote"><span><?php _e_psc('Vote'); ?></span></a>
 				</div>
  			</div>
 			<?php endif; ?>
@@ -271,6 +271,7 @@ jQuery('#sendVote').on('click', function() {
 				jQuery('#voterDetails').hide();
 				jQuery('#div-desc').show();
 				jQuery('#div-desc2').show();
+				window.location.href='/gallery';
 			} else {
 				var msg = '';
 

@@ -18,7 +18,7 @@ top: 145px;
 
 global $wpdb;
 
-$orderby = "p.subscribe_date ASC";
+$orderby = "p.subscribe_date DESC";
 
 $sql = "SELECT p.*,count(distinct(v.id)) AS votes FROM " . PSC_TABLE_PARTICIPANTS . " AS p LEFT JOIN " . PSC_TABLE_VOTES . " AS v ON p.id=v.participant_id WHERE p.approved=1 GROUP BY p.id ORDER BY " . $orderby;
 $rows = $wpdb->get_results($sql, ARRAY_A);
@@ -43,9 +43,13 @@ foreach($rows as $item) {
     echo '</a>';
     echo '<a class="more-info" data-id="' . $item['id'] . '" href="#" rel="participants"></a>';
     echo '</div> <!-- end .item-image -->';
-    echo '<div class="item-label">' . $item['project_name'] . '</div>';
+    echo '<div class="item-label">' . sprintf(__psc("%s by %s"), $item['project_name'], $item['artist']) . '</div>';
     echo '</div> <!-- end .item -->';
-
+    
+    if ($i%4 == 0) {
+	echo '<div class="clear"></div>';
+	echo '<br /><br />';
+    }
     $i++;
 }
 

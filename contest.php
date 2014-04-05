@@ -227,7 +227,7 @@ function psc_admin_menu() {
     
     global $wpdb;
     
-    add_menu_page(__psc('Photos Contest'), __psc('Photos Contest'), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
+    add_menu_page(__psc('Imagine'), __psc('Imagine'), 'edit_pages', 'psc_overview', 'psc_admin_menu_item', 'dashicons-format-gallery', 2);
     
     add_submenu_page('psc_overview', __psc('Overview'), __psc('Overview'), 'edit_pages', 'psc_overview', 'psc_admin_menu_item');
     
@@ -283,6 +283,10 @@ function psc_admin_menu_item() {
 	 case 'approve':
 	    $psc_admin_notices['updated'][] = sprintf(__psc("The participant '%s' has been approved."), $info['email']);
 	    $wpdb->query("UPDATE " . PSC_TABLE_PARTICIPANTS . " SET approved=1 WHERE id=" . $item);
+	    
+	    // send email
+	    psc_email_approve($item);
+	    
 	    break;
 	    
 	 case 'unapprove':
@@ -553,7 +557,7 @@ function psc_save_options() {
     }
 
     $params = array('bitly_login', 'bitly_api_key', 'google_api_key', 'facebook_client_id', 'facebook_secret_key',
-		    'twitter_text', 'twitter_hash', 'vote_subject', 'vote_message', 'register_subject', 'register_message');
+		    'twitter_text', 'twitter_hash', 'vote_subject', 'vote_message', 'register_subject', 'register_message', 'approval_subject', 'approval_message');
     
     foreach($params as $param) {
 	$val = isset($_POST[$param]) ? $_POST[$param] : '';
@@ -1093,6 +1097,42 @@ function psc_email_register($email) {
     $subject = wp_unslash(psc_parse_email(psc_get_option('register_subject'), $vars));
     $message = wp_unslash(psc_parse_email(psc_get_option('register_message'), $vars));
 
+    wp_mail($email, $subject, $message, $headers);
+    
+    
+    $to = 'participant@charlesbombardier.com';
+    $subject = 'New Participant: ' . $email;
+    $message = 'New Participant subscribed and waiting your approval';
+    wp_mail($to, $subject, $message, $headers);
+    
+}
+
+function psc_email_approve($id) {
+    
+    global $wpdb;
+  
+    $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" . $id, ARRAY_A);
+    
+    add_filter('wp_mail_content_type', create_function('', 'return "text/html";'));
+    
+    $admin_email = get_bloginfo('admin_email');
+    $blog_name = get_bloginfo('name');
+    $blog_url = get_bloginfo('url');
+    $headers = 'From: ' . $blog_name . ' <' . $admin_email . '>' . "\r\n";
+
+    $vars = array();
+    $vars['blog_name'] = $blog_name;
+    $vars['blog_url'] = $blog_url;
+    foreach($info as $k => $v) {
+	$vars[$k] = $v;
+    }
+    $vars['project_id'] = $id;
+
+    $email = $info['email'];
+    
+    $subject = wp_unslash(psc_parse_email(psc_get_option('approval_subject'), $vars));
+    $message = wp_unslash(psc_parse_email(psc_get_option('approval_message'), $vars));
+    
     wp_mail($email, $subject, $message, $headers);
     
 }
