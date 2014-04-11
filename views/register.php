@@ -83,7 +83,7 @@
 	<br />
 
 	<p>
-		<label for="input-project-name" class="input-label"><?php _e_psc('Project Name'); ?> <span><?php _e('(required)'); ?></span></label>
+	<label for="input-project-name" class="input-label"><?php _e_psc('Project Title'); ?> <span><?php _e('(required)'); ?></span></label>
 		<input type="text" maxlength="30" id="input-project-name" placeholder="<?php _e_psc('Type your concept title here'); ?>" name="project">
 	</p>
 
@@ -121,7 +121,7 @@
 <!--	
 		<label for="input-rules" class="input-label"><input type="checkbox" id="input-rules" name="agree_rule"> <?php _e_psc('I Accept contest rules'); ?></label>
 -->
-		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php _e_psc('I accept the terms and conditions in regards to my entry.'); ?></label>
+		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php echo sprintf(__psc('I accept the <a target="_new" href="/terms-conditions?lang=%s">terms and conditions</a> in regards to my entry.'), (isset($_GET['lang']) ? $_GET['lang'] : 'en')); ?></label>
 <br />
 		<label for="input-mail-site" class="input-label"><input checked type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> monthly newsletter.'); ?></label>
 <!--
