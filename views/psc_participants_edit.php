@@ -8,7 +8,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 	<form name="participant" id="participant" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 
-		<h3>Participant Informations</h3>
+		<h3><?php echo __psc('Participant Informations'); ?></h3>
 
 		<table class="form-table">
 
@@ -122,7 +122,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e_psc('Project Name'); ?>
+					<?php _e_psc('Project Title'); ?>
 				</th>
 				<td>
 					<input type="text" size="80" name="project_name" value="<?php echo $info['project_name']; ?>" />

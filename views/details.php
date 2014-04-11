@@ -82,16 +82,16 @@ $item['full_name'] = @$item['artist'];
 	
 					<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 					<tbody>
-						<tr><th>Name:</th><td><?php echo $item['full_name']; ?></td></tr>
-						<tr><th>Age:</th><td><?php echo $item['age']; ?></td></tr>
-						<tr><th>School Name:</th><td><?php echo psc_get_school($item['school']); ?></td></tr>
+						<tr><th><?php echo __psc("Artist's Name:"); ?></th><td><?php echo $item['full_name']; ?></td></tr>
+						<tr><th><?php echo __psc('Age:'); ?></th><td><?php echo $item['age']; ?></td></tr>
+						<tr><th><?php echo __psc('School Name:'); ?></th><td><?php echo psc_get_school($item['school']); ?></td></tr>
 <!--
 						<tr><th>Class Name:</th><td><?php echo psc_get_class($item['class_name']); ?></td></tr>
 -->
 
-						<tr><th style="width: 150px">Project Name:</th><td><?php echo $item['project_name']; ?></td></tr>
-						<tr><th>Category:</th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
-						<tr id="div-desc"><th colspan=2>Description:</th></tr>
+						<tr><th style="width: 150px"><?php echo __psc('Project Title:'); ?></th><td><?php echo $item['project_name']; ?></td></tr>
+						<tr><th><?php echo __psc('Category:'); ?></th><td><?php echo psc_get_project($item['project_category']); ?></td></tr>
+						<tr id="div-desc"><th colspan=2><?php echo __psc('Description:'); ?></th></tr>
 						<tr id="div-desc2"><td colspan=2><?php echo wp_unslash($item['project_description']); ?></td></tr>
 					</tbody>
 					</table>
@@ -136,14 +136,6 @@ $item['full_name'] = @$item['artist'];
 					<h4 class="tb-text-left">Vote for this participant:</h4>
 						<table class="tb-table tb-table-striped tb-table-hover tb-table-responsive tb-text-left">
 						<tbody>
-							<tr>
-								<th><label for="voter_email"><?php _e_psc('Enter your Email:'); ?></label></th>
-<?php if (wp_is_mobile()): ?>
-							</tr>
-							<tr>
-<?php endif; ?>		
-								<td><div class="tb-form-input" id="form_email"><input type="text" class="tb-form-control" id="voter_email" placeholder="Enter email"></div></td>
-							</tr>
 		
 							<tr>
 								<th style="width: 150px; vertical-align: middle"><label for="voter_name"><?php _e_psc('Enter your Name:'); ?></label></th>
@@ -153,6 +145,16 @@ $item['full_name'] = @$item['artist'];
 <?php endif; ?>		
 								<td><div class="tb-form-input" id="form_name"><input type="text" class="tb-form-control" id="voter_name" placeholder="Enter name"></div></td>
 							</tr>
+
+							<tr>
+								<th><label for="voter_email"><?php _e_psc('Enter your Email:'); ?></label></th>
+<?php if (wp_is_mobile()): ?>
+							</tr>
+							<tr>
+<?php endif; ?>		
+								<td><div class="tb-form-input" id="form_email"><input type="text" class="tb-form-control" id="voter_email" placeholder="Enter email"></div></td>
+							</tr>
+
 						</tbody>
 						</table>
 						<div class="tb-pull-right">
@@ -167,7 +169,7 @@ $item['full_name'] = @$item['artist'];
 				</div>
 
 				<div class="tb-col-xs-12 tb-col-sm-12 tb-col-md-7 tb-col-lg-7">
-					<img class="tb-img-responsive tb-img-thumbnail tb-text-center" style="height:auto;" src="<?php echo PSC_IMAGE . md5($item['email']) . '-view.png'; ?>" />
+					<img class="tb-img-responsive tb-img-thumbnail tb-text-center" style="height:auto;" src="<?php echo PSC_IMAGE . md5(@$item['email']) . '-view.png'; ?>" />
 				</div>
 			</div>
 		</div>
