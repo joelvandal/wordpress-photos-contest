@@ -310,7 +310,7 @@ function psc_admin_menu_item() {
 	    
 	    $fields = array('first_name' => '%s', 'last_name' => '%s', 'artist' => '%s', 'artist_show' => '%b', 'email' => '%s', 'sex' => '%s', 'age' => '%d', 'school' => '%d', 'class_level' => '%s', 'class_name' => '%s', 
 			    'project_name' => '%s', 'project_category' => '%s', 'project_description' => '%s', 
-			    'approved' => '%b', 'mail_site' => '%b', 'mail_contest' => '%b', 'subscribe_date' => '%T');
+			    'approved' => '%b', 'mail_site' => '%b', 'mail_contest' => '%b', 'subscribe_date' => '%T', 'comments' => '%s');
 	    
 	    $data = array();
 	    $format = array();
@@ -992,7 +992,7 @@ function psc_get_client_ip() {
     return $ipaddress;
 }
 
-function psc_add_vote($id, $name, $email) {
+function psc_add_vote($id, $name, $email, $mail_site = false) {
     global $wpdb;
 
     $ipaddr = psc_get_client_ip();
@@ -1001,6 +1001,7 @@ function psc_add_vote($id, $name, $email) {
 		  'voter_name' => $name,
 		  'voter_ip' => $ipaddr,
 		  'vote_date' => time(),
+		  'mail_site' => ($mail_site ? 1 : 0),
 		  'participant_id' => $id);
 
     $format = array('%s', '%s', '%s', '%d', '%d');

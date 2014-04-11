@@ -401,6 +401,7 @@ class PSC_Participants_Table extends PSC_Table {
 //			 'views'                => __psc('Views', PSC_PLUGIN),
 			 'votes'                => __psc('Votes', PSC_PLUGIN),
 			 'subscribe_date'       => __psc('Subscribe', PSC_PLUGIN),
+			 'mail_site'            => __psc('Newsletters', PSC_PLUGIN),
 			 'status'               => __psc('Status', PSC_PLUGIN)
 		         );
 	return $columns;
@@ -430,7 +431,10 @@ class PSC_Participants_Table extends PSC_Table {
 	 case 'subscribe_date':
 	    return psc_format_datetime($item[ $column_name ]);
 	    break;
-	    
+
+	 case 'mail_site':
+	    return $item['mail_site'] ? __psc('Yes', PSC_PLUGIN) : __psc('No', PSC_PLUGIN);
+
 	 case 'school':
 	    $cats = psc_get_category_by_id('school');
 	    if (isset($cats[$item[$column_name]])) {
@@ -547,6 +551,7 @@ class PSC_Votes_Table extends PSC_Table {
 			 'project_name'         => __psc('Project Name', PSC_PLUGIN),
 			 'voter_ip'             => __psc('IP Address', PSC_PLUGIN),
 			 'vote_date'            => __psc('Vote Date', PSC_PLUGIN),
+			 'mail_site'            => __psc('Newsletters', PSC_PLUGIN),
 			 'status'               => __psc('Status', PSC_PLUGIN)
 		         );
 	return $columns;
@@ -561,6 +566,9 @@ class PSC_Votes_Table extends PSC_Table {
 	 case 'voter_ip':
 	    return $item[ $column_name ];
 	    break;
+
+	 case 'mail_site':
+	    return $item['mail_site'] ? __psc('Yes', PSC_PLUGIN) : __psc('No', PSC_PLUGIN);
 
 	 case 'status':
 	    return $item['approved'] ? __psc('Accepted', PSC_PLUGIN) : __psc('Not Approved', PSC_PLUGIN);

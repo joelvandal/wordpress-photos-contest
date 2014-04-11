@@ -220,9 +220,10 @@ function psc_ajax_vote() {
 
     if (!count($errors)) {
 	$output = array('status' => 'ok');
-	
-	psc_add_vote($id, $name, $email);
+
+	psc_add_vote($id, $name, $email, @$_REQUEST['mail_site']);
 	psc_set_vote_email($email);
+	
 	psc_email_vote($email);
     }
     

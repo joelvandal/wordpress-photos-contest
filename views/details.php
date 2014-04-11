@@ -154,6 +154,12 @@ $item['full_name'] = @$item['artist'];
 <?php endif; ?>		
 								<td><div class="tb-form-input" id="form_email"><input type="text" class="tb-form-control" id="voter_email" placeholder="Enter email"></div></td>
 							</tr>
+<tr>
+	<td></td>
+	<td>
+		<label for="input-mail-site" class="input-label"><input checked type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> monthly newsletter.'); ?></label>
+	</td>
+</tr>
 
 						</tbody>
 						</table>
@@ -258,6 +264,7 @@ jQuery('#sendVote').on('click', function() {
 		action: 'vote',
 		email: jQuery("#voter_email").val(),
 		name: jQuery("#voter_name").val(),
+		mail_site: jQuery("#input-mail-site").is(':checked'),
 		participant_id: '<?php echo $item['id']; ?>'
 	};
 

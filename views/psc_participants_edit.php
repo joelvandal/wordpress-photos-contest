@@ -211,6 +211,17 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</td>
 			</tr>
 -->
+
+
+			<tr valign="top">
+				<th align="left">
+					<?php _e_psc('Comments'); ?>
+				</th>
+				<td>
+					<textarea cols="80" rows="5" name="comments"><?php echo esc_textarea(@$info['comments']); ?></textarea>
+				</td>
+			</tr>
+
 		</table>
 
 		<?php submit_button(); ?>
