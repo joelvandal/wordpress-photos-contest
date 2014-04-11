@@ -1,6 +1,6 @@
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Votes'); ?></h2>
+	<h2><?php _e_psc('Imagine - Votes'); ?></h2>
 
 <?php
 $my_table = new PSC_Votes_Table();

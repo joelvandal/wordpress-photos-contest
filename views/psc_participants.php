@@ -1,6 +1,6 @@
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Participants'); ?></h2>
+	<h2><?php _e_psc('Imagine - Participants'); ?></h2>
 
 <?php
 

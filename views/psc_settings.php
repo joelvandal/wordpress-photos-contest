@@ -1,6 +1,6 @@
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Configuration'); ?></h2>
+	<h2><?php _e_psc('Imagine - Configuration'); ?></h2>
 
 	<form name="configuration" id="configuration" method="post" action="<?php echo $_SERVER['REQUEST_URI']; ?>">
 		<?php wp_nonce_field('psc_settings', 'psc_settings_nonce') ?>

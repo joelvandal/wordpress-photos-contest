@@ -1,6 +1,6 @@
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Categories'); ?></h2>
+	<h2><?php _e_psc('Imagine - Categories'); ?></h2>
 
 <?php
 global $psc_category_types;

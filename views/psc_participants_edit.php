@@ -4,7 +4,7 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Participants'); ?></h2>
+	<h2><?php _e_psc('Imagine - Participants'); ?></h2>
 
 	<form name="participant" id="participant" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 

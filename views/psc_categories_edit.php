@@ -8,7 +8,7 @@ if ($item) {
 
 <div class="wrap">
 
-	<h2><?php _e_psc('Photos Contest - Categories'); ?></h2>
+	<h2><?php _e_psc('Imagine - Categories'); ?></h2>
 
 	<form name="category" id="category" method="post" action="<?php echo str_replace('=edit', '=save', $_SERVER['REQUEST_URI']); ?>">
 
