@@ -27,7 +27,7 @@
 	<p>
 	        <label for="input-artist"><?php _e_psc('Artist Name'); ?> <span><?php _e('(required)'); ?></span></label>
 	        <input size=20 type="text" id="input-artist" placeholder="<?php _e_psc('Artist Name'); ?>" name="artist" class="small">
-		<label for="input-artist-show" class="input-label"> <?php _e_psc('Your artist name will be displayed next to your idea instead of your name'); ?></label>
+		<label for="input-artist-show" class="input-label"> <?php _e_psc('Only your artist name will be displayed publicly.'); ?></label>
 	</p>
 
 	<p>
@@ -43,10 +43,16 @@
 			</select>
 		</div>
 
-		<div style="float: left; padding-left: 50px">
-			<label class="input-label"><?php _e_psc('Level'); ?> <span><?php _e('(required)'); ?></span></label>
-			<input type="radio" name="input-level" id="input-level" value="primary" checked> <?php _e_psc('Primary'); ?>
-			<input type="radio" name="input-level" id="input-level" value="high school"> <?php _e_psc('High School'); ?>
+		<div>
+			<label class="input-label"><?php _e_psc('Education level'); ?></label>
+<select id="input-level" name="input-level">
+			<option value="none" selected> <?php _e_psc('None selected'); ?>
+			<option value="primary"> <?php _e_psc('Primary'); ?>
+			<option value="high"> <?php _e_psc('High School'); ?>
+			<option value="college"> <?php _e_psc('College'); ?>
+			<option value="university"> <?php _e_psc('University'); ?>
+			<option value="master"> <?php _e_psc("Master's / Ph.D. / Post Doc."); ?>
+</select>
 
 		</div>
 
@@ -62,8 +68,11 @@
 	<h4><?php _e_psc('Please enter informations Your School/University'); ?></h4>
 -->
 
-	<p>
+	<p id="div-school" style="display: none;">
 		<label for="input-school" class="input-label"><?php _e_psc('School'); ?></label>
+
+		<input type="text" id="input-school" placeholder="<?php _e_psc('Enter School Name'); ?>" name="school" class="input-large">
+<!--
 		<select id="input-school" name="school" class="name">
 			<option value=""><?php _e_psc('- Select your School -'); ?></option>
 			<option value="NA"><?php _e_psc('Not applicable'); ?></option>
@@ -72,11 +81,13 @@
 	    foreach($cats as $cat) {
 		echo sprintf('<option value="%s">%s</option>', $cat['id'], $cat['category_name']);
 	    }
-	    ?>	
+	    ?>
 		</select>
+
+-->
 	</p>
-	<p>
-		<label for="input-classname" class="input-label"><?php _e_psc('Teacher Name'); ?></label>
+	<p id="div-class" style="display: none;">
+		<label for="input-classname" class="input-label"><?php _e_psc("Teacher's Name"); ?></label>
 		<input type="text" maxlength="30" id="input-classname" placeholder="<?php _e_psc("Type your teacher's name here"); ?>" name="classname">
 	</p>
 
@@ -121,7 +132,11 @@
 <!--	
 		<label for="input-rules" class="input-label"><input type="checkbox" id="input-rules" name="agree_rule"> <?php _e_psc('I Accept contest rules'); ?></label>
 -->
+<?php if (isset($_GET['lang']) && $_GET['lang'] == 'fr'): ?>
+		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php echo sprintf(__psc('I accept the <a target="_new" href="/termes-et-conditions?lang=%s">terms and conditions</a> in regards to my entry.'), (isset($_GET['lang']) ? $_GET['lang'] : 'en')); ?></label>
+<?php else: ?>
 		<label for="input-terms" class="input-label"><input type="checkbox" id="input-terms" name="agree_rule"> <?php echo sprintf(__psc('I accept the <a target="_new" href="/terms-conditions?lang=%s">terms and conditions</a> in regards to my entry.'), (isset($_GET['lang']) ? $_GET['lang'] : 'en')); ?></label>
+<?php endif; ?>
 <br />
 		<label for="input-mail-site" class="input-label"><input checked type="checkbox" id="input-mail-site" name="agree_mail_cb"> <?php echo __psc('I would like to receive the <a target="_new" href="http://charlesbombardier.com">CharlesBombardier.com</a> monthly newsletter.'); ?></label>
 <!--
@@ -195,6 +210,20 @@ jQuery("textarea").textareaCounter({ limit: 350 });
 var upload_image = false;
 var click_terms = false;
 var valid_email = false;
+
+jQuery('#input-level').on('change', function() {
+	jQuery("#div-school").hide();
+	jQuery("#div-class").hide();
+
+	var level = jQuery('#input-level').val();
+	if (level == 'primary' || level == 'high') {
+		jQuery("#div-school").show();
+		jQuery("#div-class").show();
+	} else {
+		jQuery("#input-school").val('');
+		jQuery("#input-class").val('');
+	}
+});
 
 jQuery('#input-email').on('change', function() {
 

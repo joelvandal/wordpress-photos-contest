@@ -75,12 +75,17 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e_psc('Level'); ?>
+					<?php _e_psc('Education level'); ?>
 				</th>
 				<td>
+
 					<select name="class_level">
+						<option <?php if ($info['class_level'] == 'none') { echo 'selected'; } ?> value="primary"><?php _e_psc('None'); ?></option>
 						<option <?php if ($info['class_level'] == 'primary') { echo 'selected'; } ?> value="primary"><?php _e_psc('Primary'); ?></option>
-						<option <?php if ($info['class_level'] == 'high school') { echo 'selected'; } ?> value="high school"><?php _e_psc('High School'); ?></option>
+						<option <?php if ($info['class_level'] == 'high') { echo 'selected'; } ?> value="high"><?php _e_psc('High School'); ?></option>
+						<option <?php if ($info['class_level'] == 'college') { echo 'selected'; } ?> value="college"><?php _e_psc('College'); ?></option>
+						<option <?php if ($info['class_level'] == 'university') { echo 'selected'; } ?> value="university"><?php _e_psc('University'); ?></option>
+						<option <?php if ($info['class_level'] == 'master') { echo 'selected'; } ?> value="master"><?php _e_psc('Master'); ?></option>
 					</select>
 				</td>
 			</tr>
@@ -92,22 +97,14 @@ $info = $wpdb->get_row("SELECT * FROM " . PSC_TABLE_PARTICIPANTS . " WHERE id=" 
 				</th>
 				<td>
 
-		<select id="input-school-name" name="school" class="name">
-	    <?php
-	    $cats = psc_get_category('school');
-	    foreach($cats as $cat) {
-		$selected = ($cat['id'] == $info['school']) ? 'selected' : '';
-		echo sprintf('<option %s value="%s">%s</option>', $selected, $cat['id'], $cat['category_name']);
-	    }
-	    ?>
-		</select>
+		<input type="text" id="input-school-name" placeholder="<?php _e_psc('Enter School Name'); ?>" name="school" class="input-large">
 
 				</td>
 			</tr>
 
 			<tr valign="top">
 				<th align="left">
-					<?php _e_psc('Teacher Name'); ?>
+					<?php _e_psc("Teacher's Name"); ?>
 				</th>
 				<td>
 					<input type="text" size="80" name="class_name" value="<?php echo $info['class_name']; ?>" />
