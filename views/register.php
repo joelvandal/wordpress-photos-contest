@@ -31,38 +31,37 @@
 	</p>
 
 	<p>
-		<div style="float: left; width: 150px">
-			 <label class="input-label"><?php _e_psc('Age'); ?> <span><?php _e('(required)'); ?></span></label>
-			<select id="input-age" class="small" name="age">
+		<label for="input-email" class="input-label"><?php _e_psc('Enter Your Email'); ?> <span><?php _e('(required)'); ?></span></label>
+		<input type="email" id="input-email" placeholder="<?php _e_psc('Your Email Address'); ?>" name="email" class="input-large">
+	</p>
+
+	<p>
+		<label class="input-label"><?php _e_psc('Age'); ?> <span><?php _e('(required)'); ?></span></label>
+		<select id="input-age" class="small" name="age">
+			<option value=""><?php _e_psc('select'); ?></option>
+
 	    <?php
 	    $cats = psc_get_category('school');
 	    for($i = 6; $i <= 99; $i++) {
 		echo sprintf('<option value="%s">%s</option>', $i, $i);
 	    }
 	    ?>	
-			</select>
-		</div>
+		</select>
+	</p>
 
-		<div>
-			<label class="input-label"><?php _e_psc('Education level'); ?></label>
-<select id="input-level" name="input-level">
+	<p>
+		<label class="input-label"><?php _e_psc('Education level'); ?></label>
+		<select id="input-level" name="input-level">
 			<option value="none" selected> <?php _e_psc('None selected'); ?>
 			<option value="primary"> <?php _e_psc('Primary'); ?>
 			<option value="high"> <?php _e_psc('High School'); ?>
 			<option value="college"> <?php _e_psc('College'); ?>
 			<option value="university"> <?php _e_psc('University'); ?>
 			<option value="master"> <?php _e_psc("Master's / Ph.D. / Post Doc."); ?>
-</select>
+		</select>
 
-		</div>
-
-		<div style="clear: both"></div>
 	</p>
 
-	<p>
-		<label for="input-email" class="input-label"><?php _e_psc('Enter Your Email'); ?> <span><?php _e('(required)'); ?></span></label>
-		<input type="email" id="input-email" placeholder="<?php _e_psc('Your Email Address'); ?>" name="email" class="input-large">
-	</p>
 
 <!--
 	<h4><?php _e_psc('Please enter informations Your School/University'); ?></h4>
