@@ -103,12 +103,12 @@ function psc_ajax_register() {
 			   );
     
     $params['school'] = array('desc' => __psc("School"),
-			      'required' => true,
+			      'required' => false,
 			      'type' => 'text',
 			   );
 
     $params['class_name'] = array('desc' => __psc("Teacher Name"),
-				  'required' => true,
+				  'required' => false,
 				  'type' => 'text',
 				  );
     
